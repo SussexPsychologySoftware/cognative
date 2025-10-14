@@ -10,6 +10,7 @@ interface TimePickerProps {
 }
 
 export default function TimePicker({ value, onChange }: TimePickerProps) {
+    // Nullable time picker component - scroll type and cross-platform similar.
     const [showPicker, setShowPicker] = useState(false);
 
     const formatTime = (date: Date | null) => {
