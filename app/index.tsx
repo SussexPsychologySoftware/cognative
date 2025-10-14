@@ -1,18 +1,36 @@
-import { Text, View, StyleSheet } from "react-native";
-import NumericInput from "@/components/NumericInput";
+import {Text, View, StyleSheet, Alert} from "react-native";
+import NumericInput from "@/components/basic/NumericInput";
 import {useState} from "react";
-import MultilineTextInput from "@/components/MultilineTextInput";
-import TimePicker from "@/components/TimePicker";
+import MultilineTextInput from "@/components/basic/MultilineTextInput";
+import TimePicker from "@/components/basic/TimePicker";
+import SubmitButton from "@/components/basic/SubmitButton";
+import Radio from "@/components/basic/Radio";
+import RadioList from "@/components/survey/RadioList";
 
 export default function Index() {
     const [responses, setResponses] = useState({
         numericInput: '',
         multilineTextInput: '',
+        radioOn: false,
+        radioList: '',
         timePicker: new Date()
     });
+    const [submitting, setSubmitting] = useState(false);
 
     function updateResponses(newValue: any, responseField: string) {
         setResponses({...responses, [responseField]: newValue})
+    }
+
+    function handleSubmit(){
+        if(submitting) return;
+        try {
+            setSubmitting(true);
+            Alert.alert('submitted',JSON.stringify(responses))
+        } catch (e) {
+            console.error(e)
+        } finally {
+            setSubmitting(false);
+        }
     }
 
     return (
@@ -38,6 +56,16 @@ export default function Index() {
                 <TimePicker
                     value={responses.timePicker}
                     onChange={(newValue: Date|null) => {updateResponses(newValue,'timePicker')}}
+                />
+                <RadioList
+                    options={['Yes', 'No']}
+                    onSelect={(response: string) => {updateResponses(response, 'radioList')}}
+                    containerStyle={{'width': '60%'}}
+                />
+                <SubmitButton
+                    onPress={handleSubmit}
+                    text={"Submit"}
+                    disabled={false}
                 />
             </View>
         </View>
