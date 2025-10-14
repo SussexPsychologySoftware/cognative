@@ -25,7 +25,7 @@ export default function NumericInput({ value, placeholder, maxLength, onChange, 
             keyboardType="numeric"
             placeholder={placeholder}
             placeholderTextColor={'grey'}
-            style={[globalStyles.input,{...style}]}
+            style={[globalStyles.input, style]}
             onChangeText={newText => handleInput(newText)}
             maxLength={maxLength??2}
             returnKeyType='done'
