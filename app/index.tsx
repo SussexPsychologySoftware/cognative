@@ -43,8 +43,8 @@ export default function Index() {
         >
             <Text style={[globalStyles.pageTitle,{marginVertical: 30}]}>Survey Example</Text>
             <StatusBar style={'dark'}/>
-            <Text style={globalStyles.standardText}>{progress}</Text>
             <View style={styles.inputsContainer}>
+                <Text style={globalStyles.whiteText}>% Progress: {progress}</Text>
                 <NumericInput
                     value={responses.numericInput}
                     placeholder={"Enter numeric number"}
