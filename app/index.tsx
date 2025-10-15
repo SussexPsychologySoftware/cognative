@@ -44,6 +44,7 @@ export default function Index() {
             safeAreaStyle={{padding: 30}}
         >
             <Text>Edit app/index.tsx to edit this screen.</Text>
+            <StatusBar style={'dark'}/>
             <View style={styles.inputsContainer}>
                 <NumericInput
                     value={responses.numericInput}
