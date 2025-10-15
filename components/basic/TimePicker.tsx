@@ -40,50 +40,34 @@ export default function TimePicker({ value, onChange }: TimePickerProps) {
 
     return (
         <View style={styles.container}>
-            {/* MODIFIED: Conditionally render based on whether a value is set */}
-            {!showPicker && !value ? (
+            {((Platform.OS === 'ios' && !value) || Platform.OS === 'android') &&
                 <TouchableOpacity
                     onPress={handleShowPicker}
                     style={styles.timeButton}
                 >
-                    <Text style={styles.timeText}>Set Time</Text>
+                    <Text style={styles.timeText}>
+                        {!value ? 'Set Time' : formatTime(value)}
+                    </Text>
                 </TouchableOpacity>
-            ) : (
-                <>
-                    {Platform.OS === 'ios' && (
-                        <DateTimePicker
-                            value={pickerValue}
-                            mode="time"
-                            is24Hour={true}
-                            onChange={handleChange}
-                            textColor={'white'}
-                            themeVariant={'light'} // TODO: Control as prop??
-                        />
-                    )}
-                    {Platform.OS === 'android' && (
-                        <TouchableOpacity
-                            onPress={() => setShowPicker(true)}
-                            style={styles.timeButton}
-                        >
-                            <Text style={styles.timeText}>{formatTime(value)}</Text>
-                        </TouchableOpacity>
-                    )}
-                    <TouchableOpacity onPress={handleClear} style={styles.clearButton}>
-                        <Text style={styles.clearButtonText}>X</Text>
-                    </TouchableOpacity>
-                </>
-            )}
-            {Platform.OS === 'android' && showPicker && (
+            }
+
+            {((Platform.OS === 'ios' && value) || (Platform.OS === 'android' && showPicker)) &&
                 <DateTimePicker
-                    display={'spinner'}
                     value={pickerValue}
+                    display={Platform.OS === 'android'?'spinner':undefined}
                     mode="time"
                     is24Hour={true}
                     onChange={handleChange}
-                    textColor={'white'}
-                    themeVariant={'dark'}
+                    textColor='white'
+                    themeVariant='light' // TODO: Control as prop??
                 />
-            )}
+            }
+
+            {value &&
+                <TouchableOpacity onPress={handleClear} style={styles.clearButton}>
+                    <Text style={styles.clearButtonText}>X</Text>
+                </TouchableOpacity>
+            }
         </View>
     );
 }
