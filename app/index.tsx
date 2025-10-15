@@ -61,6 +61,7 @@ export default function Index() {
                 />
                 <RadioList
                     options={['Yes', 'No']}
+                    value={responses.radioList}
                     onSelect={(response: string) => {updateResponses('radioList', response)}}
                     containerStyle={{'width': '60%'}}
                 />
