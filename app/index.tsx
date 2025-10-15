@@ -12,6 +12,7 @@ import {StatusBar} from "expo-status-bar";
 import {globalStyles} from "@/styles/appStyles";
 
 import {useSurvey} from "@/hooks/useSurvey";
+import LikertRadioGrid from "@/components/survey/LikertRadioGrid";
 
 export default function Index() {
     const questions  = [
@@ -31,6 +32,26 @@ export default function Index() {
             default: new Date(),
         },
     ]
+
+    // PLACEHOLDER: need to integrate nested objects into useSurvey
+    const likertQuestions = {
+            name: 'PHQ-8',
+            prompt: 'How often have you been bothered by the following over the past 2 weeks?',
+            options: ['Not at all', 'Several days', 'More than half the days', 'Nearly every day'],
+            questions: ['Little interest or pleasure in doing things?', 'Feeling down, depressed, or hopeless?',
+                'Trouble falling or staying asleep, or sleeping too much?', 'Feeling tired or having little energy?',
+                'Poor appetite or overeating?',
+                'Feeling bad about yourself — or that you are a failure or have let yourself or your family down?',
+                'Trouble concentrating on things, such as reading the newspaper or watching television?',
+                'Moving or speaking so slowly that other people could have noticed? Or so fidgety or restless that you have been moving a lot more than usual?'
+            ],
+            type: 'likert'
+        }
+
+    const [likertResponses, setLikertResponses] = useState(
+        Object.fromEntries(likertQuestions.questions.map(q => [q, '']))
+    );
+    console.log({likertResponses});
 
     const [playingAudio, setPlayingAudio] = useState(false);
 
@@ -70,6 +91,14 @@ export default function Index() {
                                onPress={()=>{setPlayingAudio(!playingAudio)}}
                                volume={1}
                 />
+                <LikertRadioGrid
+                    responses={likertResponses}
+                    options={likertQuestions.options}
+                    questions={likertQuestions.questions}
+                    oneWordPerLine={true}
+                    onChange={(question: string, answer: string) => {setLikertResponses({...likertResponses, [question]: answer})}}
+                />
+
                 <Text style={globalStyles.warning}>{warning}</Text>
                 <SubmitButton
                     onPress={async()=>{await handleSurveySubmit()}}
