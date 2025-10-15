@@ -33,9 +33,9 @@ export default function RadioList({options, onSelect, containerStyle} : { option
 const styles = StyleSheet.create({
     container: {
         flexDirection: 'row',
-        justifyContent: 'space-between',
+        justifyContent: 'flex-start',
         alignItems: 'center',
-        width: '100%'
+        gap: 5
     },
 })
 
