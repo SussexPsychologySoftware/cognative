@@ -72,6 +72,7 @@ export default function Index() {
                 <SubmitButton
                     onPress={handleSubmit}
                     text={"Submit"}
+                    disabledText={"Submitting..."}
                     disabled={false}
                 />
             </View>
