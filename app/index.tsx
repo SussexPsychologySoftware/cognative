@@ -6,6 +6,7 @@ import TimePicker from "@/components/basic/TimePicker";
 import SubmitButton from "@/components/basic/SubmitButton";
 import Radio from "@/components/basic/Radio";
 import RadioList from "@/components/survey/RadioList";
+import AudioPlayer from "@/components/media/AudioPlayer";
 
 export default function Index() {
     const [responses, setResponses] = useState({
@@ -16,6 +17,8 @@ export default function Index() {
         timePicker: new Date()
     });
     const [submitting, setSubmitting] = useState(false);
+    const [playingAudio, setPlayingAudio] = useState(false);
+
 
     function updateResponses(newValue: any, responseField: string) {
         setResponses({...responses, [responseField]: newValue})
@@ -61,6 +64,11 @@ export default function Index() {
                     options={['Yes', 'No']}
                     onSelect={(response: string) => {updateResponses(response, 'radioList')}}
                     containerStyle={{'width': '60%'}}
+                />
+                <AudioPlayer   audioSource={require('../assets/sounds/binaural.mp3')}
+                               isPlaying={playingAudio}
+                               onPress={()=>{setPlayingAudio(!playingAudio)}}
+                               volume={1}
                 />
                 <SubmitButton
                     onPress={handleSubmit}
