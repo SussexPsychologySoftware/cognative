@@ -47,7 +47,7 @@ export default function Index() {
                 <Text style={globalStyles.whiteText}>Progress: {progress}%</Text>
                 <NumericInput
                     value={responses.numericInput}
-                    placeholder={"Enter numeric number"}
+                    placeholder={"Enter number"}
                     onChange={(newValue: string) => {updateResponses('numericInput', newValue)}}
                 />
                 <MultilineTextInput
