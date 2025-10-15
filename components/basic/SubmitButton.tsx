@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {Text, StyleSheet, Pressable} from 'react-native'
 
-export default function SubmitButton({ text, disabledText, disabled, onPress, style } : { text: string, disabledText?: string, disabled: boolean, onPress: () => void | Promise<void>, style?: object }) {
+export default function SubmitButton({ text, disabledText, disabled, onPress, style } : { text: string, disabledText?: string, disabled?: boolean, onPress: () => void | Promise<void>, style?: object }) {
     const [pressExecuting, setPressExecuting] = useState(false); // Define pressExecuting state
 
     const handlePress = async () => {
