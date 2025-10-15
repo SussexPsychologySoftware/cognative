@@ -1,4 +1,4 @@
-import {View, StyleSheet,Text, Alert} from "react-native";
+import {View, StyleSheet,Text} from "react-native";
 import NumericInput from "@/components/basic/NumericInput";
 import React, {useState} from "react";
 import MultilineTextInput from "@/components/basic/MultilineTextInput";

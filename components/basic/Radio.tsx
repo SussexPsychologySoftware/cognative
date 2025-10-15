@@ -1,6 +1,5 @@
 import React from 'react'
 import { MaterialIcons } from '@expo/vector-icons';
-import { View } from 'react-native'
 import { colours } from "@/styles/appStyles";
 
 export default function Radio({ selected, colour }: {
