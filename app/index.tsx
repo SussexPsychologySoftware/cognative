@@ -1,12 +1,14 @@
-import {Text, View, StyleSheet, Alert} from "react-native";
+import {View, StyleSheet,Text, Alert} from "react-native";
 import NumericInput from "@/components/basic/NumericInput";
-import {useState} from "react";
+import React, {useState} from "react";
 import MultilineTextInput from "@/components/basic/MultilineTextInput";
 import TimePicker from "@/components/basic/TimePicker";
 import SubmitButton from "@/components/basic/SubmitButton";
-import Radio from "@/components/basic/Radio";
 import RadioList from "@/components/survey/RadioList";
 import AudioPlayer from "@/components/media/AudioPlayer";
+import {ScreenWrapper} from "@/components/layout/ScreenWrapper";
+import {StatusBar} from "expo-status-bar";
+import {globalStyles} from "@/styles/appStyles";
 
 export default function Index() {
     const [responses, setResponses] = useState({
@@ -37,12 +39,9 @@ export default function Index() {
     }
 
     return (
-        <View
-            style={{
-                flex: 1,
-                justifyContent: "center",
-                alignItems: "center",
-            }}
+        <ScreenWrapper
+            scrollable={true}
+            safeAreaStyle={{padding: 30}}
         >
             <Text>Edit app/index.tsx to edit this screen.</Text>
             <View style={styles.inputsContainer}>
@@ -76,7 +75,7 @@ export default function Index() {
                     disabled={false}
                 />
             </View>
-        </View>
+        </ScreenWrapper>
 );
 }
 
