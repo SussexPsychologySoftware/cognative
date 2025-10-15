@@ -3,12 +3,9 @@ import {StyleSheet, View, Text, TouchableOpacity} from 'react-native'
 import Radio from "@/components/basic/Radio";
 import {globalStyles} from "@/styles/appStyles";
 
-export default function RadioList({options, onSelect, containerStyle} : { options: string[], onSelect: (option: string)=>void, containerStyle?: object }) {
+export default function RadioList({options, value, onSelect, containerStyle} : { options: string[], value: string, onSelect: (option: string)=>void, containerStyle?: object }) {
     // TODO: make the buttons next to the text
-    const [selectedOption, setSelectedOption] = useState('');
-
     const onOptionPress = (option: string) => {
-        setSelectedOption(option);
         onSelect(option);
     }
 
@@ -21,7 +18,7 @@ export default function RadioList({options, onSelect, containerStyle} : { option
                     onPress={()=>onOptionPress(option)}
                 >
                     <Radio
-                        selected={selectedOption===option}
+                        selected={value===option}
                     />
                     <Text style={globalStyles.standardText}>{option}</Text>
                 </TouchableOpacity>
