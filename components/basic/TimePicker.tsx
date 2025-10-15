@@ -24,6 +24,11 @@ export default function TimePicker({ value, onChange }: TimePickerProps) {
         onChange(selectedTime??null);
     };
 
+    const handleShowPicker = () => {
+        setShowPicker(true);
+        onChange(new Date());
+    }
+
     // ADDED: Handler to clear the time
     const handleClear = () => {
         setShowPicker(false);
@@ -38,7 +43,7 @@ export default function TimePicker({ value, onChange }: TimePickerProps) {
             {/* MODIFIED: Conditionally render based on whether a value is set */}
             {!showPicker && !value ? (
                 <TouchableOpacity
-                    onPress={() => setShowPicker(true)}
+                    onPress={handleShowPicker}
                     style={styles.timeButton}
                 >
                     <Text style={styles.timeText}>Set Time</Text>
