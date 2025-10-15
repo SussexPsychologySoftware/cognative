@@ -43,7 +43,7 @@ export default function Index() {
             scrollable={true}
             safeAreaStyle={{padding: 30}}
         >
-            <Text>Edit app/index.tsx to edit this screen.</Text>
+            <Text style={[globalStyles.pageTitle,{marginVertical: 30}]}>Survey Example</Text>
             <StatusBar style={'dark'}/>
             <View style={styles.inputsContainer}>
                 <NumericInput
