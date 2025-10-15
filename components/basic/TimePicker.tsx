@@ -52,6 +52,7 @@ export default function TimePicker({ value, onChange }: TimePickerProps) {
             }
 
             {((Platform.OS === 'ios' && value) || (Platform.OS === 'android' && showPicker)) &&
+                // NOTE: the fact this renders at present as an inline modal pop-up is an iOS display rule quirk liable to break...
                 <DateTimePicker
                     value={pickerValue}
                     display={Platform.OS === 'android'?'spinner':undefined}

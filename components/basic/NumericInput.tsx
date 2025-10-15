@@ -2,6 +2,7 @@ import { TextInput } from "react-native";
 import {globalStyles} from "@/styles/appStyles";
 
 export default function NumericInput({ value, placeholder, maxLength, onChange, style }: { value: string, placeholder?: string, maxLength?: number, onChange: (number: string) => void, style?: object }) {
+    // TODO: min, max,
     // controlled component, no internal state
     function handleInput(response: string) {
         // Allow empty string for clearing the input
