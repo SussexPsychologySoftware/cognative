@@ -1,4 +1,3 @@
-import React, {useState} from 'react'
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native'
 import Radio from "@/components/basic/Radio";
 import {globalStyles} from "@/styles/appStyles";
