@@ -13,6 +13,10 @@ import {useSurvey} from "@/hooks/useSurvey";
 import LikertRadioGrid from "@/components/survey/LikertRadioGrid";
 
 export default function Index() {
+    const [playingAudio, setPlayingAudio] = useState(false);
+
+    // TODO: need to simplify how all this works - UI too complicated
+
     // Define Likert questions
     const phq8Questions = [
         'Little interest or pleasure in doing things?',
@@ -50,16 +54,7 @@ export default function Index() {
         }))
     ];
 
-    const [playingAudio, setPlayingAudio] = useState(false);
-
-    const { responses, updateResponses, handleSurveySubmit, warning, isSubmitting, progress, resetSurvey } = useSurvey(questions);
-
-    // Extract PHQ-8 responses for the Likert grid
-    const phq8Responses = Object.fromEntries(
-        Object.entries(responses)
-            .filter(([key]) => key.startsWith('PHQ-8.'))
-            .map(([key, value]) => [key.replace('PHQ-8.', ''), value])
-    );
+    const { responses, updateResponses, extractNestedResponses, handleSurveySubmit, warning, isSubmitting, progress, resetSurvey } = useSurvey(questions);
 
     return (
         <ScreenWrapper
@@ -103,10 +98,10 @@ export default function Index() {
                 />
 
                 <LikertRadioGrid
-                    responses={phq8Responses}
-                    options={phq8Options}
                     questions={phq8Questions}
-                    oneWordPerLine={false}
+                    options={phq8Options}
+                    responses={extractNestedResponses('PHQ-8.')}
+                    // oneWordPerLine={false}
                     onChange={(question: string, answer: string) => {
                         updateResponses(`PHQ-8.${question}`, answer);
                     }}

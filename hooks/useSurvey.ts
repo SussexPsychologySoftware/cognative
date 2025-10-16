@@ -35,7 +35,6 @@ export function useSurvey(questions: SingleInputQuestion[], onSubmit?: (data: ob
     const [responses, setResponses] = useState(
         Object.fromEntries(
             questions.map(
-
                 q => [q.question, q.default ?? '']
             )
         )
@@ -68,6 +67,14 @@ export function useSurvey(questions: SingleInputQuestion[], onSubmit?: (data: ob
         ));
         setWarning('');
     }, [questions]);
+
+    const extractNestedResponses = (parentKey: string) => {
+        return Object.fromEntries(
+            Object.entries(responses)
+                .filter(([key]) => key.startsWith(parentKey))
+                .map(([key, value]) => [key.replace(parentKey, ''), value])
+        );
+    }
 
     const progress = useMemo(() => {
         const answered = Object.values(responses).filter(r => !isEmpty(r)).length;
@@ -111,6 +118,7 @@ export function useSurvey(questions: SingleInputQuestion[], onSubmit?: (data: ob
         warning,
         isSubmitting,
         resetSurvey,
-        progress
+        progress,
+        extractNestedResponses
     };
 }
