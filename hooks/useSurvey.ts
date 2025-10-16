@@ -1,18 +1,46 @@
 import {useCallback, useMemo, useState} from "react";
 import {Alert} from "react-native";
 
-interface questions {
-    question: string,
-    required?: boolean,
-    default?: any,
+export interface SingleInputQuestion {
+    question: string;
+    required?: boolean;
+    default?: any;
 }
 
-// type ResponseValue = string | number | Date | null; //TODO
+export interface LikertGridQuestion {
+    name: string;
+    questions: string[];
+    options: string[];
+    required?: boolean; // all required
+}
 
-export function useSurvey(questions: questions[], onSubmit?: (data: object) => void) {
+// Helper to group flat dot-notation responses into nested structure
+export function groupResponses(responses: Record<string, any>): Record<string, any> {
+    const grouped: Record<string, any> = {};
+
+    for (const [key, value] of Object.entries(responses)) {
+        if (key.includes('.')) {
+            const [parent, ...rest] = key.split('.');
+            if (!grouped[parent]) grouped[parent] = {};
+            grouped[parent][rest.join('.')] = value;
+        } else {
+            grouped[key] = value;
+        }
+    }
+
+    return grouped;
+}
+
+export function useSurvey(questions: SingleInputQuestion[], onSubmit?: (data: object) => void) {
     const [responses, setResponses] = useState(
-        Object.fromEntries(questions.map(q => [q.question, q.default? q.default : '']))
+        Object.fromEntries(
+            questions.map(
+
+                q => [q.question, q.default ?? '']
+            )
+        )
     );
+
     const [warning, setWarning] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -27,12 +55,12 @@ export function useSurvey(questions: questions[], onSubmit?: (data: object) => v
 
     const validateResponses = useCallback(() => {
         for (const q of questions) {
-            if(q.required && isEmpty(responses[q.question])) {
-                return q.question
+            if (q.required && isEmpty(responses[q.question])) {
+                return q.question;
             }
         }
-        return ''
-    }, [questions, responses])
+        return '';
+    }, [questions, responses]);
 
     const resetSurvey = useCallback(() => {
         setResponses(Object.fromEntries(
@@ -48,21 +76,29 @@ export function useSurvey(questions: questions[], onSubmit?: (data: object) => v
 
     const handleSurveySubmit = useCallback(async () => {
         if (isSubmitting) return;
+
         try {
             setIsSubmitting(true);
-            const firstInvalidResponse = validateResponses()
-            if(firstInvalidResponse!=='') {
+            const firstInvalidResponse = validateResponses();
+
+            if (firstInvalidResponse !== '') {
                 setWarning(`Please answer question: ${firstInvalidResponse}`);
-                Alert.alert('Submission Failed',`Please answer question titled: ${firstInvalidResponse}`)
+                Alert.alert('Submission Failed', `Please answer question: ${firstInvalidResponse}`);
                 return false;
             }
+
             setWarning('');
-            if(onSubmit) await onSubmit(responses)
-            Alert.alert('Submitted',JSON.stringify(responses))
-            return true
+
+            // Group responses before submitting
+            const groupedResponses = groupResponses(responses);
+
+            if (onSubmit) await onSubmit(groupedResponses);
+            Alert.alert('Submitted', JSON.stringify(groupedResponses, null, 2));
+            return true;
         } catch (error) {
             console.error('Error submitting survey:', error);
             setWarning(`Failed to submit. Please try again. ${error}`);
+            return false;
         } finally {
             setIsSubmitting(false);
         }
