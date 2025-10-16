@@ -53,8 +53,14 @@ export default function Index() {
             default: new Date(),
             type: "time"
         },
+        // {
+        //     type: 'likertGrid',
+        //     options: phq8Options,
+        //
+        // }
         // Add PHQ-8 questions with dot notation
-        // TODO: so this now works for the useSurvey hook but not for the survey component. I think the nested list just makes more sense
+        // TODO: so this now works for the useSurvey hook really simply but not for the survey component.
+        // TODO: I think the nested list just makes more sense for getting these into the survey component properly.
         ...phq8Questions.map(q => ({
             question: `PHQ-8.${q}`,
             type: 'number'
