@@ -11,6 +11,7 @@ import {StatusBar} from "expo-status-bar";
 import {globalStyles} from "@/styles/appStyles";
 import {useSurvey} from "@/hooks/useSurvey";
 import LikertRadioGrid from "@/components/survey/LikertRadioGrid";
+import {SingleInputQuestion, SurveyQuestion, LikertGridQuestion} from '@/types/surveyQuestions'
 
 export default function Index() {
     const [playingAudio, setPlayingAudio] = useState(false);
@@ -31,27 +32,33 @@ export default function Index() {
 
     const phq8Options = ['Not at all', 'Several days', 'More than half the days', 'Nearly every day'];
 
-    const questions = [
+    const questions: SingleInputQuestion[] = [
         {
             question: 'numericInput',
             required: true,
             default: '',
+            type: "number"
         },
         {
             question: 'multilineTextInput',
+            type: 'multiline'
         },
         {
             question: 'radioList',
+            type: 'radio',
+            options: ['Yes', 'No']
         },
         {
             question: 'timePicker',
             default: new Date(),
+            type: "time"
         },
         // Add PHQ-8 questions with dot notation
+        // TODO: so this now works for the useSurvey hook but not for the survey component. I think the nested list just makes more sense
         ...phq8Questions.map(q => ({
             question: `PHQ-8.${q}`,
-            required: true
-        }))
+            type: 'number'
+        })),
     ];
 
     const { responses, updateResponses, extractNestedResponses, handleSurveySubmit, warning, isSubmitting, progress, resetSurvey } = useSurvey(questions);

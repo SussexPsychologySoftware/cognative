@@ -3,6 +3,7 @@ import { globalStyles } from "@/styles/appStyles";
 import Hypher from 'hypher';
 import english from 'hyphenation.en-gb';
 import Radio from "@/components/basic/Radio";
+import {SurveyDataType} from "@/types/surveyQuestions";
 
 const h = new Hypher(english);
 

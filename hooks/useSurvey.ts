@@ -1,18 +1,6 @@
 import {useCallback, useMemo, useState} from "react";
 import {Alert} from "react-native";
-
-export interface SingleInputQuestion {
-    question: string;
-    required?: boolean;
-    default?: any;
-}
-
-export interface LikertGridQuestion {
-    name: string;
-    questions: string[];
-    options: string[];
-    required?: boolean; // all required
-}
+import {SingleInputQuestion, SurveyQuestion, LikertGridQuestion} from '@/types/surveyQuestions'
 
 // Helper to group flat dot-notation responses into nested structure
 export function groupResponses(responses: Record<string, any>): Record<string, any> {
