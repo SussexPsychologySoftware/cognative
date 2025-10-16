@@ -104,13 +104,15 @@ export default function LikertRadioGrid(
     }:
     {
         responses: Record<string, string>,
-        questions?: string[],
+        questions?: string[], // Optional parameter, responses keys used if not available.
         options: string[],
         onChange: (question: string, answer: string) => void,
         secondaryLabels?: string[],
         headerRepeatInterval?: number,
         oneWordPerLine?: boolean
     }) {
+    // TODO
+    const displayQuestions = questions ?? Object.keys(responses);
 
     return (
         <View style={[styles.radioGrid, {paddingHorizontal: secondaryLabels ? '5%' : null}]}>
@@ -123,7 +125,7 @@ export default function LikertRadioGrid(
                             hasQuestion={!!questions}
                         />
                     ),
-                    ...(questions?.flatMap((question, i) => [
+                    ...(displayQuestions?.flatMap((question, i) => [
                         (i === 0 || i % headerRepeatInterval === 0) && (
                             <OptionLabels
                                 key={`options-${i}`}
