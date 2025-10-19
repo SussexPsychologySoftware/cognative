@@ -81,6 +81,7 @@ export default function Survey({
                             questions={question.statements}
                             options={question.options}
                             responses={responses[key]}
+                            headerRepeatInterval={5}
                             onChange={(statementKey: string, answer: string) => {
                                 updateResponses(key, answer, statementKey);
                             }}
