@@ -135,8 +135,7 @@ export default function LikertRadioGrid(
                         />
                     ),
                     ...(questions.flatMap((question, i) => {
-                        const statementKey = `statement${i}`;
-                        const isInvalid = invalidStatements?.has(statementKey);
+                        const isInvalid = invalidStatements?.has(question);
                         return [
                             (i === 0 || (headerRepeatInterval > 0 && i % headerRepeatInterval === 0)) && (
                                 <OptionLabels
@@ -147,10 +146,10 @@ export default function LikertRadioGrid(
                             ),
                             <LikertQuestionRow
                                 key={`question-${i}`}
-                                selectedResponse={responses?.[statementKey] || ''}
+                                selectedResponse={responses[question]}
                                 question={question}
                                 options={options}
-                                onChange={(answer) => onChange(statementKey, answer)}
+                                onChange={(answer) => onChange(question, answer)}
                                 oddRow={i%2===1}
                                 isInvalid={isInvalid}
                             />

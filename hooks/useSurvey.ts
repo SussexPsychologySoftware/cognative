@@ -71,17 +71,12 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
                 let isInvalid = false;
 
                 if (question.type === 'likertGrid') {
-                    const gridResponse = response as Record<string, any>;
-                    const expectedCount = question.statements?.length || 0;
-
-                    if (!gridResponse || Object.keys(gridResponse).length !== expectedCount) {
-                        isInvalid = true;
-                    } else {
-                        for (const value of Object.values(gridResponse)) {
-                            if (isEmpty(value)) {
-                                isInvalid = true;
-                                break;
-                            }
+                    // Find the first empty statement
+                    for (let i = 0; i < question.statements.length; i++) {
+                        if (isEmpty(response[question.statements[i]])) {
+                            isInvalid = true;
+                            firstInvalidQuestion = question.statements[i];
+                            break;
                         }
                     }
                 } else if (isEmpty(response)) {
@@ -91,7 +86,7 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
                 if (isInvalid) {
                     invalid.add(key);
                     if (!firstInvalidQuestion) {
-                        firstInvalidQuestion = question.name || question.question;
+                        firstInvalidQuestion = question.question;
                     }
                 }
             }

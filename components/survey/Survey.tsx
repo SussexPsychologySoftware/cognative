@@ -71,9 +71,8 @@ export default function Survey({
                         const invalidStatements = new Set<string>();
                         if (isInvalid && question.statements) {
                             question.statements.forEach((statement, i) => {
-                                const statementKey = `statement${i}`;
-                                if (!responses[key]?.[statementKey]) {
-                                    invalidStatements.add(statementKey);
+                                if (!responses[key]?.[statement]) {
+                                    invalidStatements.add(statement);
                                 }
                             });
                         }
