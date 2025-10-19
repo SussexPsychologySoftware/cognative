@@ -3,7 +3,6 @@ import { globalStyles } from "@/styles/appStyles";
 import Hypher from 'hypher';
 import english from 'hyphenation.en-gb';
 import Radio from "@/components/basic/Radio";
-import {SurveyDataType} from "@/types/surveyQuestions";
 
 const h = new Hypher(english);
 
@@ -19,7 +18,6 @@ export function OptionLabels({options, hasQuestion, oneWordPerLine}: { options: 
         <View style={[styles.row, styles.optionsTextContainer]} >
             {hasQuestion && <Text style={[styles.gridItem, styles.question]}></Text>}
             {options.map((option, index) => {
-                //https://stackoverflow.com/questions/57578586/control-word-text-break-on-react-native-text-element
                 return(
                     <Text
                         key={`label-${option}`}
@@ -71,7 +69,7 @@ export function LikertQuestionRow(
         selectedResponse: string,
         question?: string,
         options: string[],
-        onChange: (question: string, answer: string) => void,
+        onChange: (answer: string) => void,
         oddRow?: boolean
     }) {
     return (
@@ -85,7 +83,7 @@ export function LikertQuestionRow(
                     <RadioButton
                         key={`radio-${option}`}
                         selected={selectedResponse===option}
-                        onChange={() => {onChange(question??'', option)}}
+                        onChange={() => onChange(option)}
                     />
                 ))
             }
@@ -104,19 +102,16 @@ export default function LikertRadioGrid(
         headerRepeatInterval=0
     }:
     {
-        responses: Record<string, string>,
-        questions?: string[], // Optional parameter, responses keys used if not available.
-        options: string[],
-        onChange: (question: string, answer: string) => void,
+        responses: Record<string, string>, // Just this grid's responses: { statement0: 'answer', statement1: 'answer' }
+        questions: string[], // The statements
+        options: string[], // Likert scale options
+        onChange: (statementKey: string, answer: string) => void,
         secondaryLabels?: string[],
         headerRepeatInterval?: number,
         oneWordPerLine?: boolean
     }) {
-    // TODO
-    const displayQuestions = questions ?? Object.keys(responses);
-
     return (
-        <View style={[styles.radioGrid, {paddingHorizontal: secondaryLabels ? '5%' : null}]}>
+        <View style={[styles.radioGrid, {paddingHorizontal: secondaryLabels ? '5%' : undefined}]}>
             {
                 [
                     secondaryLabels && (
@@ -126,23 +121,25 @@ export default function LikertRadioGrid(
                             hasQuestion={!!questions}
                         />
                     ),
-                    ...(displayQuestions?.flatMap((question, i) => [
-                        (i === 0 || i % headerRepeatInterval === 0) && (
-                            <OptionLabels
-                                key={`options-${i}`}
+                    ...(questions.flatMap((question, i) => {
+                        return [
+                            (i === 0 || (headerRepeatInterval > 0 && i % headerRepeatInterval === 0)) && (
+                                <OptionLabels
+                                    key={`options-${i}`}
+                                    options={options}
+                                    oneWordPerLine={oneWordPerLine}
+                                    hasQuestion={!!questions} />
+                            ),
+                            <LikertQuestionRow
+                                key={`question-${i}`}
+                                selectedResponse={responses[question]}
+                                question={question}
                                 options={options}
-                                oneWordPerLine={oneWordPerLine}
-                                hasQuestion={!!questions} />
-                        ),
-                        <LikertQuestionRow
-                            key={`question-${i}`}
-                            selectedResponse={responses[question]}
-                            question={question}
-                            options={options}
-                            onChange={onChange}
-                            oddRow={i%2===1}
-                        />
-                    ]).filter(Boolean) ?? [])
+                                onChange={(answer) => onChange(question, answer)}
+                                oddRow={i%2===1}
+                            />
+                        ];
+                    }).filter(Boolean) ?? [])
                 ].filter(Boolean)
             }
         </View>
@@ -159,16 +156,14 @@ const styles = StyleSheet.create({
     // Grid container and rows
     radioGrid: {
         rowGap: 20,
-        // STYLING??
         backgroundColor: '#d3d3d3',
         borderWidth: 1,
         borderColor: 'darkgrey',
         borderRadius: 20,
         padding: 15
     },
-    row: { // Radio Row applies to each row
+    row: {
         justifyContent: 'space-between',
-        // width: '100%',
         flexDirection: 'row',
         columnGap: 10,
     },
@@ -177,10 +172,10 @@ const styles = StyleSheet.create({
         borderRadius: 5,
     },
     gridItem: {
-        flex: 1, // flex everything
+        flex: 1,
     },
     // options
-    optionsTextContainer: { // Headers at bottom of container
+    optionsTextContainer: {
         marginHorizontal: 15,
     },
     oddRow: {
@@ -197,7 +192,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     secondaryLabel: {
-        width: 70, // Fixed width larger than container
+        width: 70,
     },
 
     // Radio buttons

@@ -1,26 +1,31 @@
 import {useCallback, useMemo, useState} from "react";
 import {Alert} from "react-native";
-import {SingleInputQuestion, SurveyQuestion, LikertGridQuestion} from '@/types/surveyQuestions'
+import {SurveyQuestion} from '@/types/surveyQuestions'
 
-// Helper to group flat dot-notation responses into nested structure
-export function groupResponses(responses: Record<string, any>): Record<string, any> {
-    const grouped: Record<string, any> = {};
+// Initialize responses from survey definition
+function initializeResponses(questions: SurveyQuestion[]): Record<string, any> {
+    const responses: Record<string, any> = {};
 
-    for (const [key, value] of Object.entries(responses)) {
-        if (key.includes('.')) {
-            const [parent, ...rest] = key.split('.');
-            if (!grouped[parent]) grouped[parent] = {};
-            grouped[parent][rest.join('.')] = value;
+    for (const question of questions) {
+        const key = question.key || question.question; // fallback to question text if no key
+
+        if (question.type === 'likertGrid') {
+            // Initialize nested object for likert grids
+            responses[key] = {};
+            question.statements?.forEach((statement, index) => {
+                responses[key][statement] = '';
+            });
         } else {
-            grouped[key] = value;
+            // Initialize simple value for single-input questions
+            responses[key] = '';
         }
     }
 
-    return grouped;
+    return responses;
 }
 
 export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object) => void) {
-    const [responses, setResponses] = useState(questions);
+    const [responses, setResponses] = useState(() => initializeResponses(questions));
     const [warning, setWarning] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -29,38 +34,49 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
             (typeof value === 'string' && value.trim() === '');
     };
 
-    const updateResponses = (index: number, answer: any, question?: string) => {
-        setResponses(prev => prev.map((item, i) => {
-            if (i !== index) return item;
-
-            if (item.type === 'likertGrid' && question) {
+    const updateResponses = useCallback((key: string, answer: any, nestedKey?: string) => {
+        setResponses(prev => {
+            if (nestedKey) {
+                // For likert grids: update nested object
                 return {
-                    ...item,
-                    response: {
-                        ...(item.response as Record<string, any>),
-                        [question]: answer
+                    ...prev,
+                    [key]: {
+                        ...prev[key],
+                        [nestedKey]: answer
                     }
                 };
             }
 
-            return { ...item, response: answer };
-        }));
-        console.log(responses)
-    };
+            // For simple questions
+            return {
+                ...prev,
+                [key]: answer
+            };
+        });
+    }, []);
 
     const validateResponses = useCallback(() => {
-        for (let i = 0; i < questions.length; i++) {
-            const q = questions[i];
-            const response = responses[i]?.response;
+        for (const question of questions) {
+            const key = question.key || question.question;
+            const response = responses[key];
 
-            if (q.required) {
-                if (q.type === 'likertGrid') {
+            if (question.required) {
+                if (question.type === 'likertGrid') {
                     const gridResponse = response as Record<string, any>;
-                    if (!gridResponse || Object.keys(gridResponse).length !== q.statements.length) {
-                        return q.name;
+                    const expectedCount = question.statements?.length || 0;
+
+                    if (!gridResponse || Object.keys(gridResponse).length !== expectedCount) {
+                        return question.name || question.question;
+                    }
+
+                    // Check all nested responses are filled
+                    for (const value of Object.values(gridResponse)) {
+                        if (isEmpty(value)) {
+                            return question.name || question.question;
+                        }
                     }
                 } else if (isEmpty(response)) {
-                    return q.question;
+                    return question.question;
                 }
             }
         }
@@ -68,24 +84,36 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
     }, [questions, responses]);
 
     const resetSurvey = useCallback(() => {
-        setResponses(questions);
+        setResponses(initializeResponses(questions));
         setWarning('');
     }, [questions]);
 
-    const extractNestedResponses = (parentKey: string) => {
-        return Object.fromEntries(
-            Object.entries(responses)
-                .filter(([key]) => key.startsWith(parentKey))
-                .map(([key, value]) => [key.replace(parentKey, ''), value])
-        );
-    }
-
     const progress = useMemo(() => {
-        const answered = Object.values(responses).filter(r => !isEmpty(r)).length;
-        return (answered / questions.length) * 100;
-    }, [responses, questions.length]);
+        let totalQuestions = 0;
+        let answeredQuestions = 0;
 
-    // TODO: maybe doesn't belong here?
+        for (const question of questions) {
+            const key = question.key || question.question;
+            const response = responses[key];
+
+            if (question.type === 'likertGrid') {
+                const expectedCount = question.statements?.length || 0;
+                totalQuestions += expectedCount;
+
+                if (response && typeof response === 'object') {
+                    answeredQuestions += Object.values(response).filter(v => !isEmpty(v)).length;
+                }
+            } else {
+                totalQuestions += 1;
+                if (!isEmpty(response)) {
+                    answeredQuestions += 1;
+                }
+            }
+        }
+
+        return totalQuestions > 0 ? (answeredQuestions / totalQuestions) * 100 : 0;
+    }, [responses, questions]);
+
     const handleSurveySubmit = useCallback(async () => {
         if (isSubmitting) return false;
 
@@ -101,11 +129,8 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
 
             setWarning('');
 
-            // Group responses before submitting
-            const groupedResponses = groupResponses(responses);
-
-            if (onSubmit) await onSubmit(groupedResponses);
-            Alert.alert('Submitted', JSON.stringify(groupedResponses, null, 2));
+            if (onSubmit) await onSubmit(responses);
+            Alert.alert('Submitted', JSON.stringify(responses, null, 2));
             return true;
         } catch (error) {
             console.error('Error submitting survey:', error);
@@ -124,6 +149,5 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
         isSubmitting,
         resetSurvey,
         progress,
-        extractNestedResponses
     };
 }

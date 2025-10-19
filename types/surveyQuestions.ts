@@ -13,26 +13,23 @@ export interface BasicSurveyQuestion {
     question: string;
     type: SurveyQuestionType;
     required?: boolean;
-    response: SurveyDataType;
+    key: string
 }
 
 interface TextQuestion extends BasicSurveyQuestion {
     type: 'number' | 'text' | 'multiline';
     placeholder?: string;
-    response: string
 }
 
 export interface TimeQuestion extends BasicSurveyQuestion {
     type: 'time' | 'lengthOfTime';
     min?: string;
     max?: string;
-    response: Date
 }
 
 export interface RadioQuestion extends BasicSurveyQuestion {
     type: 'radio';
     options: string[];
-    response: string
 }
 
 export interface LikertGridQuestion extends BasicSurveyQuestion {
@@ -40,7 +37,6 @@ export interface LikertGridQuestion extends BasicSurveyQuestion {
     name: string;
     options: string[];
     statements: string[];
-    response: Record<string, string>;
 }
 
 export type SingleInputQuestion = TextQuestion | TimeQuestion | RadioQuestion;

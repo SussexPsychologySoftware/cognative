@@ -1,50 +1,42 @@
 import {View, StyleSheet, Text} from "react-native";
-import NumericInput from "@/components/basic/NumericInput";
 import React, {useState} from "react";
-import MultilineTextInput from "@/components/basic/MultilineTextInput";
-import TimePicker from "@/components/basic/TimePicker";
 import SubmitButton from "@/components/basic/SubmitButton";
-import RadioList from "@/components/survey/RadioList";
-import AudioPlayer from "@/components/media/AudioPlayer";
 import {ScreenWrapper} from "@/components/layout/ScreenWrapper";
 import {StatusBar} from "expo-status-bar";
 import {globalStyles} from "@/styles/appStyles";
 import {useSurvey} from "@/hooks/useSurvey";
-import LikertRadioGrid from "@/components/survey/LikertRadioGrid";
-import {SingleInputQuestion, SurveyQuestion, LikertGridQuestion} from '@/types/surveyQuestions'
+import {SurveyQuestion} from '@/types/surveyQuestions'
 import Survey from "@/components/survey/Survey";
-import {updateExpression} from "@babel/types";
 
 export default function Index() {
     const [playingAudio, setPlayingAudio] = useState(false);
 
-    // TODO: need to simplify how all this works - UI too complicated
-
-    // Define Likert questions=
+    // Define survey questions with keys
     const questions: SurveyQuestion[] = [
         {
+            key: 'numericInput',
             question: 'numericInput',
             required: true,
             type: "number",
-            response: ''
         },
         {
+            key: 'multilineTextInput',
             question: 'multilineTextInput',
             type: 'multiline',
-            response: ''
         },
         {
+            key: 'radioList',
             question: 'radioList',
             type: 'radio',
             options: ['Yes', 'No'],
-            response: ''
         },
         {
+            key: 'timePicker',
             question: 'timePicker',
             type: "time",
-            response: new Date(),
         },
         {
+            key: 'phq8',
             type: 'likertGrid',
             name: 'PHQ-8',
             required: true,
@@ -60,11 +52,10 @@ export default function Index() {
                 'Moving or speaking so slowly that other people could have noticed? Or so fidgety or restless that you have been moving a lot more than usual?'
             ],
             options: ['Not at all', 'Several days', 'More than half the days', 'Nearly every day'],
-            response: {}
         }
     ];
 
-    const { responses, updateResponses, extractNestedResponses, handleSurveySubmit, warning, isSubmitting, progress, resetSurvey } = useSurvey(questions);
+    const { responses, updateResponses, handleSurveySubmit, warning, isSubmitting, progress, resetSurvey } = useSurvey(questions);
 
     return (
         <ScreenWrapper
@@ -75,17 +66,21 @@ export default function Index() {
             <StatusBar style={'dark'}/>
             <View style={styles.inputsContainer}>
                 <Text style={globalStyles.whiteText}>Progress: {progress.toFixed(0)}%</Text>
+
                 <Survey
-                    // surveyState
-                    questions={responses}
+                    questions={questions}
                     responses={responses}
                     updateResponses={updateResponses}
-                    handleSurveySubmit={async()=>{return await handleSurveySubmit()}}
+                    handleSurveySubmit={handleSurveySubmit}
                     warning={warning}
-                    isSubmitting={false}
-                    progress={0}
-                    extractNestedResponses={extractNestedResponses}
+                    isSubmitting={isSubmitting}
+                    progress={progress}
                 />
+
+                {/* Debug: Show current responses */}
+                <Text style={globalStyles.whiteText}>
+                    {JSON.stringify(responses, null, 2)}
+                </Text>
 
                 <SubmitButton
                     onPress={() => {resetSurvey()}}
