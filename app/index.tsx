@@ -34,6 +34,7 @@ export default function Index() {
             key: 'multilineTextInput',
             question: "Tell us about yourself",
             type: 'multiline',
+            placeholder: "Say as much as you like...",
         },
         {
             key: 'phq8',
@@ -47,7 +48,7 @@ export default function Index() {
                 'Trouble falling or staying asleep, or sleeping too much?',
                 'Feeling tired or having little energy?',
                 'Poor appetite or overeating?',
-                'Feeling bad about yourself — or that you are a failure or have let yourself or your family down?',
+                'Feeling bad about yourself â€" or that you are a failure or have let yourself or your family down?',
                 'Trouble concentrating on things, such as reading the newspaper or watching television?',
                 'Moving or speaking so slowly that other people could have noticed? Or so fidgety or restless that you have been moving a lot more than usual?'
             ],
@@ -55,7 +56,16 @@ export default function Index() {
         }
     ];
 
-    const { responses, updateResponses, handleSurveySubmit, warning, isSubmitting, progress, resetSurvey } = useSurvey(questions);
+    const {
+        responses,
+        updateResponses,
+        handleSurveySubmit,
+        warning,
+        isSubmitting,
+        progress,
+        resetSurvey,
+        invalidQuestions
+    } = useSurvey(questions);
 
     return (
         <ScreenWrapper
@@ -65,12 +75,12 @@ export default function Index() {
             <Text style={[globalStyles.pageTitle, {marginVertical: 30}]}>Survey Example</Text>
             <StatusBar style={'dark'}/>
             <View style={styles.inputsContainer}>
-                <Text style={globalStyles.whiteText}>Progress: {progress.toFixed(0)}%</Text>
                 <Text style={globalStyles.sectionTitle}>Demographics</Text>
                 <Survey
                     questions={questions.slice(0,4)}
                     responses={responses}
                     updateResponses={updateResponses}
+                    invalidQuestions={invalidQuestions}
                 />
 
                 <Text style={globalStyles.sectionTitle}>Please fill out the following survey</Text>
@@ -82,6 +92,7 @@ export default function Index() {
                     warning={warning}
                     isSubmitting={isSubmitting}
                     progress={progress}
+                    invalidQuestions={invalidQuestions}
                 />
 
                 {/* Debug: Show current responses */}

@@ -17,6 +17,7 @@ interface SurveyProps {
     warning?: string;
     isSubmitting?: boolean;
     progress?: number;
+    invalidQuestions?: Set<string>;
 }
 
 export default function Survey({
@@ -27,11 +28,13 @@ export default function Survey({
                                    warning,
                                    isSubmitting,
                                    progress,
+                                   invalidQuestions,
                                }: SurveyProps) {
     return (
         <View style={styles.container}>
             {questions.map((question, index) => {
                 const key = question.key || question.question;
+                const isInvalid = invalidQuestions?.has(key) ?? false;
                 let input;
                 let title = question.question;
 
@@ -64,6 +67,17 @@ export default function Survey({
                         />;
                         break;
                     case 'likertGrid':
+                        // Get invalid statements for this grid
+                        const invalidStatements = new Set<string>();
+                        if (isInvalid && question.statements) {
+                            question.statements.forEach((statement, i) => {
+                                const statementKey = `statement${i}`;
+                                if (!responses[key]?.[statementKey]) {
+                                    invalidStatements.add(statementKey);
+                                }
+                            });
+                        }
+
                         input = <LikertRadioGrid
                             questions={question.statements}
                             options={question.options}
@@ -71,6 +85,7 @@ export default function Survey({
                             onChange={(statementKey: string, answer: string) => {
                                 updateResponses(key, answer, statementKey);
                             }}
+                            invalidStatements={invalidStatements}
                         />;
                         break;
                     default:
@@ -78,15 +93,22 @@ export default function Survey({
                 }
 
                 return (
-                    <View key={`question-${index}`} style={styles.questionContainer}>
-                        {title && <Text style={globalStyles.question}>{title}:</Text>}
+                    <View key={`question-${index}`} style={[
+                        styles.questionContainer,
+                        isInvalid && globalStyles.invalidInput
+                    ]}>
+                        {title && (
+                            <Text style={globalStyles.question}>
+                                {title}:
+                            </Text>
+                        )}
                         {input}
                     </View>
                 );
             })}
 
             <View style={styles.footerContainer}>
-                { progress &&
+                { progress !== undefined &&
                     <Text style={globalStyles.whiteText}>Progress: {progress.toFixed(0)}%</Text>
                 }
 
@@ -115,6 +137,17 @@ const styles = StyleSheet.create({
     },
     questionContainer: {
         gap: 10,
+    },
+    invalidContainer: {
+        borderWidth: 2,
+        borderColor: '#ff0000',
+        borderRadius: 8,
+        padding: 10,
+        backgroundColor: '#ffeeee',
+    },
+    invalidLabel: {
+        color: '#cc0000',
+        fontWeight: 'bold',
     },
     footerContainer: {
         gap: 15,

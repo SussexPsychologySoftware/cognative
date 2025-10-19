@@ -64,19 +64,30 @@ export function LikertQuestionRow(
         question,
         options,
         onChange,
-        oddRow
+        oddRow,
+        isInvalid
     }: {
         selectedResponse: string,
         question?: string,
         options: string[],
         onChange: (answer: string) => void,
-        oddRow?: boolean
+        oddRow?: boolean,
+        isInvalid?: boolean
     }) {
     return (
-        <View style={[styles.likertRow, styles.row, oddRow && styles.oddRow]}>
+        <View style={[
+            styles.likertRow,
+            styles.row,
+            oddRow && styles.oddRow,
+            isInvalid && globalStyles.invalidInput
+        ]}>
             {
                 question &&
-                <Text style={[globalStyles.whiteText, styles.question, styles.gridItem]}>{question}</Text>
+                <Text style={[
+                    globalStyles.whiteText,
+                    styles.question,
+                    styles.gridItem,
+                ]}>{question}</Text>
             }
             {
                 options.map((option, index) => (
@@ -99,7 +110,8 @@ export default function LikertRadioGrid(
         onChange,
         secondaryLabels,
         oneWordPerLine,
-        headerRepeatInterval=0
+        headerRepeatInterval=0,
+        invalidStatements
     }:
     {
         responses: Record<string, string>, // Just this grid's responses: { statement0: 'answer', statement1: 'answer' }
@@ -108,7 +120,8 @@ export default function LikertRadioGrid(
         onChange: (statementKey: string, answer: string) => void,
         secondaryLabels?: string[],
         headerRepeatInterval?: number,
-        oneWordPerLine?: boolean
+        oneWordPerLine?: boolean,
+        invalidStatements?: Set<string>
     }) {
     return (
         <View style={[styles.radioGrid, {paddingHorizontal: secondaryLabels ? '5%' : undefined}]}>
@@ -122,6 +135,8 @@ export default function LikertRadioGrid(
                         />
                     ),
                     ...(questions.flatMap((question, i) => {
+                        const statementKey = `statement${i}`;
+                        const isInvalid = invalidStatements?.has(statementKey);
                         return [
                             (i === 0 || (headerRepeatInterval > 0 && i % headerRepeatInterval === 0)) && (
                                 <OptionLabels
@@ -132,11 +147,12 @@ export default function LikertRadioGrid(
                             ),
                             <LikertQuestionRow
                                 key={`question-${i}`}
-                                selectedResponse={responses[question]}
+                                selectedResponse={responses?.[statementKey] || ''}
                                 question={question}
                                 options={options}
-                                onChange={(answer) => onChange(question, answer)}
+                                onChange={(answer) => onChange(statementKey, answer)}
                                 oddRow={i%2===1}
+                                isInvalid={isInvalid}
                             />
                         ];
                     }).filter(Boolean) ?? [])

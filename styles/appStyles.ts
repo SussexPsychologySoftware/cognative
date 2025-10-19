@@ -105,5 +105,10 @@ export const globalStyles = StyleSheet.create({
         borderColor: colours.border,
         borderRadius: 8,
         padding: 10,
+    },
+    invalidInput: {
+        borderColor: '#ff0000',
+        borderWidth: 2,
+        // backgroundColor: '#ffeeee',
     }
 });

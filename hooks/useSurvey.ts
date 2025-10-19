@@ -7,16 +7,14 @@ function initializeResponses(questions: SurveyQuestion[]): Record<string, any> {
     const responses: Record<string, any> = {};
 
     for (const question of questions) {
-        const key = question.key || question.question; // fallback to question text if no key
+        const key = question.key || question.question;
 
         if (question.type === 'likertGrid') {
-            // Initialize nested object for likert grids
             responses[key] = {};
             question.statements?.forEach((statement, index) => {
                 responses[key][statement] = '';
             });
         } else {
-            // Initialize simple value for single-input questions
             responses[key] = '';
         }
     }
@@ -28,6 +26,7 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
     const [responses, setResponses] = useState(() => initializeResponses(questions));
     const [warning, setWarning] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [invalidQuestions, setInvalidQuestions] = useState<Set<string>>(new Set());
 
     const isEmpty = (value: any) => {
         return value === null || value === undefined || value === '' ||
@@ -37,7 +36,6 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
     const updateResponses = useCallback((key: string, answer: any, nestedKey?: string) => {
         setResponses(prev => {
             if (nestedKey) {
-                // For likert grids: update nested object
                 return {
                     ...prev,
                     [key]: {
@@ -47,45 +45,66 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
                 };
             }
 
-            // For simple questions
             return {
                 ...prev,
                 [key]: answer
             };
         });
+
+        // Clear invalid status when user updates
+        setInvalidQuestions(prev => {
+            const next = new Set(prev);
+            next.delete(key);
+            return next;
+        });
     }, []);
 
     const validateResponses = useCallback(() => {
+        const invalid = new Set<string>();
+        let firstInvalidQuestion = '';
+
         for (const question of questions) {
             const key = question.key || question.question;
             const response = responses[key];
 
             if (question.required) {
+                let isInvalid = false;
+
                 if (question.type === 'likertGrid') {
                     const gridResponse = response as Record<string, any>;
                     const expectedCount = question.statements?.length || 0;
 
                     if (!gridResponse || Object.keys(gridResponse).length !== expectedCount) {
-                        return question.name || question.question;
-                    }
-
-                    // Check all nested responses are filled
-                    for (const value of Object.values(gridResponse)) {
-                        if (isEmpty(value)) {
-                            return question.name || question.question;
+                        isInvalid = true;
+                    } else {
+                        for (const value of Object.values(gridResponse)) {
+                            if (isEmpty(value)) {
+                                isInvalid = true;
+                                break;
+                            }
                         }
                     }
                 } else if (isEmpty(response)) {
-                    return question.question;
+                    isInvalid = true;
+                }
+
+                if (isInvalid) {
+                    invalid.add(key);
+                    if (!firstInvalidQuestion) {
+                        firstInvalidQuestion = question.name || question.question;
+                    }
                 }
             }
         }
-        return '';
+
+        setInvalidQuestions(invalid);
+        return firstInvalidQuestion;
     }, [questions, responses]);
 
     const resetSurvey = useCallback(() => {
         setResponses(initializeResponses(questions));
         setWarning('');
+        setInvalidQuestions(new Set());
     }, [questions]);
 
     const progress = useMemo(() => {
@@ -149,5 +168,6 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
         isSubmitting,
         resetSurvey,
         progress,
+        invalidQuestions,
     };
 }
