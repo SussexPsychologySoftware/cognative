@@ -79,6 +79,7 @@ export function LikertQuestionRow(
             styles.likertRow,
             styles.row,
             oddRow && styles.oddRow,
+            oddRow===false && styles.evenRow,
             isInvalid && globalStyles.invalidInput
         ]}>
             {
@@ -170,35 +171,40 @@ const styles = StyleSheet.create({
 
     // Grid container and rows
     radioGrid: {
-        rowGap: 20,
-        backgroundColor: '#d3d3d3',
+        // rowGap: 20,
+        // backgroundColor: '#d3d3d3',
         borderWidth: 1,
         borderColor: 'darkgrey',
-        borderRadius: 20,
-        padding: 15
+        borderRadius: 5,
+        padding: 2
     },
     row: {
         justifyContent: 'space-between',
         flexDirection: 'row',
-        columnGap: 10,
+        columnGap: 3,
     },
     likertRow: {
-        padding: 5,
-        borderRadius: 5,
+        // padding: 5,
+        paddingVertical: 10,
+        // borderRadius: 5,
     },
     gridItem: {
         flex: 1,
     },
     // options
     optionsTextContainer: {
-        marginHorizontal: 15,
+        paddingVertical: 5,
+        // marginHorizontal: 15,
     },
     oddRow: {
-        backgroundColor: '#b0c4dd',
+        // backgroundColor: '#b0c4dd',
+    },
+    evenRow: {
+        backgroundColor: 'lightgrey',
     },
     optionsText: {
         textAlign: 'center',
-        fontSize: 16,
+        // fontSize: 16,
         fontWeight: "500",
     },
 
