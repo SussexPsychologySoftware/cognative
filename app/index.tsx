@@ -14,26 +14,26 @@ export default function Index() {
     // Define survey questions with keys
     const questions: SurveyQuestion[] = [
         {
-            key: 'numericInput',
-            question: 'numericInput',
+            key: 'age',
+            question: 'What is your age?',
             required: true,
             type: "number",
         },
         {
-            key: 'multilineTextInput',
-            question: 'multilineTextInput',
-            type: 'multiline',
-        },
-        {
-            key: 'radioList',
-            question: 'radioList',
+            key: 'gender',
+            question: 'What is your gender?',
             type: 'radio',
-            options: ['Yes', 'No'],
+            options: ['Male', 'Female', 'Other', 'Prefer not to say'],
         },
         {
-            key: 'timePicker',
-            question: 'timePicker',
+            key: 'local time',
+            question: 'What is the time where you are now?',
             type: "time",
+        },
+        {
+            key: 'multilineTextInput',
+            question: "Tell us about yourself",
+            type: 'multiline',
         },
         {
             key: 'phq8',
@@ -66,9 +66,16 @@ export default function Index() {
             <StatusBar style={'dark'}/>
             <View style={styles.inputsContainer}>
                 <Text style={globalStyles.whiteText}>Progress: {progress.toFixed(0)}%</Text>
-
+                <Text style={globalStyles.sectionTitle}>Demographics</Text>
                 <Survey
-                    questions={questions}
+                    questions={questions.slice(0,4)}
+                    responses={responses}
+                    updateResponses={updateResponses}
+                />
+
+                <Text style={globalStyles.sectionTitle}>Please fill out the following survey</Text>
+                <Survey
+                    questions={questions.slice(4)}
                     responses={responses}
                     updateResponses={updateResponses}
                     handleSurveySubmit={handleSurveySubmit}
