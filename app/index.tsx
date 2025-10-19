@@ -12,59 +12,56 @@ import {globalStyles} from "@/styles/appStyles";
 import {useSurvey} from "@/hooks/useSurvey";
 import LikertRadioGrid from "@/components/survey/LikertRadioGrid";
 import {SingleInputQuestion, SurveyQuestion, LikertGridQuestion} from '@/types/surveyQuestions'
+import Survey from "@/components/survey/Survey";
+import {updateExpression} from "@babel/types";
 
 export default function Index() {
     const [playingAudio, setPlayingAudio] = useState(false);
 
     // TODO: need to simplify how all this works - UI too complicated
 
-    // Define Likert questions
-    const phq8Questions = [
-        'Little interest or pleasure in doing things?',
-        'Feeling down, depressed, or hopeless?',
-        'Trouble falling or staying asleep, or sleeping too much?',
-        'Feeling tired or having little energy?',
-        'Poor appetite or overeating?',
-        'Feeling bad about yourself — or that you are a failure or have let yourself or your family down?',
-        'Trouble concentrating on things, such as reading the newspaper or watching television?',
-        'Moving or speaking so slowly that other people could have noticed? Or so fidgety or restless that you have been moving a lot more than usual?'
-    ];
-
-    const phq8Options = ['Not at all', 'Several days', 'More than half the days', 'Nearly every day'];
-
-    const questions: SingleInputQuestion[] = [
+    // Define Likert questions=
+    const questions: SurveyQuestion[] = [
         {
             question: 'numericInput',
             required: true,
-            default: '',
-            type: "number"
+            type: "number",
+            response: ''
         },
         {
             question: 'multilineTextInput',
-            type: 'multiline'
+            type: 'multiline',
+            response: ''
         },
         {
             question: 'radioList',
             type: 'radio',
-            options: ['Yes', 'No']
+            options: ['Yes', 'No'],
+            response: ''
         },
         {
             question: 'timePicker',
-            default: new Date(),
-            type: "time"
+            type: "time",
+            response: new Date(),
         },
-        // {
-        //     type: 'likertGrid',
-        //     options: phq8Options,
-        //
-        // }
-        // Add PHQ-8 questions with dot notation
-        // TODO: so this now works for the useSurvey hook really simply but not for the survey component.
-        // TODO: I think the nested list just makes more sense for getting these into the survey component properly.
-        ...phq8Questions.map(q => ({
-            question: `PHQ-8.${q}`,
-            type: 'number'
-        })),
+        {
+            type: 'likertGrid',
+            name: 'PHQ-8',
+            required: true,
+            question: 'Over the last 4 days have you felt...',
+            statements: [
+                'Little interest or pleasure in doing things?',
+                'Feeling down, depressed, or hopeless?',
+                'Trouble falling or staying asleep, or sleeping too much?',
+                'Feeling tired or having little energy?',
+                'Poor appetite or overeating?',
+                'Feeling bad about yourself — or that you are a failure or have let yourself or your family down?',
+                'Trouble concentrating on things, such as reading the newspaper or watching television?',
+                'Moving or speaking so slowly that other people could have noticed? Or so fidgety or restless that you have been moving a lot more than usual?'
+            ],
+            options: ['Not at all', 'Several days', 'More than half the days', 'Nearly every day'],
+            response: {}
+        }
     ];
 
     const { responses, updateResponses, extractNestedResponses, handleSurveySubmit, warning, isSubmitting, progress, resetSurvey } = useSurvey(questions);
@@ -78,55 +75,16 @@ export default function Index() {
             <StatusBar style={'dark'}/>
             <View style={styles.inputsContainer}>
                 <Text style={globalStyles.whiteText}>Progress: {progress.toFixed(0)}%</Text>
-
-                <NumericInput
-                    value={responses.numericInput}
-                    placeholder={"Enter number"}
-                    onChange={(newValue: string) => {updateResponses('numericInput', newValue)}}
-                />
-
-                <MultilineTextInput
-                    value={responses.multilineTextInput}
-                    placeholder={"Multiline text input"}
-                    onChange={(newValue: string) => {updateResponses('multilineTextInput', newValue)}}
-                />
-
-                <TimePicker
-                    value={responses.timePicker}
-                    onChange={(newValue: Date|null) => {updateResponses('timePicker', newValue)}}
-                />
-
-                <RadioList
-                    options={['Yes', 'No']}
-                    value={responses.radioList}
-                    onSelect={(response: string) => {updateResponses('radioList', response)}}
-                    containerStyle={{'width': '60%'}}
-                />
-
-                <AudioPlayer
-                    audioSource={require('../assets/sounds/binaural.mp3')}
-                    isPlaying={playingAudio}
-                    onPress={() => {setPlayingAudio(!playingAudio)}}
-                    volume={1}
-                />
-
-                <LikertRadioGrid
-                    questions={phq8Questions}
-                    options={phq8Options}
-                    responses={extractNestedResponses('PHQ-8.')}
-                    // oneWordPerLine={false}
-                    onChange={(question: string, answer: string) => {
-                        updateResponses(`PHQ-8.${question}`, answer);
-                    }}
-                />
-
-                <Text style={globalStyles.warning}>{warning}</Text>
-
-                <SubmitButton
-                    onPress={async() => {await handleSurveySubmit()}}
-                    text={"Submit"}
-                    disabledText={"Submitting..."}
-                    disabled={isSubmitting}
+                <Survey
+                    // surveyState
+                    questions={responses}
+                    responses={responses}
+                    updateResponses={updateResponses}
+                    handleSurveySubmit={async()=>{return await handleSurveySubmit()}}
+                    warning={warning}
+                    isSubmitting={false}
+                    progress={0}
+                    extractNestedResponses={extractNestedResponses}
                 />
 
                 <SubmitButton

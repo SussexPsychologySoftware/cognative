@@ -19,15 +19,8 @@ export function groupResponses(responses: Record<string, any>): Record<string, a
     return grouped;
 }
 
-export function useSurvey(questions: SingleInputQuestion[], onSubmit?: (data: object) => void) {
-    const [responses, setResponses] = useState(
-        Object.fromEntries(
-            questions.map(
-                q => [q.question, q.default ?? '']
-            )
-        )
-    );
-
+export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object) => void) {
+    const [responses, setResponses] = useState(questions);
     const [warning, setWarning] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
@@ -36,23 +29,46 @@ export function useSurvey(questions: SingleInputQuestion[], onSubmit?: (data: ob
             (typeof value === 'string' && value.trim() === '');
     };
 
-    const updateResponses = (question: string, answer: any) => {
-        setResponses({ ...responses, [question]: answer });
+    const updateResponses = (index: number, answer: any, question?: string) => {
+        setResponses(prev => prev.map((item, i) => {
+            if (i !== index) return item;
+
+            if (item.type === 'likertGrid' && question) {
+                return {
+                    ...item,
+                    response: {
+                        ...(item.response as Record<string, any>),
+                        [question]: answer
+                    }
+                };
+            }
+
+            return { ...item, response: answer };
+        }));
+        console.log(responses)
     };
 
     const validateResponses = useCallback(() => {
-        for (const q of questions) {
-            if (q.required && isEmpty(responses[q.question])) {
-                return q.question;
+        for (let i = 0; i < questions.length; i++) {
+            const q = questions[i];
+            const response = responses[i]?.response;
+
+            if (q.required) {
+                if (q.type === 'likertGrid') {
+                    const gridResponse = response as Record<string, any>;
+                    if (!gridResponse || Object.keys(gridResponse).length !== q.statements.length) {
+                        return q.name;
+                    }
+                } else if (isEmpty(response)) {
+                    return q.question;
+                }
             }
         }
         return '';
     }, [questions, responses]);
 
     const resetSurvey = useCallback(() => {
-        setResponses(Object.fromEntries(
-            questions.map(q => [q.question, q.default ?? ''])
-        ));
+        setResponses(questions);
         setWarning('');
     }, [questions]);
 
@@ -69,8 +85,9 @@ export function useSurvey(questions: SingleInputQuestion[], onSubmit?: (data: ob
         return (answered / questions.length) * 100;
     }, [responses, questions.length]);
 
+    // TODO: maybe doesn't belong here?
     const handleSurveySubmit = useCallback(async () => {
-        if (isSubmitting) return;
+        if (isSubmitting) return false;
 
         try {
             setIsSubmitting(true);

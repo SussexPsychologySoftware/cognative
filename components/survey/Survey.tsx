@@ -14,7 +14,7 @@ import SubmitButton from "@/components/basic/SubmitButton";
 interface SurveyProps {
     questions: SurveyQuestion[];
     responses: Record<string, any>;
-    updateResponses: (question: string, answer: any) => void;
+    updateResponses: (index: number, answer: any, question?: string) => void;
     handleSurveySubmit: () => Promise<boolean>;
     warning: string;
     isSubmitting: boolean;
@@ -32,63 +32,60 @@ export default function Survey({
                                    progress,
                                    extractNestedResponses
                                }: SurveyProps) {
+    // TODO pass custom props in?
 
     return (
         <View style={styles.container}>
             {
                 questions.map((question, index) => {
                     let input;
-                    let title;
+                    let title = question.question;
 
                     switch (question.type) {
                         case 'number':
-                            title = question.question;
                             input = <NumericInput
-                                value={responses[question.question]}
+                                value={responses[index].response}
                                 placeholder={question.placeholder}
-                                onChange={(newValue: string) => updateResponses(question.question, newValue)}
+                                onChange={(newValue: string) => updateResponses(index, newValue)}
                             />;
                             break;
                         case 'multiline':
-                            title = question.question;
                             input = <MultilineTextInput
-                                value={responses[question.question]}
+                                value={responses[index].response}
                                 placeholder={question.placeholder}
-                                onChange={(newValue: string) => updateResponses(question.question, newValue)}
+                                onChange={(newValue: string) => updateResponses(index, newValue)}
                             />;
                             break;
                         case 'radio':
-                            title = question.question;
                             input = <RadioList
                                 options={question.options || []}
-                                value={responses[question.question]}
-                                onSelect={(newValue: string) => updateResponses(question.question, newValue)}
+                                value={responses[index].response}
+                                onSelect={(newValue: string) => updateResponses(index, newValue)}
                             />;
                             break;
                         case 'time':
-                            title = question.question;
                             input = <TimePicker
-                                value={responses[question.question]}
-                                onChange={(newValue: Date | null) => updateResponses(question.question, newValue)}
+                                value={responses[index].response}
+                                onChange={(newValue: Date | null) => updateResponses(index, newValue)}
                             />;
                             break;
-                        // case 'likertGrid':
-                        //     input = <LikertRadioGrid
-                        //         questions={question.questions}
-                        //         options={question.options}
-                        //         // THIS IS AN ISSUE - how are the responses going to work?
-                        //         responses={extractNestedResponses(`${question.name}.`)}
-                        //         onChange={(q: string, a: string) => {
-                        //             updateResponses(`${question.name}.${q}`, a);
-                        //         }}
-                        //     />;
-                        //     break;
+                        case 'likertGrid':
+                            input = <LikertRadioGrid
+                                questions={question.statements}
+                                options={question.options}
+                                // THIS IS AN ISSUE - how are the responses going to work?
+                                responses={responses[index].response}
+                                onChange={(q: string, a: string) => {
+                                    updateResponses(index, a, q);
+                                }}
+                            />;
+                            break;
                         default:
                             input = <Text>Unsupported question type: {(question as any).type}</Text>;
                     }
 
                     return (
-                        <View key={`question-block-${index}`} style={styles.questionContainer}>
+                        <View key={`question-${index}`} style={styles.questionContainer}>
                             {title && <Text style={globalStyles.question}>{title}:</Text>}
                             {input}
                         </View>
