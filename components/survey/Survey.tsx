@@ -13,10 +13,10 @@ interface SurveyProps {
     questions: SurveyQuestion[];
     responses: Record<string, any>;
     updateResponses: (key: string, answer: any, nestedKey?: string) => void;
-    handleSurveySubmit: () => Promise<boolean>;
-    warning: string;
-    isSubmitting: boolean;
-    progress: number;
+    handleSurveySubmit?: () => Promise<boolean>;
+    warning?: string;
+    isSubmitting?: boolean;
+    progress?: number;
 }
 
 export default function Survey({
@@ -86,16 +86,23 @@ export default function Survey({
             })}
 
             <View style={styles.footerContainer}>
-                <Text style={globalStyles.whiteText}>Progress: {progress.toFixed(0)}%</Text>
+                { progress &&
+                    <Text style={globalStyles.whiteText}>Progress: {progress.toFixed(0)}%</Text>
+                }
 
-                {warning ? <Text style={globalStyles.warning}>{warning}</Text> : null}
+                {
+                    warning &&
+                    <Text style={globalStyles.warning}>{warning}</Text>
+                }
 
-                <SubmitButton
-                    onPress={async() => {await handleSurveySubmit()}}
-                    text={"Submit"}
-                    disabledText={"Submitting..."}
-                    disabled={isSubmitting}
-                />
+                { handleSurveySubmit &&
+                    <SubmitButton
+                        onPress={async() => {await handleSurveySubmit()}}
+                        text={"Submit"}
+                        disabledText={"Submitting..."}
+                        disabled={isSubmitting ?? false}
+                    />
+                }
             </View>
         </View>
     );
