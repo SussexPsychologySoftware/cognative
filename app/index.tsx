@@ -7,6 +7,7 @@ import {globalStyles} from "@/styles/appStyles";
 import {useSurvey} from "@/hooks/useSurvey";
 import {SurveyQuestion} from '@/types/surveyQuestions'
 import Survey from "@/components/survey/Survey";
+import Picture from "@/components/media/Picture";
 
 export default function Index() {
     const [playingAudio, setPlayingAudio] = useState(false);
@@ -26,7 +27,7 @@ export default function Index() {
             options: ['Male', 'Female', 'Other', 'Prefer not to say'],
         },
         {
-            key: 'local time',
+            key: 'localTime',
             question: 'What is the time where you are now?',
             type: "time",
         },
@@ -35,6 +36,19 @@ export default function Index() {
             question: "Tell us about yourself",
             type: 'multiline',
             placeholder: "Say as much as you like...",
+        },
+        {
+            key: 'consent',
+            question: '',
+            label: 'Do you consent to take part in this experiment?',
+            type: 'checkbox',
+            required: true,
+        },
+        {
+            key: 'content',
+            question: 'On a scale of 0-1, how content are you?',
+            type: 'slider',
+            default: 0.5
         },
         {
             key: 'phq8',
@@ -76,8 +90,12 @@ export default function Index() {
             <StatusBar style={'dark'}/>
             <View style={styles.inputsContainer}>
                 <Text style={globalStyles.sectionTitle}>Demographics</Text>
+                <Picture
+                    asset={require('@/assets/images/icon.png')}
+                    caption='Images are displayed like this'
+                />
                 <Survey
-                    questions={questions.slice(0,4)}
+                    questions={questions.slice(0,6)}
                     responses={responses}
                     updateResponses={updateResponses}
                     invalidQuestions={invalidQuestions}
@@ -85,7 +103,7 @@ export default function Index() {
 
                 <Text style={globalStyles.sectionTitle}>Please fill out the following survey</Text>
                 <Survey
-                    questions={questions.slice(4)}
+                    questions={questions.slice(6)}
                     responses={responses}
                     updateResponses={updateResponses}
                     handleSurveySubmit={handleSurveySubmit}
