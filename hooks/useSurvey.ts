@@ -12,10 +12,10 @@ function initializeResponses(questions: SurveyQuestion[]): Record<string, any> {
         if (question.type === 'likertGrid') {
             responses[key] = {};
             question.statements?.forEach((statement, index) => {
-                responses[key][statement] = '';
+                responses[key][statement] = question.default??'';
             });
         } else {
-            responses[key] = '';
+            responses[key] = question.default??'';
         }
     }
 
@@ -79,6 +79,10 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
                             break;
                         }
                     }
+                } else if(question.type === 'checkbox' && response===false) {
+                    isInvalid = true;
+                    firstInvalidQuestion = question.label;
+                    break;
                 } else if (isEmpty(response)) {
                     isInvalid = true;
                 }
