@@ -8,6 +8,8 @@ import RadioList from "@/components/survey/RadioList";
 import TimePicker from "@/components/basic/TimePicker";
 import LikertRadioGrid from "@/components/survey/LikertRadioGrid";
 import SubmitButton from "@/components/basic/SubmitButton";
+import Tickbox from "@/components/basic/Tickbox";
+import Slider from '@react-native-community/slider';
 
 interface SurveyProps {
     questions: SurveyQuestion[];
@@ -66,6 +68,22 @@ export default function Survey({
                             onChange={(newValue: Date | null) => updateResponses(key, newValue)}
                         />;
                         break;
+                    case 'checkbox':
+                        input = <Tickbox
+                            checked={responses[key]}
+                            text={question.label}
+                            onChange={(newValue: boolean) => updateResponses(key, newValue)}
+                        />;
+                        break;
+                    case 'slider':
+                        input = <Slider
+                            style={{width: '100%', height: 40}}
+                            value={responses[key]}
+                            minimumValue={question.min??0}
+                            maximumValue={question.max??1}
+                            onValueChange={(newValue: number) => updateResponses(key, newValue)}
+                        />;
+                        break;
                     case 'likertGrid':
                         // Get invalid statements for this grid
                         const invalidStatements = new Set<string>();
@@ -99,7 +117,7 @@ export default function Survey({
                     ]}>
                         {title && (
                             <Text style={globalStyles.question}>
-                                {title}:
+                                {title}
                             </Text>
                         )}
                         {input}
