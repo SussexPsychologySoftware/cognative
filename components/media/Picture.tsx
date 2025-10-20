@@ -26,10 +26,12 @@ const styles = StyleSheet.create({
     imageContainer: {
         marginVertical: 20,
         alignItems: 'center',
+        maxWidth: '100%',
+        maxHeight: '100%',
     },
     image: {
-        // maxWidth: '100%',
-        // maxHeight: '100%',
+        maxWidth: '100%',
+        maxHeight: '100%',
     },
     imageCaption: {
         fontSize: 14,
