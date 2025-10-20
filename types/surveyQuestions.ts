@@ -5,7 +5,9 @@ export type SurveyQuestionType =
     'time' |
     'lengthOfTime' |
     'radio' |
-    'likertGrid';
+    'likertGrid' |
+    'checkbox' |
+    'slider';
 
 export type SurveyDataType = string | number | boolean | Date | null | Record<string, string>;
 
@@ -13,7 +15,8 @@ export interface BasicSurveyQuestion {
     question: string;
     type: SurveyQuestionType;
     required?: boolean;
-    key: string
+    key: string;
+    default?: SurveyDataType;
 }
 
 interface TextQuestion extends BasicSurveyQuestion {
@@ -32,6 +35,17 @@ export interface RadioQuestion extends BasicSurveyQuestion {
     options: string[];
 }
 
+export interface CheckboxQuestion extends BasicSurveyQuestion {
+    type: 'checkbox';
+    label: string;
+}
+
+export interface SliderQuestion extends BasicSurveyQuestion {
+    type: 'slider';
+    min?: number;
+    max?: number;
+}
+
 export interface LikertGridQuestion extends BasicSurveyQuestion {
     type: 'likertGrid';
     name: string;
@@ -39,6 +53,6 @@ export interface LikertGridQuestion extends BasicSurveyQuestion {
     statements: string[];
 }
 
-export type SingleInputQuestion = TextQuestion | TimeQuestion | RadioQuestion;
+export type SingleInputQuestion = TextQuestion | TimeQuestion | RadioQuestion | CheckboxQuestion | SliderQuestion;
 
 export type SurveyQuestion = SingleInputQuestion | LikertGridQuestion;
