@@ -15,10 +15,10 @@ export const experimentDefinition: ExperimentDefinition = {
     // end_when: '', // function??
     tasks: [
         {
-            id: 'morningDiary',
-            name: 'Morning diary',
-            prompt: 'Just woke up?',
-            path_to_screen: '/morningDiary',
+            id: 'surveyExample',
+            name: 'Example Survey',
+            prompt: 'Here it is:',
+            path_to_screen: '/surveyExample',
             show_on_days: [0,1,2,3],
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: ['control'], //independent conditions
