@@ -1,4 +1,4 @@
-import {ExperimentDefinition} from "@/types/experimentState";
+import {ExperimentDefinition} from "@/types/experimentConfig";
 
 export const experimentDefinition: ExperimentDefinition = {
     name: 'Experiment',
@@ -15,12 +15,14 @@ export const experimentDefinition: ExperimentDefinition = {
     // end_when: '', // function??
     tasks: [
         {
-            name: 'morning diary',
+            id: 'morningDiary',
+            name: 'Morning diary',
             prompt: 'Just woke up?',
             path_to_screen: '/morningDiary',
-            show_on_days: [1,2,3],
+            show_on_days: [0,1,2,3],
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: ['control'], //independent conditions
+            allow_edit: true,
             // required: true,
             // optional fields
             // showWhen: (context: object) => {
@@ -28,9 +30,11 @@ export const experimentDefinition: ExperimentDefinition = {
             //     return day > 2 && condition !== 'baseline' && dayInBlock < 3;
             // },
             // availableFrom: '06:00',
-            // availableTo: '12:00',
-            // deadlineWarning: '11:30',
+            // availableUntil: '12:00',
             // reminder: true,
+            // deadlineWarning: '11:30',
+            // conditional_on_tasks: ['eveningDiary']
+            // allow_edit: true
         }
     ]
 }
