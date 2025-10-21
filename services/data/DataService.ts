@@ -1,5 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { dataQueue } from './dataQueue';
+import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
 
 export class DataService {
     static async setData(key: string, data: any) {
@@ -30,7 +31,8 @@ export class DataService {
 
     static async saveData(data: Record<string, any>, name: string, datapipeId?: string) {
         data.timestamp = new Date().toISOString();
-        const participantId = await this.getParticipantID();
+        const state = await ExperimentTracker.getState();
+        const participantId = state?.participantId
         data.participantId = participantId;
         // Save local copy
         const dataString = await this.setData(name, data)
