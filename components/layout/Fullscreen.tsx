@@ -3,6 +3,7 @@ import {Stack} from "expo-router";
 import * as NavigationBar from 'expo-navigation-bar';
 import {Platform, StyleSheet, View} from "react-native";
 import {StatusBar} from "expo-status-bar";
+import {SafeAreaView} from "react-native-safe-area-context";
 
 export default function Fullscreen({children, style} : {children?: any, style?: Record<string, string|number>}) {
     useEffect(() => {
@@ -33,7 +34,9 @@ export default function Fullscreen({children, style} : {children?: any, style?: 
 
 
     return(
-        <View style={[styles.container, style]}>
+        <SafeAreaView
+            style={[styles.container, style]}
+        >
             <StatusBar translucent hidden/>
             <Stack screenOptions={{
                 // Just incase
@@ -43,12 +46,13 @@ export default function Fullscreen({children, style} : {children?: any, style?: 
                 contentStyle: { backgroundColor: 'black' }
             }}/>
             {children}
-        </View>
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
         height: "100%",
         width: "100%",
         minWidth: "100%",
