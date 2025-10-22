@@ -1,4 +1,4 @@
-import {StyleSheet, View, Text} from 'react-native';
+import {StyleSheet, View, Text, TextInput} from 'react-native';
 import {globalStyles} from "@/styles/appStyles";
 import NumericInput from "@/components/basic/NumericInput";
 import React from "react";
@@ -55,11 +55,20 @@ export default function Survey({
 
                 // Get input type
                 switch (question.type) {
+                    case "text":
+                        input = <TextInput
+                            value={responses[key]}
+                            placeholder={question.placeholder}
+                            placeholderTextColor={'grey'}
+                            style={globalStyles.input}
+                            onChangeText={newValue => updateResponses(key, newValue)}
+                        />
+                        break;
                     case 'number':
                         input = <NumericInput
                             value={responses[key]}
                             placeholder={question.placeholder}
-                            onChange={(newValue: string) => updateResponses(key, newValue)}
+                            onChange={newValue => updateResponses(key, newValue)}
                         />;
                         break;
                     case 'multiline':
@@ -83,6 +92,7 @@ export default function Survey({
                         />;
                         break;
                     case 'checkbox':
+                        // TODO: question should maybe be in the text section?
                         input = <Tickbox
                             checked={responses[key]}
                             text={question.label}
