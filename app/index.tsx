@@ -1,13 +1,6 @@
-import {View, StyleSheet, Text, Task} from "react-native";
+import {StyleSheet, Text} from "react-native";
 import React, {useCallback, useEffect, useState} from "react";
-import SubmitButton from "@/components/basic/SubmitButton";
 import {StandardView} from "@/components/layout/StandardView";
-import {StatusBar} from "expo-status-bar";
-import {globalStyles} from "@/styles/appStyles";
-import {useSurvey} from "@/hooks/useSurvey";
-import {SurveyQuestion} from '@/types/surveyQuestions'
-import Survey from "@/components/survey/Survey";
-import Picture from "@/components/media/Picture";
 import ToDoList from "@/components/longitudinal/ToDoList";
 import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
 import {router} from "expo-router";
@@ -25,6 +18,7 @@ export default function Index() {
             if (!experimentState) {
                 experimentState = await ExperimentTracker.startExperiment('control','abc'); // or redirect appropriately
             }
+            console.log(experimentState);
             const newDisplayState = ExperimentTracker.calculateDisplayState(experimentState);
             // Check if experiment has ended
             if (newDisplayState.isExperimentComplete) {
@@ -38,12 +32,13 @@ export default function Index() {
         } finally {
             setLoading(false);
         }
-    }, [loading]);
+    }, []);
 
     useEffect(() => {
         void loadExperimentStatus();
     }, [loadExperimentStatus]);
 
+    if(loading) return null;
     return (
         <StandardView
             scrollable={true}
