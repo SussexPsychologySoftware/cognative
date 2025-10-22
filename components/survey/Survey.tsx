@@ -9,8 +9,8 @@ import TimePicker from "@/components/basic/TimePicker";
 import LikertRadioGrid from "@/components/survey/LikertRadioGrid";
 import SubmitButton from "@/components/basic/SubmitButton";
 import Tickbox from "@/components/basic/Tickbox";
-import Slider from '@react-native-community/slider';
 import Range from "@/components/basic/Range";
+import Select from "@/components/basic/Select";
 
 interface SurveyProps {
     questions: SurveyQuestion[];
@@ -129,6 +129,13 @@ export default function Survey({
                             }}
                             invalidStatements={invalidStatements}
                         />;
+                        break;
+                    case 'select':
+                        input = <Select
+                            value={responses[key]}
+                            options={question.options}
+                            onSelect={newValue => updateResponses(key, newValue)}
+                        />
                         break;
                     default:
                         input = <Text>Unsupported question type: {(question as any).type}</Text>;
