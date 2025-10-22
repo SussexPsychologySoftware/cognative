@@ -87,7 +87,7 @@ export class ExperimentTracker {
         if (this.TEST_MINUS_DAYS_FROM_START > 0) {
             state.startDate = this.testAddDaysToDate(state.startDate, this.TEST_MINUS_DAYS_FROM_START);
         }
-        await DataService.saveData(state, this.STORAGE_KEY);
+        await DataService.saveData(state, this.STORAGE_KEY, state.participantId);
     }
 
     static async resetDailyTasks(): Promise<void> {
