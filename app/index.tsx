@@ -40,11 +40,8 @@ export default function Index() {
 
     if(loading) return null;
     return (
-        <StandardView
-            scrollable={true}
-            safeAreaStyle={{padding: 30}}
-        >
-            <Text>TODO list:</Text>
+        <StandardView safeAreaStyle={{padding: 30}}>
+            <Text>TO DO list:</Text>
             {
                 displayState && <ToDoList taskStates={displayState.tasks}/>
             }
