@@ -3,7 +3,6 @@
     "name": "cognative",
     "slug": "cognative",
     "version": "1.0.0",
-    "orientation": "default",
     "icon": "./assets/images/icon.png",
     "scheme": "cognative",
     "userInterfaceStyle": "automatic",
@@ -22,9 +21,6 @@
         ],
         "ITSAppUsesNonExemptEncryption": false
       },
-      "config": {
-        "usesNonExemptEncryption": false
-      }
     },
     "android": {
       "adaptiveIcon": {
