@@ -14,6 +14,7 @@ export default function Range({ value, min, max, step, showValue, onChange, styl
                 minimumValue={min??0}
                 maximumValue={max??10}
                 onValueChange={onChange}
+                // onSlidingComplete={onChange}
                 step={step??0}
                 tapToSeek={true}
                 renderStepNumber={!!step}
