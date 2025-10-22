@@ -22,7 +22,17 @@ export default function Index() {
             key: 'gender',
             question: 'What is your gender?',
             type: 'radio',
-            options: ['Male', 'Female', 'Other', 'Prefer not to say'],
+            // TODO: add difference between label and value {label: value}
+            options: ['Male', 'Female', 'Other or prefer to self describe', 'Prefer not to say'],
+        },
+        {
+            key: 'selfDescribeGender',
+            question: 'Describe your gender',
+            type: 'text',
+            conditions: [
+                {key: 'gender', value: 'Other or prefer to self describe'},
+            ],
+            required: true
         },
         {
             key: 'localTime',

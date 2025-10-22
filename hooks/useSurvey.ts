@@ -68,8 +68,19 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
             const response = responses[key];
 
             if (question.required) {
-                let isInvalid = false;
+                // Handle conditional question
+                if(question.conditions && question.conditions.length > 0) {
+                    let conditionMatched = false
+                    for(let i=0; i<question.conditions.length; i++) {
+                        const condition = question.conditions[i]
+                        if(responses[condition.key] !== undefined && responses[condition.key] === condition.value){
+                            conditionMatched = true
+                        }
+                    }
+                    if(!conditionMatched) continue
+                }
 
+                let isInvalid = false;
                 if (question.type === 'likertGrid') {
                     // Find the first empty statement
                     for (let i = 0; i < question.statements.length; i++) {

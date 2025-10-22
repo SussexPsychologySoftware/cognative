@@ -40,6 +40,19 @@ export default function Survey({
                 let input;
                 let title = question.question;
 
+                // Check for conditional question
+                if(question.conditions && question.conditions.length > 0) {
+                    let conditionMatched = false
+                    for(let i=0; i<question.conditions.length; i++) {
+                        const condition = question.conditions[i]
+                        if(responses[condition.key] !== undefined && responses[condition.key] === condition.value){
+                            conditionMatched = true
+                        }
+                    }
+                    if(!conditionMatched) return null
+                }
+
+                // Get input type
                 switch (question.type) {
                     case 'number':
                         input = <NumericInput
@@ -110,10 +123,12 @@ export default function Survey({
                         input = <Text>Unsupported question type: {(question as any).type}</Text>;
                 }
 
+                // Wrap input in container
                 return (
                     <View key={`question-${index}`} style={[
                         styles.questionContainer,
-                        isInvalid && globalStyles.invalidInput
+                        isInvalid && globalStyles.invalidInput,
+                        question.conditions && styles.conditionalQuestion
                     ]}>
                         {title && (
                             <Text style={globalStyles.question}>
@@ -170,5 +185,13 @@ const styles = StyleSheet.create({
     footerContainer: {
         gap: 15,
         marginTop: 20,
+    },
+    conditionalQuestion: {
+        marginTop: -5,
+        paddingLeft: 10,
+        marginLeft: 10,
+        borderLeftWidth: 2,
+        borderStyle: 'solid',
+        borderLeftColor: 'grey',
     }
 });
