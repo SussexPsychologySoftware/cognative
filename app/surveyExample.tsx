@@ -56,7 +56,10 @@ export default function Index() {
             key: 'content',
             question: 'On a scale of 0-1, how content are you?',
             type: 'slider',
-            default: 0.5
+            default: 5,
+            min: 0,
+            max: 10,
+            step: 1
         },
         {
             key: 'phq8',

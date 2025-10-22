@@ -10,6 +10,7 @@ import LikertRadioGrid from "@/components/survey/LikertRadioGrid";
 import SubmitButton from "@/components/basic/SubmitButton";
 import Tickbox from "@/components/basic/Tickbox";
 import Slider from '@react-native-community/slider';
+import Range from "@/components/basic/Range";
 
 interface SurveyProps {
     questions: SurveyQuestion[];
@@ -89,12 +90,12 @@ export default function Survey({
                         />;
                         break;
                     case 'slider':
-                        input = <Slider
-                            style={{width: '100%', height: 40}}
+                        input = <Range
                             value={responses[key]}
-                            minimumValue={question.min??0}
-                            maximumValue={question.max??1}
-                            onValueChange={(newValue: number) => updateResponses(key, newValue)}
+                            min={question.min}
+                            max={question.max}
+                            onChange={(newValue: number) => updateResponses(key, newValue)}
+                            step={question.step}
                         />;
                         break;
                     case 'likertGrid':

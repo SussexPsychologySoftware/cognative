@@ -50,6 +50,7 @@ export interface SliderQuestion extends BasicSurveyQuestion {
     type: 'slider';
     min?: number;
     max?: number;
+    step?: number;
 }
 
 export interface LikertGridQuestion extends BasicSurveyQuestion {
