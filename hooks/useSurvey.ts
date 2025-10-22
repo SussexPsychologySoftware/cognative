@@ -86,14 +86,17 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
                     for (let i = 0; i < question.statements.length; i++) {
                         if (isEmpty(response[question.statements[i]])) {
                             isInvalid = true;
-                            firstInvalidQuestion = question.statements[i];
+                            if (!firstInvalidQuestion) {
+                                firstInvalidQuestion = question.statements[i];
+                            }
                             break;
                         }
                     }
-                } else if(question.type === 'checkbox' && response===false) {
+                } else if(question.type === 'checkbox' && (isEmpty(response) || response===false)) {
                     isInvalid = true;
-                    firstInvalidQuestion = question.label;
-                    break;
+                    if (!firstInvalidQuestion) {
+                        firstInvalidQuestion = question.label;
+                    }
                 } else if (isEmpty(response)) {
                     isInvalid = true;
                 }
