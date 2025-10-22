@@ -8,9 +8,33 @@ import {useSurvey} from "@/hooks/useSurvey";
 import {SurveyQuestion} from '@/types/surveyQuestions'
 import Survey from "@/components/survey/Survey";
 import Picture from "@/components/media/Picture";
+import Select from "@/components/basic/Select";
 
 export default function Index() {
     // Define survey questions with keys
+    const ethnicitiesList: string[] = [
+        'Indian',
+        'Pakistani',
+        'Bangladeshi',
+        'Chinese',
+        'Any other Asian background',
+        'African',
+        'Caribbean',
+        'Any other Black, African or Caribbean background',
+        'White and Black Caribbean',
+        'White and Black African',
+        'White and Asian',
+        'Any other Mixed or multiple ethnic background',
+        'White English, Welsh, Scottish, Northern Irish or British',
+        'White Irish',
+        'White Gypsy or Irish Traveller',
+        'White Roma',
+        'Any other White background',
+        'Arab',
+        'Any other ethnic group',
+        'Prefer not to say',
+    ]
+
     const questions: SurveyQuestion[] = [
         {
             key: 'age',
@@ -33,6 +57,12 @@ export default function Index() {
                 {key: 'gender', value: 'Other or prefer to self describe'},
             ],
             required: true
+        },
+        {
+            key: 'Ethnicity',
+            question: 'What is your ethnicity?',
+            type: 'select',
+            options: ethnicitiesList
         },
         {
             key: 'localTime',
