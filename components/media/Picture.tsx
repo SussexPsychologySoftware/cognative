@@ -38,7 +38,7 @@ const styles = StyleSheet.create({
         fontStyle: 'italic',
         textAlign: 'center',
         color: '#666',
-        paddingHorizontal: 20,
+        paddingHorizontal: 30,
     },
 })
 
