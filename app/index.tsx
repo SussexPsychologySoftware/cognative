@@ -1,7 +1,7 @@
 import {View, StyleSheet, Text, Task} from "react-native";
 import React, {useCallback, useEffect, useState} from "react";
 import SubmitButton from "@/components/basic/SubmitButton";
-import {ScreenWrapper} from "@/components/layout/ScreenWrapper";
+import {StandardView} from "@/components/layout/StandardView";
 import {StatusBar} from "expo-status-bar";
 import {globalStyles} from "@/styles/appStyles";
 import {useSurvey} from "@/hooks/useSurvey";
@@ -45,7 +45,7 @@ export default function Index() {
     }, [loadExperimentStatus]);
 
     return (
-        <ScreenWrapper
+        <StandardView
             scrollable={true}
             safeAreaStyle={{padding: 30}}
         >
@@ -53,7 +53,7 @@ export default function Index() {
             {
                 displayState && <ToDoList taskStates={displayState.tasks}/>
             }
-        </ScreenWrapper>
+        </StandardView>
     );
 }
 

@@ -1,7 +1,7 @@
 import {View, StyleSheet, Text} from "react-native";
 import React, {useState} from "react";
 import SubmitButton from "@/components/basic/SubmitButton";
-import {ScreenWrapper} from "@/components/layout/ScreenWrapper";
+import {StandardView} from "@/components/layout/StandardView";
 import {StatusBar} from "expo-status-bar";
 import {globalStyles} from "@/styles/appStyles";
 import {useSurvey} from "@/hooks/useSurvey";
@@ -93,10 +93,7 @@ export default function Index() {
     } = useSurvey(questions);
 
     return (
-        <ScreenWrapper
-            scrollable={true}
-            safeAreaStyle={{padding: 30}}
-        >
+        <StandardView headerShown={false}>
             <Text style={[globalStyles.pageTitle, {marginVertical: 30}]}>Survey Example</Text>
             <StatusBar style={'dark'}/>
             <View style={styles.inputsContainer}>
@@ -136,7 +133,7 @@ export default function Index() {
                     disabled={false}
                 />
             </View>
-        </ScreenWrapper>
+        </StandardView>
     );
 }
 
