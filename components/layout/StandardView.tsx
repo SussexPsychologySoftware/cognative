@@ -3,25 +3,22 @@ import {
     KeyboardAvoidingView,
     ScrollView,
     Platform,
-    View
+    View, StyleSheet
 } from 'react-native';
-import {SafeAreaView} from "react-native-safe-area-context";
+import {Edges, SafeAreaView} from "react-native-safe-area-context";
 import { StatusBar } from 'expo-status-bar';
 import { Stack } from 'expo-router';
 
-export const ScreenWrapper = ({
+export const StandardView = ({
                                   children,
-                                  scrollable = true,
                                   statusBarStyle = 'dark',
                                   keyboardBehavior = Platform.OS === 'ios' ? 'padding' : 'height',
+                                  headerShown = true,
                                   contentContainerStyle,
-                                  style,
                                   safeAreaStyle,
-                                  headerShown
                               }:
                               {
                                   children?: any,
-                                  scrollable?: boolean,
                                   statusBarStyle?: 'light'|'dark',
                                   keyboardBehavior?: 'padding'|'height'|'position',
                                   contentContainerStyle?: object,
@@ -30,37 +27,46 @@ export const ScreenWrapper = ({
                                   headerShown?: boolean,
                               }) => {
 
-    const content = scrollable ? (
-        <ScrollView
-            contentContainerStyle={contentContainerStyle}
-            keyboardShouldPersistTaps="handled"
-        >
-            {children}
-        </ScrollView>
-    ) : (
-        <View style={[{ flex: 1 }, style]}>
-            {children}
-        </View>
-    );
-
     return (
-        <SafeAreaView style={[{ flex: 1 }, safeAreaStyle]}>
+        <SafeAreaView
+            style={[styles.outerContainer, safeAreaStyle]}
+            // Deal with padding manually as component a little broken
+            edges={headerShown ? ['left', 'right'] : ['top', 'left', 'right']}
+        >
             <Stack.Screen
                 options={{
                     headerShown: headerShown,
-                    // headerStyle: { backgroundColor: '#f4511e' },
-                    // headerTintColor: '#fff',
-                    // headerTitleStyle: {
-                    //     fontWeight: 'bold',
-                    // },
-            }} />
+                }}
+            />
+            <StatusBar style={statusBarStyle}/>
             <KeyboardAvoidingView
                 behavior={keyboardBehavior}
-                style={{ flex: 1 }}
+                style={styles.keyboardAvoidingView}
             >
-                <StatusBar style={statusBarStyle}/>
-                {content}
+            <ScrollView
+                contentContainerStyle={[contentContainerStyle, styles.scrollViewContentContainer]}
+                style={styles.scrollView}
+                keyboardShouldPersistTaps="handled"
+            >
+                {children}
+            </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
     );
 };
+
+const styles = StyleSheet.create({
+    outerContainer: {
+        // flex: 1,
+    },
+    keyboardAvoidingView: {
+        // flex: 1,
+    },
+    scrollViewContentContainer: {
+        // Pad inner content so scroll bar is pushed to right name of screen
+        paddingHorizontal: 20,
+        paddingBottom: 20,
+    },
+    scrollView: {
+    }
+})
