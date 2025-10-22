@@ -6,6 +6,7 @@ export default function Range({ value, min, max, step, showValue, onChange, styl
     // Note value/markers broken for steps between 0-1, floating point issues
     // TODO: implement my own simple version
     // TODO: add secondary labels
+
     return (
         <View style={styles.container}>
             <Slider
@@ -19,7 +20,7 @@ export default function Range({ value, min, max, step, showValue, onChange, styl
                 tapToSeek={true}
                 renderStepNumber={!!step}
             />
-            { (showValue !== undefined || showValue) &&
+            { showValue &&
                 <Text style={styles.valueDisplay}>
                     {value}
                 </Text>
