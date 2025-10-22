@@ -17,6 +17,7 @@ export const ScreenWrapper = ({
                                   contentContainerStyle,
                                   style,
                                   safeAreaStyle,
+                                  headerShown
                               }:
                               {
                                   children?: any,
@@ -26,6 +27,7 @@ export const ScreenWrapper = ({
                                   contentContainerStyle?: object,
                                   style?: object,
                                   safeAreaStyle?: object,
+                                  headerShown?: boolean,
                               }) => {
 
     const content = scrollable ? (
@@ -43,7 +45,15 @@ export const ScreenWrapper = ({
 
     return (
         <SafeAreaView style={[{ flex: 1 }, safeAreaStyle]}>
-            <Stack.Screen options={{ headerShown: false }} />
+            <Stack.Screen
+                options={{
+                    headerShown: headerShown,
+                    // headerStyle: { backgroundColor: '#f4511e' },
+                    // headerTintColor: '#fff',
+                    // headerTitleStyle: {
+                    //     fontWeight: 'bold',
+                    // },
+            }} />
             <KeyboardAvoidingView
                 behavior={keyboardBehavior}
                 style={{ flex: 1 }}
