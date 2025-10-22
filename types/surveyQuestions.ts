@@ -7,7 +7,8 @@ export type SurveyQuestionType =
     'radio' |
     'likertGrid' |
     'checkbox' |
-    'slider';
+    'slider' |
+    'select';
 
 export type SurveyDataType = string | number | boolean | Date | null | Record<string, string>;
 
@@ -36,8 +37,8 @@ export interface TimeQuestion extends BasicSurveyQuestion {
     max?: string;
 }
 
-export interface RadioQuestion extends BasicSurveyQuestion {
-    type: 'radio';
+export interface SelectQuestion extends BasicSurveyQuestion {
+    type: 'radio' | 'select';
     options: string[];
 }
 
@@ -60,6 +61,6 @@ export interface LikertGridQuestion extends BasicSurveyQuestion {
     statements: string[];
 }
 
-export type SingleInputQuestion = TextQuestion | TimeQuestion | RadioQuestion | CheckboxQuestion | SliderQuestion;
+export type SingleInputQuestion = TextQuestion | TimeQuestion | SelectQuestion | CheckboxQuestion | SliderQuestion;
 
 export type SurveyQuestion = SingleInputQuestion | LikertGridQuestion;
