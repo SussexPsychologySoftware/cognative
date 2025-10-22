@@ -21,6 +21,7 @@
         ],
         "ITSAppUsesNonExemptEncryption": false
       },
+      "bundleIdentifier": "com.max-lovell.cognative"
     },
     "android": {
       "adaptiveIcon": {
