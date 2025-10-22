@@ -5,7 +5,7 @@ import {Platform, StyleSheet, View} from "react-native";
 import {StatusBar} from "expo-status-bar";
 import {SafeAreaView} from "react-native-safe-area-context";
 
-export default function Fullscreen({children, style} : {children?: any, style?: Record<string, string|number>}) {
+export default function FullscreenView({children, style} : {children?: any, style?: Record<string, string|number>}) {
     useEffect(() => {
         const hideNavBar = async () => {
             try {
