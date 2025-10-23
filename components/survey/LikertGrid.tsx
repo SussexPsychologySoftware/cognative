@@ -1,41 +1,7 @@
 import { View, Pressable, Text, StyleSheet } from 'react-native';
 import { globalStyles } from "@/styles/appStyles";
-import Hypher from 'hypher';
-import english from 'hyphenation.en-gb';
 import Radio from "@/components/inputParts/Radio";
-import SecondaryLabels from "@/components/inputParts/Labels";
 import Labels from "@/components/inputParts/Labels";
-
-const h = new Hypher(english);
-
-function hyphenate(text: string) {
-    return text?.split(/(\s+)/).map(part =>
-        part.trim() ? h.hyphenate(part).join('\u00AD') : part
-    ).join('') ?? text;
-}
-
-// Define single radio button component
-export function OptionLabels({options, hasQuestion, oneWordPerLine}: { options: string[], hasQuestion?: boolean, oneWordPerLine?: boolean }) {
-    return (
-        <View style={[styles.row, styles.optionsTextContainer]} >
-            {hasQuestion && <Text style={[styles.gridItem, styles.question]}></Text>}
-            {options.map((option, index) => {
-                return(
-                    <Text
-                        key={`label-${option}`}
-                        android_hyphenationFrequency='full'
-                        allowFontScaling={true}
-                        adjustsFontSizeToFit={true}
-                        numberOfLines={oneWordPerLine ? option.split(' ').length : 0}
-                        style={[globalStyles.whiteText, styles.optionsText, styles.gridItem]}
-                    >
-                        {hyphenate(option)}
-                    </Text>
-                )
-            })}
-        </View>
-    );
-}
 
 function RadioButton({ selected, onChange } : { selected: boolean, onChange: () => void }) {
     return (
@@ -74,7 +40,9 @@ export function LikertQuestionRow(
                     globalStyles.whiteText,
                     styles.question,
                     styles.gridItem,
-                ]}>{question}</Text>
+                ]}>
+                    {question}
+                </Text>
             }
             {
                 options.map((option, index) => (
@@ -95,7 +63,6 @@ export default function LikertGrid(
         questions,
         options,
         onChange,
-        secondaryLabels,
         oneWordPerLine,
         headerRepeatInterval=0,
         invalidStatements
@@ -105,31 +72,21 @@ export default function LikertGrid(
         questions: string[], // The statements
         options: string[], // Likert scale options
         onChange: (statementKey: string, answer: string) => void,
-        secondaryLabels?: string[],
         headerRepeatInterval?: number,
         oneWordPerLine?: boolean,
         invalidStatements?: Set<string>
     }) {
     return (
-        <View style={[styles.radioGrid, {paddingHorizontal: secondaryLabels ? '5%' : undefined}]}>
+        <View style={styles.radioGrid}>
             {
-                [
-                    secondaryLabels && (
-                        <Labels
-                            key="secondary-labels"
-                            labels={secondaryLabels}
-                            prependEmptyMinWidth={!!questions ? 50 : 0}
-                        />
-                    ),
-                    ...(questions.flatMap((question, i) => {
-                        const isInvalid = invalidStatements?.has(question);
+                questions.map((question, i) => {
                         return [
                             (i === 0 || (headerRepeatInterval > 0 && i % headerRepeatInterval === 0)) && (
                                 <Labels
                                     key={`options-${i}`}
                                     labels={options}
                                     oneWordPerLine={oneWordPerLine}
-                                    prependEmptyMinWidth={!!questions ? 50 : 0}
+                                    prependEmptyMinWidth={questions.length ? 50 : 0} // Empty question with same min width
                                 />
                             ),
                             <LikertQuestionRow
@@ -139,11 +96,10 @@ export default function LikertGrid(
                                 options={options}
                                 onChange={(answer) => onChange(question, answer)}
                                 oddRow={i%2===1}
-                                isInvalid={isInvalid}
+                                isInvalid={invalidStatements?.has(question)}
                             />
                         ];
-                    }).filter(Boolean) ?? [])
-                ].filter(Boolean)
+                })
             }
         </View>
     );
