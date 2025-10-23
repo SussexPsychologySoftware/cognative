@@ -1,4 +1,4 @@
-import {FlexStyle, StyleSheet, Text, View} from "react-native";
+import {DimensionValue, StyleSheet, Text, View} from "react-native";
 import {globalStyles} from "@/styles/appStyles";
 import Hypher from 'hypher';
 import english from 'hyphenation.en-gb';
@@ -11,15 +11,22 @@ function hyphenate(text: string) {
     ).join('') ?? text;
 }
 
-export default function Labels({labels, prependEmptyMinWidth, oneWordPerLine, justifyContent}: { labels: string[], prependEmptyMinWidth?: number, oneWordPerLine?: boolean, justifyContent?: FlexStyle['justifyContent'] }) {
+// TODO: consider hyphenated text component as well
+export default function Labels({labels, prependEmptyMinWidth, oneWordPerLine, spread, labelMaxWidth}: { labels: string[], prependEmptyMinWidth?: number, oneWordPerLine?: boolean, spread?: boolean, labelMaxWidth?: DimensionValue }) {
     return (
-        <View style={[styles.container, justifyContent && {justifyContent: justifyContent}]}>
+        <View style={[styles.container, spread && {justifyContent: 'space-between'}]}>
             {prependEmptyMinWidth && <Text style={[styles.labelContainer, {minWidth: prependEmptyMinWidth}]}></Text>}
             {labels.map((label, index) => (
-                <View key={`labels-${label}`} style={styles.labelContainer}>
+                <View
+                    key={`label-container-${label}-${index}`}
+                    style={[
+                        styles.labelContainer,
+                        spread && {maxWidth: `${100/labels.length}%`, flex: 0},
+                    ]}
+                >
                     <Text
-                        style={[globalStyles.whiteText, styles.labelText]}
-                        key={`label-${label}`}
+                        style={[globalStyles.whiteText, styles.labelText, {maxWidth: labelMaxWidth}]}
+                        key={`label-text-${label}`}
                         android_hyphenationFrequency='full'
                         allowFontScaling={true}
                         adjustsFontSizeToFit={true}
@@ -35,21 +42,22 @@ export default function Labels({labels, prependEmptyMinWidth, oneWordPerLine, ju
 
 const styles = StyleSheet.create({
     container: {
-        width: "100%",
-        flex: 1,
-        alignItems: 'center',
+        width: '100%',
+        maxWidth: "100%",
+        alignItems: 'flex-end',
         flexDirection: 'row',
-        columnGap: 3,
-        paddingVertical: 5,
+        gap: 5,
     },
     labelContainer: {
-        width: 70,
-        textAlign: 'center',
         paddingVertical: 5,
-        // flex: 1, // TODO: works for secondary but not primary?
+        flex: 1,
+        alignItems: 'center',
+        // borderWidth: 1,
     },
     labelText: {
+        textAlign: 'center',
         fontWeight: "500",
+        // borderWidth: 1,
     }
 
 });
