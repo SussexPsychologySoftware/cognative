@@ -12,7 +12,9 @@ export default function Range({ value, min, max, step, showValue, onChange, styl
         <View style={styles.container}>
             {labels && <Labels
                 labels={labels}
-                justifyContent={'space-between'}
+                spread={true}
+                labelMaxWidth={100}
+                oneWordPerLine={true}
             />}
             <Slider
                 style={[styles.slider, style]}
