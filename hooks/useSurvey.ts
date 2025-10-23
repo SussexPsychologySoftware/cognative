@@ -1,6 +1,7 @@
-import {useCallback, useMemo, useState} from "react";
+import {useCallback, useEffect, useMemo, useState} from "react";
 import {Alert} from "react-native";
 import {SurveyQuestion} from '@/types/surveyQuestions'
+import {DataService} from "@/services/data/DataService";
 
 // Initialize responses from survey definition
 function initializeResponses(questions: SurveyQuestion[]): Record<string, any> {
@@ -22,11 +23,33 @@ function initializeResponses(questions: SurveyQuestion[]): Record<string, any> {
     return responses;
 }
 
-export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object) => void) {
-    const [responses, setResponses] = useState(() => initializeResponses(questions));
+async function restoreResponses(restoreKey: string){
+    const data = await DataService.getData(restoreKey)
+    if(!data) return null
+    return data
+}
+
+export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object) => void, restoreKey?: string) {
+    const [responses, setResponses] = useState(initializeResponses(questions));
+    const [isLoading, setIsLoading] = useState(!!restoreKey);
     const [warning, setWarning] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [invalidQuestions, setInvalidQuestions] = useState<Set<string>>(new Set());
+
+    // Restore responses on mount if restoreKey is provided
+    useEffect(() => {
+        if (restoreKey) {
+            restoreResponses(restoreKey).then(data => {
+                if (data) {
+                    setResponses(data);
+                }
+                setIsLoading(false);
+            }).catch(error => {
+                console.error('Error restoring responses:', error);
+                setIsLoading(false);
+            });
+        }
+    }, [restoreKey]);
 
     const isEmpty = (value: any) => {
         return value === null || value === undefined || value === '' ||
@@ -182,5 +205,6 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
         resetSurvey,
         progress,
         invalidQuestions,
+        isLoading
     };
 }
