@@ -9,6 +9,8 @@ import {SurveyQuestion} from '@/types/surveyQuestions'
 import Survey from "@/components/survey/Survey";
 import Picture from "@/components/media/Picture";
 import Select from "@/components/inputs/Select";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import {DataService} from "@/services/data/DataService";
 
 export default function Index() {
     // Define survey questions with keys
@@ -91,7 +93,7 @@ export default function Index() {
             question: '',
             label: 'Do you consent to take part in this experiment?',
             type: 'checkbox',
-            required: true,
+            required: false,
         },
         {
             key: 'content',
@@ -114,7 +116,7 @@ export default function Index() {
             key: 'phq8',
             type: 'likertGrid',
             name: 'PHQ-8',
-            required: true,
+            required: false,
             question: 'Over the last 4 days have you felt...',
             statements: [
                 'Little interest or pleasure in doing things?',
@@ -139,7 +141,7 @@ export default function Index() {
         progress,
         resetSurvey,
         invalidQuestions
-    } = useSurvey(questions);
+    } = useSurvey(questions,async (responses)=>{await DataService.saveData(responses,'surveyExample')}, 'surveyExample');
 
     return (
         <StandardView headerShown={true}>
