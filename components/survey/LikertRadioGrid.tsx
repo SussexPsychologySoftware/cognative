@@ -3,6 +3,7 @@ import { globalStyles } from "@/styles/appStyles";
 import Hypher from 'hypher';
 import english from 'hyphenation.en-gb';
 import Radio from "@/components/inputParts/Radio";
+import SecondaryLabels from "@/components/inputParts/Labels";
 
 const h = new Hypher(english);
 
@@ -31,21 +32,6 @@ export function OptionLabels({options, hasQuestion, oneWordPerLine}: { options: 
                     </Text>
                 )
             })}
-        </View>
-    );
-}
-
-function SecondaryLabels({labels, hasQuestion}: { labels: string[], hasQuestion?: boolean }) {
-    return (
-        <View style={[styles.row, styles.optionsTextContainer]}>
-            {hasQuestion && <Text style={[styles.gridItem,styles.question]}></Text>}
-            {labels.map((label, index) => (
-                <View key={`secondary-${index}`} style={[styles.gridItem, styles.secondaryLabelContainer]}>
-                    <Text style={[globalStyles.whiteText, styles.optionsText, styles.secondaryLabel]}>
-                        {label}
-                    </Text>
-                </View>
-            ))}
         </View>
     );
 }
@@ -128,13 +114,12 @@ export default function LikertRadioGrid(
         <View style={[styles.radioGrid, {paddingHorizontal: secondaryLabels ? '5%' : undefined}]}>
             {
                 [
-                    secondaryLabels && (
-                        <SecondaryLabels
-                            key="secondary-labels"
-                            labels={secondaryLabels}
-                            hasQuestion={!!questions}
-                        />
-                    ),
+                    // secondaryLabels && (
+                    //     <SecondaryLabels
+                    //         key="secondary-labels"
+                    //         labels={!!questions ? secondaryLabels.push('') : secondaryLabels}
+                    //     />
+                    // ),
                     ...(questions.flatMap((question, i) => {
                         const isInvalid = invalidStatements?.has(question);
                         return [
