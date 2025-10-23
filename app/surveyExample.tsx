@@ -142,7 +142,7 @@ export default function Index() {
     } = useSurvey(questions);
 
     return (
-        <StandardView headerShown={false}>
+        <StandardView headerShown={true}>
             <Text style={[globalStyles.pageTitle, {marginVertical: 30}]}>Survey Example</Text>
             <StatusBar style={'dark'}/>
             <View style={styles.inputsContainer}>
