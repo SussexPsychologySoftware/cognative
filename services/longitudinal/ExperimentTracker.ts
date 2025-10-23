@@ -49,10 +49,11 @@ export class ExperimentTracker {
 
     // ============ STOP EXPERIMENT ============
 
-    private static async stopExperiment(): Promise<void> {
+     static async stopExperiment(): Promise<void> {
         // TODO: resetExperiment() also needed?
         await DataService.deleteData(this.STORAGE_KEY)
         await Notifications.cancelAllScheduledNotificationsAsync();
+        router.replace('/end')
     }
 
     static async stopExperimentConfirmation(): Promise<void> {
