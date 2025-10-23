@@ -2,7 +2,7 @@ import { View, Pressable, Text, StyleSheet } from 'react-native';
 import { globalStyles } from "@/styles/appStyles";
 import Hypher from 'hypher';
 import english from 'hyphenation.en-gb';
-import Radio from "@/components/inputs/Radio";
+import Radio from "@/components/inputParts/Radio";
 
 const h = new Hypher(english);
 
