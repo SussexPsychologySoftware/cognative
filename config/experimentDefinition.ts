@@ -35,6 +35,16 @@ export const experimentDefinition: ExperimentDefinition = {
             // deadlineWarning: '11:30',
             // conditional_on_tasks: ['eveningDiary']
             // allow_edit: true
+        },
+        {
+            id: 'surveyExample2',
+            name: 'Example Survey',
+            prompt: 'Here it is:',
+            path_to_screen: '/surveyExample',
+            show_on_days: [0, 1, 2, 3],
+            datapipe_id: 'dOS0nQ93xCSV',
+            show_for_conditions: ['control'], //independent conditions
+            allow_edit: true,
         }
     ]
 }
