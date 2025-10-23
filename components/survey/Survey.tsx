@@ -1,16 +1,16 @@
 import {StyleSheet, View, Text, TextInput} from 'react-native';
 import {globalStyles} from "@/styles/appStyles";
-import NumericInput from "@/components/basic/NumericInput";
+import NumericInput from "@/components/inputs/NumericInput";
 import React from "react";
 import {SurveyQuestion} from '@/types/surveyQuestions';
-import MultilineTextInput from "@/components/basic/MultilineTextInput";
+import MultilineTextInput from "@/components/inputs/MultilineTextInput";
 import RadioList from "@/components/survey/RadioList";
-import TimePicker from "@/components/basic/TimePicker";
+import TimePicker from "@/components/inputs/TimePicker";
 import LikertRadioGrid from "@/components/survey/LikertRadioGrid";
-import SubmitButton from "@/components/basic/SubmitButton";
-import Tickbox from "@/components/basic/Tickbox";
-import Range from "@/components/basic/Range";
-import Select from "@/components/basic/Select";
+import SubmitButton from "@/components/inputs/SubmitButton";
+import Tickbox from "@/components/inputs/Tickbox";
+import Range from "@/components/inputs/Range";
+import Select from "@/components/inputs/Select";
 
 interface SurveyProps {
     questions: SurveyQuestion[];

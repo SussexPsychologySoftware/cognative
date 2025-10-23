@@ -2,7 +2,7 @@ import {StyleSheet, View, Text} from "react-native";
 import {globalStyles} from "@/styles/appStyles";
 import {Link, RelativePathString, router} from "expo-router";
 import React, {useCallback} from "react";
-import SubmitButton from "@/components/basic/SubmitButton";
+import SubmitButton from "@/components/inputs/SubmitButton";
 import {ExperimentDisplayState, ExperimentState, TaskDisplayStatus} from "@/types/trackExperimentState";
 
 // TODO: add back in debounce

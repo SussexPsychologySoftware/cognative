@@ -1,6 +1,6 @@
 import {View, StyleSheet, Text} from "react-native";
 import React, {useState} from "react";
-import SubmitButton from "@/components/basic/SubmitButton";
+import SubmitButton from "@/components/inputs/SubmitButton";
 import {StandardView} from "@/components/layout/StandardView";
 import {StatusBar} from "expo-status-bar";
 import {globalStyles} from "@/styles/appStyles";
@@ -8,7 +8,7 @@ import {useSurvey} from "@/hooks/useSurvey";
 import {SurveyQuestion} from '@/types/surveyQuestions'
 import Survey from "@/components/survey/Survey";
 import Picture from "@/components/media/Picture";
-import Select from "@/components/basic/Select";
+import Select from "@/components/inputs/Select";
 
 export default function Index() {
     // Define survey questions with keys
