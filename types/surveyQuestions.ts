@@ -37,9 +37,14 @@ export interface TimeQuestion extends BasicSurveyQuestion {
     max?: string;
 }
 
-export interface SelectQuestion extends BasicSurveyQuestion {
-    type: 'radio' | 'select';
+export interface RadioQuestion extends BasicSurveyQuestion {
+    type: 'radio';
     options: string[];
+}
+
+export interface SelectQuestion extends BasicSurveyQuestion {
+    type: 'select';
+    options: Record<string, string[]>;
 }
 
 export interface CheckboxQuestion extends BasicSurveyQuestion {
@@ -61,6 +66,6 @@ export interface LikertGridQuestion extends BasicSurveyQuestion {
     statements: string[];
 }
 
-export type SingleInputQuestion = TextQuestion | TimeQuestion | SelectQuestion | CheckboxQuestion | SliderQuestion;
+export type SingleInputQuestion = TextQuestion | TimeQuestion | SelectQuestion | CheckboxQuestion | SliderQuestion | RadioQuestion;
 
 export type SurveyQuestion = SingleInputQuestion | LikertGridQuestion;
