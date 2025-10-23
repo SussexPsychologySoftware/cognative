@@ -65,7 +65,7 @@ export default function TimePicker({ value, onChange, cancellable }: TimePickerP
                 />
             }
 
-            {(cancellable!==undefined || cancellable) && value &&
+            {(cancellable===undefined || cancellable) && value &&
                 <TouchableOpacity onPress={handleClear} style={styles.clearButton}>
                     <Text style={styles.clearButtonText}>X</Text>
                 </TouchableOpacity>
