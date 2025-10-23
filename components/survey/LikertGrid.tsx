@@ -64,8 +64,7 @@ export function LikertQuestionRow(
         <View style={[
             styles.likertRow,
             styles.row,
-            oddRow && styles.oddRow,
-            oddRow===false && styles.evenRow,
+            oddRow ? styles.oddRow : styles.evenRow,
             isInvalid && globalStyles.invalidInput
         ]}>
             {
