@@ -6,8 +6,6 @@ import {DataService} from "@/services/data/DataService";
 import {experimentDefinition} from "@/config/experimentDefinition";
 import {TaskDefinition} from "@/types/experimentConfig";
 
-// TODO: NOTE UNFINISHED PSEUDOCODE FOR ENTIRE SCRIPT
-
 // TODO: some of this is a bit high level - maybe needs to be split into 'diary study'  and 'todo list' and 'experiment state' etc?
 export class ExperimentTracker {
     private static readonly STORAGE_KEY = 'experimentState'; // Storage

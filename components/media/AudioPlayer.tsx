@@ -21,6 +21,7 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 export default function AudioPlayer({audioSource, isPlaying, onPress, resetOnPause, onFinished, volume}: {audioSource: number, isPlaying: boolean, resetOnPause?: boolean, onPress: ()=>void, onFinished?: () => void, volume?: number}) {
     // Note: audioSource is not loaded inside the component as this needs to be known at runtime, dynamic requires not allowed in RN
     // Volume works well with a slider if required dynamic setting
+    // TODO: add volume controls? maybe separate component
     const player = useAudioPlayer(audioSource);
     const { didJustFinish } = useAudioPlayerStatus(player);
     const isDisabled = !audioSource;
