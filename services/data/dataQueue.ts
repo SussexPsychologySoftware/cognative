@@ -77,6 +77,7 @@ class DataQueue {
 
         try {
             const queue = await this.getQueue();
+            return ''
             if(queue.length === 0) return 'No items to sync';
 
             let responseMessage = 'All items successfully sent to server';
