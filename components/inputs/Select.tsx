@@ -22,7 +22,13 @@ export default function Select({ value, options, onSelect }: { value: string, op
     function SelectOptions({options}: {options: Record<string, string[]>}) {
         const groupedOptions = []
         for (const [groupName, groupOptions] of Object.entries(options)) {
-            const groupTitle = <Text style={styles.groupTitle}>{groupName}</Text>;
+            const groupTitle =
+                <Text
+                    key={groupName}
+                    style={styles.groupTitle}
+                >
+                    {groupName}
+                </Text>;
             const optionsList = groupOptions.map((item, index) => {
                 return(
                     <TouchableOpacity
