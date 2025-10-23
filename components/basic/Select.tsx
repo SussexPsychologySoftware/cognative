@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
-import {View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal, Alert, Dimensions} from 'react-native';
-import {modelId} from "expo-device";
-import {useWindowDimensions} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal} from 'react-native';
 import {globalStyles} from "@/styles/appStyles";
 
 
 // https://medium.com/@amolakapadi/react-native-implementing-a-multi-select-search-textinput-47ab2b4153d4
 
-export default function Select({ value, options, onSelect }: { value: string, options: string[], onSelect: (selection: string) => void }) {
+
+export default function Select({ value, options, onSelect }: { value: string, options: Record<string, string[]>, onSelect: (selection: string) => void }) {
     //https://reactnative.dev/docs/modal
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -20,11 +19,26 @@ export default function Select({ value, options, onSelect }: { value: string, op
         setModalVisible(false)
     };
 
-    const toggleModal = () => {
-        setModalVisible(!modalVisible)
-    }
 
-    const {height, width} = useWindowDimensions();
+    function SelectOptions({options}: {options: Record<string, string[]>}) {
+        const groupedOptions = []
+        for (const [groupName, groupOptions] of Object.entries(options)) {
+            const groupTitle = <Text style={styles.groupTitle}>{groupName}</Text>;
+            const optionsList = groupOptions.map((item, index) => {
+                return(
+                    <TouchableOpacity
+                        key={`${groupName}-${item}`}
+                        style={[styles.listOption, value===item ? {backgroundColor: 'grey' } : {backgroundColor: 'inherit' }]}
+                        onPress={() => handleSelect(item)}
+                    >
+                        <Text style={styles.optionText}>{ item }</Text>
+                    </TouchableOpacity>
+                )
+            })
+            groupedOptions.push(groupTitle, ...optionsList)
+        }
+        return groupedOptions
+    }
 
     return (
         <>
@@ -60,17 +74,9 @@ export default function Select({ value, options, onSelect }: { value: string, op
                 >
                     <View style={styles.listContainer}>
                         <ScrollView style={styles.listScrollContainer}>
-                            {options.map((option, index) => {
-                                return(
-                                    <TouchableOpacity
-                                        key={option}
-                                        style={[styles.listOption, option===value ? {backgroundColor: 'grey' } : {backgroundColor: 'inherit' }]}
-                                        onPress={() => handleSelect(option)}
-                                    >
-                                        <Text style={styles.optionText}>{ option }</Text>
-                                    </TouchableOpacity>
-                                )
-                            })}
+                            <SelectOptions
+                                options={options}
+                            />
                         </ScrollView>
                     </View>
                 </TouchableOpacity>
@@ -96,6 +102,8 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '500',
     },
+
+    // REMOVE BUTTON -----
     removeButtonContainer: {
         justifyContent: 'center',
         alignItems: 'center',
@@ -115,8 +123,8 @@ const styles = StyleSheet.create({
         borderColor: 'grey',
         color: 'grey',
     },
-    selectedText: {
-    },
+
+    // LIST CONTAINER -----
 
     modalContainer: {
     },
@@ -143,10 +151,18 @@ const styles = StyleSheet.create({
     listScrollContainer: {
         width: '100%',
     },
+    groupTitle: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        padding: 10,
+        backgroundColor: '#007AFF',
+        color: 'white',
+    },
     listOption: {
+        marginLeft: 15,
         borderBottomWidth: 1,
         borderBottomColor: '#ddd',
-        padding: 10,
+        paddingVertical: 10,
     },
     optionText: {
         fontSize: 18,
