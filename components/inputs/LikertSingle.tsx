@@ -26,7 +26,7 @@ export function RadioRow(
     }) {
     const minSize = 10;
     const maxSize = 40;
-    const baseSize = 200 / options.length; // adjust 200 to tune the curve
+    const baseSize = 300 / options.length; // adjust to tune the curve
     const size = Math.max(minSize, Math.min(maxSize, baseSize));
     return (
         <View style={styles.radioRow}>
@@ -96,12 +96,12 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: 'row',
         columnGap: 5,
-        borderWidth: 1,
+        // borderWidth: 1,
     },
     radioButton: {
         justifyContent: 'center',
         alignItems: 'center',
         flex: 1, // Keeps in-line with labels
-        borderWidth: 1,
+        // borderWidth: 1,
     },
 });
