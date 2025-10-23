@@ -141,6 +141,7 @@ export class ExperimentTracker {
 
             // Task is allowed if all previous required tasks are done
             displayStatuses.push({
+                id: taskDef.id,
                 name: taskDef.name,
                 prompt: taskDef.prompt,
                 path_to_screen: taskDef.path_to_screen,

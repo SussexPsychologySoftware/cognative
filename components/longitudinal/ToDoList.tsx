@@ -54,7 +54,7 @@ export default function ToDoList({ taskStates }: { taskStates: TaskDisplayStatus
             {
                 taskStates.length > 0 && taskStates.map(task => (
                     <Activity
-                        key={task.name}
+                        key={task.id}
                         prompt={task.prompt}
                         buttonText={`Complete ${task.name}`}
                         route={task.path_to_screen as RelativePathString}

@@ -13,6 +13,7 @@ export interface ExperimentState extends ParticipantInformation {
 // FOR DISPLAY STATE **************
 export interface TaskDisplayStatus { // This is essentially a to-do list item
     // Info from the definition
+    id: string,
     name: string;
     prompt?: string;
     path_to_screen: string;
