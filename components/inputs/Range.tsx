@@ -10,7 +10,10 @@ export default function Range({ value, min, max, step, showValue, onChange, styl
 
     return (
         <View style={styles.container}>
-            {labels && <Labels labels={labels}/>}
+            {labels && <Labels
+                labels={labels}
+                justifyContent={'space-between'}
+            />}
             <Slider
                 style={[styles.slider, style]}
                 value={value}

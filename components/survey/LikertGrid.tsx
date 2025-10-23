@@ -4,6 +4,7 @@ import Hypher from 'hypher';
 import english from 'hyphenation.en-gb';
 import Radio from "@/components/inputParts/Radio";
 import SecondaryLabels from "@/components/inputParts/Labels";
+import Labels from "@/components/inputParts/Labels";
 
 const h = new Hypher(english);
 
@@ -113,21 +114,23 @@ export default function LikertGrid(
         <View style={[styles.radioGrid, {paddingHorizontal: secondaryLabels ? '5%' : undefined}]}>
             {
                 [
-                    // secondaryLabels && (
-                    //     <SecondaryLabels
-                    //         key="secondary-labels"
-                    //         labels={!!questions ? secondaryLabels.push('') : secondaryLabels}
-                    //     />
-                    // ),
+                    secondaryLabels && (
+                        <Labels
+                            key="secondary-labels"
+                            labels={secondaryLabels}
+                            prependEmptyMinWidth={!!questions ? 50 : 0}
+                        />
+                    ),
                     ...(questions.flatMap((question, i) => {
                         const isInvalid = invalidStatements?.has(question);
                         return [
                             (i === 0 || (headerRepeatInterval > 0 && i % headerRepeatInterval === 0)) && (
-                                <OptionLabels
+                                <Labels
                                     key={`options-${i}`}
-                                    options={options}
+                                    labels={options}
                                     oneWordPerLine={oneWordPerLine}
-                                    hasQuestion={!!questions} />
+                                    prependEmptyMinWidth={!!questions ? 50 : 0}
+                                />
                             ),
                             <LikertQuestionRow
                                 key={`question-${i}`}
