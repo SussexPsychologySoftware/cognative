@@ -5,9 +5,10 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 interface TimePickerProps {
     value: Date | null; // MODIFIED: Allow null values
     onChange: (date: Date | null) => void; // MODIFIED: Allow setting null
+    cancellable?: boolean;
 }
 
-export default function TimePicker({ value, onChange }: TimePickerProps) {
+export default function TimePicker({ value, onChange, cancellable }: TimePickerProps) {
     // Nullable time picker component - scroll type and cross-platform similar.
     const [showPicker, setShowPicker] = useState(false);
 
@@ -64,7 +65,7 @@ export default function TimePicker({ value, onChange }: TimePickerProps) {
                 />
             }
 
-            {value &&
+            {(cancellable!==undefined || cancellable) && value &&
                 <TouchableOpacity onPress={handleClear} style={styles.clearButton}>
                     <Text style={styles.clearButtonText}>X</Text>
                 </TouchableOpacity>
