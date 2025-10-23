@@ -12,28 +12,39 @@ import Select from "@/components/basic/Select";
 
 export default function Index() {
     // Define survey questions with keys
-    const ethnicitiesList: string[] = [
-        'Indian',
-        'Pakistani',
-        'Bangladeshi',
-        'Chinese',
-        'Any other Asian background',
-        'African',
-        'Caribbean',
-        'Any other Black, African or Caribbean background',
-        'White and Black Caribbean',
-        'White and Black African',
-        'White and Asian',
-        'Any other Mixed or multiple ethnic background',
-        'White English, Welsh, Scottish, Northern Irish or British',
-        'White Irish',
-        'White Gypsy or Irish Traveller',
-        'White Roma',
-        'Any other White background',
-        'Arab',
-        'Any other ethnic group',
-        'Prefer not to say',
-    ]
+    const optionsListNested = {
+        'Asian or Asian British': [
+            'Indian',
+            'Pakistani',
+            'Bangladeshi',
+            'Chinese',
+            'Any other Asian background',
+        ],
+        'Black, African, Caribbean or Black British': [
+            'African',
+            'Caribbean',
+            'Any other Black, African or Caribbean background',
+        ],
+        'Mixed': [
+            'Mixed or multiple ethnic groups',
+            'White and Black Caribbean',
+            'White and Black African',
+            'White and Asian',
+            'Any other Mixed or multiple ethnic background'
+        ],
+        'White': [
+            'White English, Welsh, Scottish, Northern Irish or British',
+            'White Irish',
+            'White Gypsy or Irish Traveller',
+            'White Roma',
+            'Any other White background',
+        ],
+        'Other ethnic group': [
+            'Arab',
+            'Any other ethnic group',
+        ]
+    }
+
 
     const questions: SurveyQuestion[] = [
         {
@@ -62,7 +73,7 @@ export default function Index() {
             key: 'Ethnicity',
             question: 'What is your ethnicity?',
             type: 'select',
-            options: ethnicitiesList
+            options: optionsListNested
         },
         {
             key: 'localTime',
