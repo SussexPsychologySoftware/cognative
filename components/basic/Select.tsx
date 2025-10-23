@@ -11,8 +11,11 @@ export default function Select({ value, options, onSelect }: { value: string, op
     //https://reactnative.dev/docs/modal
     const [modalVisible, setModalVisible] = useState(false);
 
+    const toggleModal = () => {
+        setModalVisible(!modalVisible)
+    }
+
     const handleSelect = (option: string) => {
-        console.log('Select changed to:', option);
         onSelect(option);
         setModalVisible(false)
     };
