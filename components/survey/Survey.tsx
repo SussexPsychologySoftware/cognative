@@ -4,7 +4,7 @@ import NumericInput from "@/components/inputs/NumericInput";
 import React from "react";
 import {SurveyQuestion} from '@/types/surveyQuestions';
 import MultilineTextInput from "@/components/inputs/MultilineTextInput";
-import RadioList from "@/components/survey/RadioList";
+import RadioList from "@/components/inputs/RadioList";
 import TimePicker from "@/components/inputs/TimePicker";
 import LikertRadioGrid from "@/components/survey/LikertRadioGrid";
 import SubmitButton from "@/components/inputs/SubmitButton";
