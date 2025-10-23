@@ -1,11 +1,10 @@
 import { MaterialIcons } from '@expo/vector-icons';
 import { colours } from "@/styles/appStyles";
-import {DimensionValue} from "react-native";
 
 export default function Radio({ selected, colour, size }: {
     selected: boolean,
     colour?: string,
-    size?: DimensionValue
+    size?: number
 }) {
     return(
             <MaterialIcons

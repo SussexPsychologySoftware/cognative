@@ -3,7 +3,7 @@ import { globalStyles } from "@/styles/appStyles";
 import Radio from "@/components/inputParts/Radio";
 import Labels from "@/components/inputParts/Labels";
 
-function RadioButton({ selected, onChange, size } : { selected: boolean, onChange: () => void, size?: DimensionValue }) {
+function RadioButton({ selected, onChange, size } : { selected: boolean, onChange: () => void, size?: number }) {
     return (
         <Pressable style={styles.radioButton} onPress={onChange}>
             <Radio
