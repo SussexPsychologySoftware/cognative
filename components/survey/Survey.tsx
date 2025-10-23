@@ -6,7 +6,7 @@ import {SurveyQuestion} from '@/types/surveyQuestions';
 import MultilineTextInput from "@/components/inputs/MultilineTextInput";
 import RadioList from "@/components/inputs/RadioList";
 import TimePicker from "@/components/inputs/TimePicker";
-import LikertRadioGrid from "@/components/survey/LikertRadioGrid";
+import LikertGrid from "@/components/survey/LikertGrid";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import Tickbox from "@/components/inputs/Tickbox";
 import Range from "@/components/inputs/Range";
@@ -121,7 +121,7 @@ export default function Survey({
                             });
                         }
 
-                        input = <LikertRadioGrid
+                        input = <LikertGrid
                             questions={question.statements}
                             options={question.options}
                             responses={responses[key]}

@@ -89,7 +89,7 @@ export function LikertQuestionRow(
     );
 }
 
-export default function LikertRadioGrid(
+export default function LikertGrid(
     {
         responses,
         questions,
