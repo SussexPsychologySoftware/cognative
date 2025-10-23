@@ -107,6 +107,7 @@ export default function Survey({
                             onChange={(newValue: number) => updateResponses(key, newValue)}
                             step={question.step}
                             showValue={true}
+                            labels={question.labels}
                         />;
                         break;
                     case 'likertGrid':

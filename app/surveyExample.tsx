@@ -100,7 +100,8 @@ export default function Index() {
             default: 5,
             min: 0,
             max: 10,
-            step: 1
+            step: 1,
+            labels: ['Content', 'Neither content nor uncontent', 'Uncontent']
         },
         {
             key: 'phq8',

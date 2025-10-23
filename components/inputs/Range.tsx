@@ -1,14 +1,16 @@
 import {StyleSheet, View, Text} from "react-native";
 import {globalStyles} from "@/styles/appStyles";
 import Slider from "@react-native-community/slider";
+import Labels from "@/components/inputParts/Labels";
 
-export default function Range({ value, min, max, step, showValue, onChange, style }: { value: number, min?: number, max?: number, step?: number, showValue?: boolean, onChange: (value: number) => void, style?: object }) {
+export default function Range({ value, min, max, step, showValue, onChange, style, labels }: { value: number, min?: number, max?: number, step?: number, showValue?: boolean, onChange: (value: number) => void, style?: object, labels?: string[] }) {
     // Note value/markers broken for steps between 0-1, floating point issues
     // TODO: implement my own simple version
     // TODO: add secondary labels
 
     return (
         <View style={styles.container}>
+            {labels && <Labels labels={labels}/>}
             <Slider
                 style={[styles.slider, style]}
                 value={value}
