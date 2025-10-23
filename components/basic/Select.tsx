@@ -19,7 +19,6 @@ export default function Select({ value, options, onSelect }: { value: string, op
         setModalVisible(false)
     };
 
-
     function SelectOptions({options}: {options: Record<string, string[]>}) {
         const groupedOptions = []
         for (const [groupName, groupOptions] of Object.entries(options)) {
@@ -28,10 +27,10 @@ export default function Select({ value, options, onSelect }: { value: string, op
                 return(
                     <TouchableOpacity
                         key={`${groupName}-${item}`}
-                        style={[styles.listOption, value===item ? {backgroundColor: 'grey' } : {backgroundColor: 'inherit' }]}
+                        style={[styles.listOption, value===item ? styles.selectedItemInList : {backgroundColor: 'inherit' }]}
                         onPress={() => handleSelect(item)}
                     >
-                        <Text style={styles.optionText}>{ item }</Text>
+                        <Text style={[styles.optionText,value===item ? styles.selectedItemInList : {backgroundColor: 'inherit' }]}>{ item }</Text>
                     </TouchableOpacity>
                 )
             })
@@ -97,6 +96,9 @@ const styles = StyleSheet.create({
         borderWidth: 1,
     },
     selectedItemTextContainer: {
+        // stop overflow
+        maxWidth: '90%',
+        maxHeight: '100%'
     },
     selectedItemText: {
         fontSize: 16,
@@ -155,11 +157,11 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         padding: 10,
-        backgroundColor: '#007AFF',
+        backgroundColor: 'grey',
         color: 'white',
     },
     listOption: {
-        marginLeft: 15,
+        paddingHorizontal: 15,
         borderBottomWidth: 1,
         borderBottomColor: '#ddd',
         paddingVertical: 10,
@@ -167,4 +169,8 @@ const styles = StyleSheet.create({
     optionText: {
         fontSize: 18,
     },
+    selectedItemInList: {
+        backgroundColor: '#007AFF',
+        color: 'white',
+    }
 });
