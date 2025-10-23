@@ -11,6 +11,7 @@ import SubmitButton from "@/components/inputs/SubmitButton";
 import Tickbox from "@/components/inputs/Tickbox";
 import Range from "@/components/inputs/Range";
 import Select from "@/components/inputs/Select";
+import LikertSingle from "@/components/inputs/LikertSingle";
 
 interface SurveyProps {
     questions: SurveyQuestion[];
@@ -109,6 +110,15 @@ export default function Survey({
                             showValue={true}
                             labels={question.labels}
                         />;
+                        break;
+                    case 'likertSingle':
+                        input = <LikertSingle
+                            value={responses[key]}
+                            options={question.options}
+                            labels={question.labels}
+                            oneWordPerLine={true}
+                            onChange={answer => updateResponses(key, answer)}
+                        />
                         break;
                     case 'likertGrid':
                         // Get invalid statements for this grid

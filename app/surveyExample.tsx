@@ -104,6 +104,13 @@ export default function Index() {
             labels: ['Content', 'Neither content nor uncontent', 'Uncontent']
         },
         {
+            key: 'confidence',
+            question: 'How confident would you be in recommending this treatment to a friend who experiences similar problems?',
+            options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+            labels: ['Not at all confident', 'Very confident'],
+            type: 'likertSingle'
+        },
+        {
             key: 'phq8',
             type: 'likertGrid',
             name: 'PHQ-8',

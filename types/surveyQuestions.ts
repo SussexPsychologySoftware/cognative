@@ -8,7 +8,8 @@ export type SurveyQuestionType =
     'likertGrid' |
     'checkbox' |
     'slider' |
-    'select';
+    'select' |
+    'likertSingle';
 
 export type SurveyDataType = string | number | boolean | Date | null | Record<string, string>;
 
@@ -67,6 +68,12 @@ export interface LikertGridQuestion extends BasicSurveyQuestion {
     statements: string[];
 }
 
-export type SingleInputQuestion = TextQuestion | TimeQuestion | SelectQuestion | CheckboxQuestion | SliderQuestion | RadioQuestion;
+export interface LikertSingleQuestion extends BasicSurveyQuestion {
+    type: 'likertSingle';
+    options: string[];
+    labels: string[];
+}
+
+export type SingleInputQuestion = TextQuestion | TimeQuestion | SelectQuestion | CheckboxQuestion | SliderQuestion | RadioQuestion | LikertSingleQuestion;
 
 export type SurveyQuestion = SingleInputQuestion | LikertGridQuestion;
