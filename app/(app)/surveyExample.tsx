@@ -13,9 +13,8 @@ import {useExperiment} from "@/context/ExperimentContext"; // 1. Import hook
 
 
 export default function SurveyExample() {
-    // Get a field called 'responseKey' from the todolist for saving and restoring the data
     const { responseKey, taskName } = useLocalSearchParams<{ responseKey: string, taskName: string }>();
-    const { state, completeTask } = useExperiment();
+    const { submitTaskData } = useExperiment();
 
     // Define survey questions with keys
     const optionsListNested = {
@@ -146,13 +145,13 @@ export default function SurveyExample() {
         resetSurvey,
         invalidQuestions
     } = useSurvey(questions,
+        // 3. THIS IS THE 'onSubmit' FUNCTION
         async (responses) => {
-            await DataService.saveData(responses, responseKey, state?.participantId);
             if (taskName) {
-                await completeTask(taskName);
+                await submitTaskData(taskName, responses);
             }
             if (router.canGoBack()) {
-                router.back();
+                router.back(); // Go back to the to-do list
             } else {
                 router.replace('/');
             }
