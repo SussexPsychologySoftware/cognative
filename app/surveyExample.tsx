@@ -162,7 +162,7 @@ export default function SurveyExample() {
                     caption='Images are displayed like this'
                 />
                 <Survey
-                    questions={questions.slice(0,6)}
+                    questions={questions.slice(0,8)}
                     responses={responses}
                     updateResponses={updateResponses}
                     invalidQuestions={invalidQuestions}
@@ -170,7 +170,7 @@ export default function SurveyExample() {
 
                 <Text style={globalStyles.sectionTitle}>Please fill out the following survey</Text>
                 <Survey
-                    questions={questions.slice(6)}
+                    questions={questions.slice(8)}
                     responses={responses}
                     updateResponses={updateResponses}
                     handleSurveySubmit={handleSurveySubmit}
