@@ -3,7 +3,6 @@ import Radio from "@/components/inputParts/Radio";
 import {globalStyles} from "@/styles/appStyles";
 
 export default function RadioList({options, value, onSelect, containerStyle} : { options: string[], value: string, onSelect: (option: string)=>void, containerStyle?: object }) {
-    // TODO: make the buttons next to the text
     const onOptionPress = (option: string) => {
         onSelect(option);
     }

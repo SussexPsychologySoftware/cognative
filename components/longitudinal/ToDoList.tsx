@@ -3,7 +3,6 @@ import {globalStyles} from "@/styles/appStyles";
 import {RelativePathString, router} from "expo-router";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import {TaskDisplayStatus} from "@/types/trackExperimentState";
-import {experimentDefinition} from "@/config/experimentDefinition";
 
 // TODO: add back in debounce
 function Activity({ prompt, buttonText, pathname, disabled, completed, params }: {
