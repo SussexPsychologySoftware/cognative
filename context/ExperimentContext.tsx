@@ -3,6 +3,7 @@ import { ExperimentDefinition } from '@/types/experimentConfig';
 import { ExperimentDisplayState, ExperimentState } from '@/types/trackExperimentState';
 import { experimentDefinition } from '@/config/experimentDefinition';
 import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
+import { DataService } from '@/services/data/DataService';
 import {router} from "expo-router";
 import {Alert} from "react-native";
 
@@ -15,6 +16,7 @@ interface ExperimentContextType {
     // Functions to change experiment state
     startExperiment: (condition: string, participantId?: string) => Promise<void>;
     completeTask: (taskName: string) => Promise<void>;
+    submitTaskData: (taskName: string, data: any) => Promise<void>;
     stopExperiment: () => Promise<void>;
     confirmAndStopExperiment: () => void;
 }
@@ -76,8 +78,30 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         // Update the React state, triggering a re-render
         setState(newState);
         setDisplayState(newDisplayState);
-
     }, []);
+
+    const submitTaskData = useCallback(async (taskName: string, data: any) => {
+        if (!state || displayState === null) {
+            console.error("Cannot submit data: no experiment state found.");
+            return;
+        }
+        const { participantId } = state;
+        const { experimentDay } = displayState;
+        // Build the key to submit data with - by default experiment day is used
+        // TODO: make this more flexible for non-longitudinal studies
+        const responseKey = `${taskName}_${experimentDay}`;
+        try {
+            // 1. Save the actual survey/task data
+            await DataService.saveData(data, responseKey, participantId);
+            // 2. Mark the task as complete
+            await completeTask(taskName);
+        } catch (e) {
+            console.error("Failed to submit task data:", e);
+            // We'll add better error handling in step 3
+            throw e; // Re-throw for now
+        }
+
+    }, [state, displayState, completeTask]);
 
     const startExperiment = useCallback(async (condition: string, participantId?: string) => {
         const newState = await ExperimentTracker.startExperiment(condition, participantId);
@@ -120,6 +144,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         displayState,
         startExperiment,
         completeTask,
+        submitTaskData,
         stopExperiment,
         confirmAndStopExperiment
     };
