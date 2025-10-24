@@ -23,7 +23,9 @@ export default function Select({ value, options, onSelect }: { value: string, op
         const groupedOptions = []
         for (const [groupName, groupOptions] of Object.entries(options)) {
             const groupTitle =
-                <TouchableOpacity activeOpacity={1}>
+                <TouchableOpacity
+                    activeOpacity={1}
+                >
                     <Text
                         pointerEvents="none"
                         key={groupName}

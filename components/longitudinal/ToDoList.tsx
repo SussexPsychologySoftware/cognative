@@ -56,7 +56,6 @@ export default function ToDoList({ taskStates, data }: { taskStates: TaskDisplay
     return (
         <View style={styles.todoList}>
             {
-
                 taskStates.length > 0 && taskStates.map(task => {
                     // Create params TODO: this feels messy and not maintainable
                     const params: Record<string, any> = { ...data }; // (includes day, condition)

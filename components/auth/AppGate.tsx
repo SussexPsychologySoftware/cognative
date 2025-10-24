@@ -19,21 +19,27 @@ export function AppGate({ children }: { children: React.ReactNode }) {
         const inOnboardingGroup = segments[0] === '(onboarding)';
 
         if (!inExperiment && !inOnboardingGroup) {
-            // User is not signed in and not in the onboarding flow.
-            // Redirect them to the onboarding start page.
+            // Not setup but in onboarding flow - redirect to onboarding start page.
             router.replace('/(onboarding)/welcome');
         } else if (inExperiment && inOnboardingGroup) {
-            // User is signed in but somehow landed in the onboarding flow.
-            // Redirect them to the app's home page.
+            // User is setup but landed in onboarding flow, redirect to homepage.
             router.replace('/');
         }
     }, [isLoading, state, segments]);
 
     // If loading, show a blank view or a global spinner
     if (isLoading) {
-        return <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}><Text>Loading...</Text></View>;
+        return (
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+                <Text>Loading...</Text>
+            </View>
+        )
     }
 
-    // If we are not loading and navigation is settled, show the children
-    return <>{children}</>;
+    // If not loading and navigation finished, show children
+    return (
+        <>
+            {children}
+        </>
+    )
 }
