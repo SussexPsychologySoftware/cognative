@@ -11,6 +11,7 @@ interface ExperimentContextType {
     state: ExperimentState | null;            // The core stored state
     displayState: ExperimentDisplayState | null; // The calculated display state
     isLoading: boolean;                       // For loading screens
+    startExperiment: (condition: string, participantId?: string) => Promise<void>;
     completeTask: (taskName: string) => Promise<void>;
 }
 
@@ -41,22 +42,16 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         const loadExperimentStatus = async () => {
             try {
                 let experimentState = await ExperimentTracker.getState();
-                if (!experimentState) {
-                    // TODO: fix loading of participant ID and condition
-                    experimentState = await ExperimentTracker.startExperiment('control');
+                if (experimentState) { // state remains null if it doesn't exist
+                    const newDisplayState = ExperimentTracker.calculateDisplayState(experimentState);
+
+                    if (newDisplayState.isExperimentComplete) {
+                        router.replace('/end'); // TODO: consider a more flexible restoration router routeUsingState()
+                        return;
+                    }
+                    setState(experimentState);
+                    setDisplayState(newDisplayState);
                 }
-
-                const newDisplayState = ExperimentTracker.calculateDisplayState(experimentState);
-
-                // TODO: useRestore here??
-                if (newDisplayState.isExperimentComplete) {
-                    router.replace('/end');
-                    return;
-                }
-
-                // Set the state for the provider
-                setState(experimentState);
-                setDisplayState(newDisplayState);
 
             } catch (error) {
                 console.error("Error loading experiment status:", error);
@@ -78,7 +73,14 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         setState(newState);
         setDisplayState(newDisplayState);
 
-    }, []); // Empty dependency array, it uses static functions
+    }, []);
+
+    const startExperiment = useCallback(async (condition: string, participantId?: string) => {
+        const newState = await ExperimentTracker.startExperiment(condition, participantId);
+        const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
+        setState(newState);
+        setDisplayState(newDisplayState);
+    }, []);
 
     // Create object to pass to context
     const value: ExperimentContextType = {
@@ -86,6 +88,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         definition,
         state,
         displayState,
+        startExperiment,
         completeTask
     };
 
