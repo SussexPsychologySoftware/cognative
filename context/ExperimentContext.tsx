@@ -88,8 +88,8 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         const { participantId } = state;
         const { experimentDay } = displayState;
         // Build the key to submit data with - by default experiment day is used
-        // TODO: make this more flexible for non-longitudinal studies
-        const responseKey = `${taskName}_${experimentDay}`;
+        // TODO: make this more flexible - issue with
+        const responseKey = ExperimentTracker.constructResponseKey(taskName, experimentDay)
         try {
             // 1. Save the actual survey/task data
             await DataService.saveData(data, responseKey, participantId);

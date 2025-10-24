@@ -3,6 +3,7 @@ import {globalStyles} from "@/styles/appStyles";
 import {RelativePathString, router} from "expo-router";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import {TaskDisplayStatus} from "@/types/trackExperimentState";
+import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
 
 // TODO: add back in debounce
 function Activity({ prompt, buttonText, pathname, disabled, completed, params }: {
@@ -59,12 +60,10 @@ export default function ToDoList({ taskStates, data }: { taskStates: TaskDisplay
                 taskStates.length > 0 && taskStates.map(task => {
                     // Create params TODO: this feels messy and not maintainable
                     const params: Record<string, any> = { ...data }; // (includes day, condition)
-                    if (data.day) {
-                        // TODO: day is available from useExperiment so this feels a bit messy - maybe construct in provider.
-                        params.responseKey = `${task.definition.id}_${data.day}`;
-                    } else {
-                        params.responseKey = task.definition.id
-                    }
+                    params.responseKey = ExperimentTracker.constructResponseKey(
+                        task.definition.name,
+                        data.day
+                    );
                     params.taskName = task.definition.name; // Pass the name for completion tracking
                     return (
                         <Activity
