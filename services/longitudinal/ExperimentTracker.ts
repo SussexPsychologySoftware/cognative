@@ -162,14 +162,6 @@ export class ExperimentTracker {
         await this.saveState(state);
     }
 
-    static onTaskPress(taskName: string) {
-        const taskDef = this.getTaskDefinition(taskName);
-
-        if (taskDef) {
-            router.push(taskDef.path_to_screen as RelativePathString);
-        }
-    }
-
     // ============ Date Utilities ===========
     static calculateDaysPassed(eventDate: string): number {
         if (!eventDate) return 0;
