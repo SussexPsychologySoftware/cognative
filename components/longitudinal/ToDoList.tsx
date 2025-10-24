@@ -12,6 +12,7 @@ function Activity({ prompt, buttonText, route, disabled, completed }: {
     route: RelativePathString,
     disabled: boolean,
     completed?: boolean
+    params?: Record<string, any>
 }){
     return (
         <View style={[

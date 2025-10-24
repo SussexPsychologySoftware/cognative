@@ -6,12 +6,11 @@ import {DataService} from "@/services/data/DataService";
 import {experimentDefinition} from "@/config/experimentDefinition";
 import {TaskDefinition} from "@/types/experimentConfig";
 
+// ============ State Management ============
 // TODO: some of this is a bit high level - maybe needs to be split into 'diary study'  and 'todo list' and 'experiment state' etc?
 export class ExperimentTracker {
     private static readonly STORAGE_KEY = 'experimentState'; // Storage
     private static readonly TEST_MINUS_DAYS_FROM_START = 0; // NEEDS 2 to get 1 day diff?
-
-    // ============ State Management ============
 
     // ============ START EXPERIMENT ============
 
@@ -145,6 +144,7 @@ export class ExperimentTracker {
                 name: taskDef.name,
                 prompt: taskDef.prompt,
                 path_to_screen: taskDef.path_to_screen,
+                params: taskDef.params,
                 isAllowed: allPreviousRequiredTasksComplete,
                 completed: taskCompleted,
             });

@@ -17,6 +17,7 @@ export interface TaskDisplayStatus { // This is essentially a to-do list item
     name: string;
     prompt?: string;
     path_to_screen: string;
+    params?: Record<string, any>;
 
     // Actual status stuff
     // shouldShow: boolean; // redundant

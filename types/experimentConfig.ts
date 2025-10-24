@@ -7,6 +7,7 @@ export interface TaskDefinition {
     show_for_conditions: string[]; // Empty array means show for all conditions
     datapipe_id: string;
     allow_edit: boolean;
+    params?: Record<string, any>;
     // Other ideas
     // required: true,
     // showWhen?: (context: object) => {
