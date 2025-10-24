@@ -3,28 +3,31 @@ import {
     KeyboardAvoidingView,
     ScrollView,
     Platform,
-    View, StyleSheet
+    StyleSheet
 } from 'react-native';
-import {Edges, SafeAreaView} from "react-native-safe-area-context";
+import { SafeAreaView} from "react-native-safe-area-context";
 import { StatusBar } from 'expo-status-bar';
 import { Stack } from 'expo-router';
 
 export const StandardView = ({
-                                  children,
-                                  statusBarStyle = 'dark',
-                                  keyboardBehavior = Platform.OS === 'ios' ? 'padding' : 'height',
-                                  headerShown = true,
-                                  contentContainerStyle,
-                                  safeAreaStyle,
+                                 children,
+                                 statusBarStyle = 'dark',
+                                 keyboardBehavior = Platform.OS === 'ios' ? 'padding' : 'height',
+                                 headerShown = true,
+                                 safeAreaStyle,
+                                 keyboardAvoidingViewStyle,
+                                 contentContainerStyle,
+                                 scrollViewStyle,
                               }:
                               {
                                   children?: any,
                                   statusBarStyle?: 'light'|'dark',
                                   keyboardBehavior?: 'padding'|'height'|'position',
-                                  contentContainerStyle?: object,
-                                  style?: object,
-                                  safeAreaStyle?: object,
                                   headerShown?: boolean,
+                                  safeAreaStyle?: object,
+                                  keyboardAvoidingViewStyle?: object,
+                                  contentContainerStyle?: object,
+                                  scrollViewStyle?: object,
                               }) => {
 
     return (
@@ -41,15 +44,15 @@ export const StandardView = ({
             <StatusBar style={statusBarStyle}/>
             <KeyboardAvoidingView
                 behavior={keyboardBehavior}
-                style={styles.keyboardAvoidingView}
+                style={[styles.keyboardAvoidingView, keyboardAvoidingViewStyle]}
             >
-            <ScrollView
-                contentContainerStyle={[contentContainerStyle, styles.scrollViewContentContainer]}
-                style={styles.scrollView}
-                keyboardShouldPersistTaps="handled"
-            >
-                {children}
-            </ScrollView>
+                <ScrollView
+                    contentContainerStyle={[styles.scrollViewContentContainer, contentContainerStyle]}
+                    style={[styles.scrollView, scrollViewStyle]}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    {children}
+                </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>
     );
