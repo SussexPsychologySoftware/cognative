@@ -1,17 +1,17 @@
 import {StyleSheet, View, Text} from "react-native";
 import {globalStyles} from "@/styles/appStyles";
-import {Link, RelativePathString, router} from "expo-router";
-import React, {useCallback} from "react";
+import {RelativePathString, router} from "expo-router";
 import SubmitButton from "@/components/inputs/SubmitButton";
-import {ExperimentDisplayState, ExperimentState, TaskDisplayStatus} from "@/types/trackExperimentState";
+import {TaskDisplayStatus} from "@/types/trackExperimentState";
+import {experimentDefinition} from "@/config/experimentDefinition";
 
 // TODO: add back in debounce
-function Activity({ prompt, buttonText, route, disabled, completed }: {
+function Activity({ prompt, buttonText, pathname, disabled, completed, params }: {
     prompt?: string,
     buttonText: string,
-    route: RelativePathString,
+    pathname: RelativePathString,
     disabled: boolean,
-    completed?: boolean
+    completed?: boolean,
     params?: Record<string, any>
 }){
     return (
@@ -42,7 +42,9 @@ function Activity({ prompt, buttonText, route, disabled, completed }: {
             <SubmitButton
                 disabled={disabled} // Disable button while routing
                 text={buttonText}
-                onPress={()=>{router.push(route)}}
+                onPress={()=>{
+                    router.push({pathname, params})
+                }}
                 style={styles.activityButton}
             />
         </View>
