@@ -43,7 +43,14 @@ export default function Index() {
         <StandardView safeAreaStyle={{padding: 30}}>
             <Text>TO DO list:</Text>
             {
-                displayState && <ToDoList taskStates={displayState.tasks}/>
+                displayState &&
+                <ToDoList
+                    taskStates={displayState.tasks}
+                    data={{
+                        day: displayState.experimentDay,
+                        condition: displayState.currentCondition,
+                    }}
+                />
             }
         </StandardView>
     );
