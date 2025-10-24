@@ -70,15 +70,46 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
     }, []); // This runs once on app load
 
     const completeTask = useCallback(async (taskName: string) => {
-        await ExperimentTracker.setTaskCompleted(taskName); // Complete the task
-        const newState = await ExperimentTracker.getState(); // Grab new state
-        if (!newState) return; // Shouldn't happen, but good to check
-        // Recalculate the display state
-        const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
-        // Update the React state, triggering a re-render
+        // Get current states using setState to ensure up to date (between rerenders?)
+        if (!state || !displayState) {
+            console.warn("Cannot complete task: state is not loaded.");
+            return;
+        }
+
+        // 2. Create the new state *optimistically*
+        const newCompletionDate = new Date().toISOString();
+
+        // Update core state
+        const newState: ExperimentState = {
+            ...state, // No error here
+            tasksLastCompletionDate: {
+                ...state.tasksLastCompletionDate,
+                [taskName]: newCompletionDate,
+            },
+        };
+
+        // Update display state - faster than recalculating
+        const newDisplayState: ExperimentDisplayState = {
+            ...displayState, // No error here
+            tasks: displayState.tasks.map(task =>
+                task.definition.name === taskName
+                    ? { ...task, completed: true }
+                    : task
+            ),
+            // TODO: Update 'allTasksCompleteToday'
+        };
+
+        // Set react states
         setState(newState);
         setDisplayState(newDisplayState);
-    }, []);
+
+        // UI already updated so fire and forget saving task
+        ExperimentTracker.setTaskCompleted(taskName).catch(err => {
+            console.error("Failed to save task completion to storage:", err);
+            // TODO: consider reverting state on error
+        });
+
+    }, [displayState, state]);
 
     const submitTaskData = useCallback(async (taskName: string, data: any) => {
         if (!state || displayState === null) {
