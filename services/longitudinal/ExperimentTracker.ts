@@ -17,7 +17,7 @@ export class ExperimentTracker {
     private static createInitialState(participantId: string, currentCondition: string): ExperimentState {
         const emptyTaskStates = Object.fromEntries(
             experimentDefinition.tasks.map((task, index)=> {
-            return [task.name, ''];
+            return [task.id, ''];
         }))
 
         console.log(emptyTaskStates)
@@ -110,7 +110,7 @@ export class ExperimentTracker {
         let allPreviousRequiredTasksComplete = true;
 
         for (const taskDef of visibleTasks) {
-            const taskCompletionDate = taskCompletionDates[taskDef.name];
+            const taskCompletionDate = taskCompletionDates[taskDef.id];
             const taskCompleted = this.happenedToday(taskCompletionDate);
 
             // Task is allowed if all previous required tasks are done
@@ -155,20 +155,21 @@ export class ExperimentTracker {
 
 
     // ============ Task Completion Recording ============
-    static async setTaskCompleted(task: string): Promise<void> {
+    static async setTaskCompleted(taskId: string): Promise<void> {
         const state = await this.getState();
         if(!state) return
-        state.tasksLastCompletionDate[task] = new Date().toISOString();
+        state.tasksLastCompletionDate[taskId] = new Date().toISOString();
         await this.saveState(state);
     }
 
-    static constructResponseKey(taskName: string, day: number | null | undefined): string {
+    static constructResponseKey(taskId: string, day: number | null | undefined): string {
         if (day !== null && day !== undefined) {
             // For longitudinal tasks
-            return `${taskName}_${day}`;
+            console.log(`${taskId}_${day}`)
+            return `${taskId}_${day}`;
         }
         // For one-off tasks (e.g., initial demographics survey)
-        return taskName;
+        return taskId;
     }
 
     // ============ Date Utilities ===========

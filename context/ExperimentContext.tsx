@@ -19,7 +19,7 @@ interface ExperimentContextType {
     actionError: string | null;
     // Functions to change experiment state
     startExperiment: (condition: string, participantId?: string) => Promise<void>;
-    completeTask: (taskName: string) => Promise<void>;
+    completeTask: (taskId: string) => Promise<void>;
     submitTaskData: (taskId: string, data: any, datapipeId: string) => Promise<void>;
     stopExperiment: () => Promise<void>;
     confirmAndStopExperiment: () => void;
@@ -91,7 +91,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         }
     }, []);
 
-    const completeTask = useCallback(async (taskName: string) => {
+    const completeTask = useCallback(async (taskId: string) => {
         // Get current states using setState to ensure up to date (between rerenders?)
         if (!state || !displayState) {
             console.warn("Cannot complete task: state is not loaded.");
@@ -106,7 +106,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             ...state, // No error here
             tasksLastCompletionDate: {
                 ...state.tasksLastCompletionDate,
-                [taskName]: newCompletionDate,
+                [taskId]: newCompletionDate,
             },
         };
 
@@ -114,7 +114,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         const newDisplayState: ExperimentDisplayState = {
             ...displayState, // No error here
             tasks: displayState.tasks.map(task =>
-                task.definition.name === taskName
+                task.definition.id === taskId
                     ? { ...task, completed: true }
                     : task
             ),
@@ -126,7 +126,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         setDisplayState(newDisplayState);
 
         // UI already updated so fire and forget saving task
-        ExperimentTracker.setTaskCompleted(taskName).catch(err => {
+        ExperimentTracker.setTaskCompleted(taskId).catch(err => {
             console.error("Failed to save task completion to storage:", err);
             // TODO: consider reverting state on error
         });
@@ -157,7 +157,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             throw e; // Re-throw so useSurvey's 'handleSurveySubmit' can catch it
         }
 
-    }, [state, displayState, completeTask]);
+    }, [state, completeTask]);
 
     const stopExperiment = useCallback(async () => {
         setIsActionLoading(true);
