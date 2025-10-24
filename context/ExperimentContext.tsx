@@ -1,4 +1,4 @@
-import {createContext, ReactNode, useContext, useEffect, useState} from 'react';
+import {createContext, ReactNode, useCallback, useContext, useEffect, useState} from 'react';
 import { ExperimentDefinition } from '@/types/experimentConfig';
 import { ExperimentDisplayState, ExperimentState } from '@/types/trackExperimentState';
 import { experimentDefinition } from '@/config/experimentDefinition';
@@ -11,6 +11,7 @@ interface ExperimentContextType {
     state: ExperimentState | null;            // The core stored state
     displayState: ExperimentDisplayState | null; // The calculated display state
     isLoading: boolean;                       // For loading screens
+    completeTask: (taskName: string) => Promise<void>;
 }
 
 // init context as undefined
@@ -67,12 +68,25 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         void loadExperimentStatus();
     }, []); // This runs once on app load
 
+    const completeTask = useCallback(async (taskName: string) => {
+        await ExperimentTracker.setTaskCompleted(taskName); // Complete the task
+        const newState = await ExperimentTracker.getState(); // Grab new state
+        if (!newState) return; // Shouldn't happen, but good to check
+        // Recalculate the display state
+        const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
+        // Update the React state, triggering a re-render
+        setState(newState);
+        setDisplayState(newDisplayState);
+
+    }, []); // Empty dependency array, it uses static functions
+
     // Create object to pass to context
     const value: ExperimentContextType = {
         isLoading,
         definition,
         state,
         displayState,
+        completeTask
     };
 
     // return provider
