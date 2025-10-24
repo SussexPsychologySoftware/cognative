@@ -12,7 +12,7 @@ import {useExperiment} from "@/context/ExperimentContext"; // 1. Import hook
 
 
 export default function SurveyExample() {
-    const { responseKey, taskName, datapipeId } = useLocalSearchParams<{ responseKey: string, taskName: string, datapipeId: string }>();
+    const { responseKey, taskId, datapipeId } = useLocalSearchParams<{ responseKey: string, taskId: string, datapipeId: string }>();
     const { submitTaskData } = useExperiment();
 
     // Define survey questions with keys
@@ -135,8 +135,8 @@ export default function SurveyExample() {
     ];
 
     const onSubmit = async (responses: object) => {
-        if (taskName) {
-            await submitTaskData(taskName, responses, datapipeId);
+        if (taskId) {
+            await submitTaskData(taskId, responses, datapipeId);
         }
         if (router.canGoBack()) {
             router.back(); // Go back to the to-do list
@@ -146,7 +146,7 @@ export default function SurveyExample() {
     }
 
     const {
-        responses, // Contains responses as {fieldKey: "response"} made from survey definition
+        responses, // Contains responses as {fieldKey: "response"} made from task definition
         updateResponses, // Function to update responses
         handleSurveySubmit, // Function to run when submitting responses
         warning, // Text listing first incorrect question in survey

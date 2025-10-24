@@ -60,7 +60,7 @@ export default function ToDoList({ taskStates, data }: { taskStates: TaskDisplay
                     // Create params TODO: this feels messy and not maintainable
                     const params: Record<string, any> = { ...data }; // (includes day, condition)
                     params.responseKey = ExperimentTracker.constructResponseKey(
-                        task.definition.name,
+                        task.definition.id,
                         data.day
                     );
                     params.taskName = task.definition.name; // Pass the name for completion tracking

@@ -20,7 +20,7 @@ interface ExperimentContextType {
     // Functions to change experiment state
     startExperiment: (condition: string, participantId?: string) => Promise<void>;
     completeTask: (taskName: string) => Promise<void>;
-    submitTaskData: (taskName: string, data: any, datapipeId: string) => Promise<void>;
+    submitTaskData: (taskId: string, data: any, datapipeId: string) => Promise<void>;
     stopExperiment: () => Promise<void>;
     confirmAndStopExperiment: () => void;
 }
@@ -133,7 +133,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
 
     }, [displayState, state]);
 
-    const submitTaskData = useCallback(async (taskName: string, data: any, datapipeID?: string) => {
+    const submitTaskData = useCallback(async (taskId: string, data: any, datapipeID?: string) => {
         if (!state || displayState === null) {
             // Note this is state issue not action error
             console.error("Cannot submit data: no experiment state found.");
@@ -146,10 +146,11 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         const { experimentDay } = displayState;
         // Build the key to submit data with - by default experiment day is used
         // TODO: make this more flexible - issue with non-longitudinal studies
-        const responseKey = ExperimentTracker.constructResponseKey(taskName, experimentDay)
+        const responseKey = ExperimentTracker.constructResponseKey(taskId, experimentDay)
+        console.log({responseKey})
         try {
             await DataService.saveData(data, responseKey, datapipeID, participantId);
-            await completeTask(taskName); // 'optimistic' function - updates state and uses that, expects saving will be fine.
+            await completeTask(taskId); // 'optimistic' function - updates state and uses that, expects saving will be fine.
         } catch (e) {
             console.error("Failed to submit task data:", e);
             setActionError(`Failed to submit data\n${e}`);
