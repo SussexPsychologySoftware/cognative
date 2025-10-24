@@ -52,31 +52,6 @@ export class ExperimentTracker {
         // TODO: resetExperiment() also needed?
         await DataService.deleteData(this.STORAGE_KEY)
         await Notifications.cancelAllScheduledNotificationsAsync();
-        router.replace('/end')
-    }
-
-    static async stopExperimentConfirmation(): Promise<void> {
-        Alert.alert(
-            'WARNING',
-            "Experiment progress will be reset",
-            [
-                {
-                    text: 'Reset experiment',
-                    onPress: async () => {
-                        await this.stopExperiment()
-                        router.push('/'); // Change this to 'end' or something...
-                    },
-                    style: "default"
-                },
-                {
-                    text: 'Cancel',
-                    style: 'cancel',
-                },
-            ],
-            {
-                cancelable: true,
-            },
-        );
     }
 
     // ============ SET STATE ============
