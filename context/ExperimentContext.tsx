@@ -4,6 +4,7 @@ import { ExperimentDisplayState, ExperimentState } from '@/types/trackExperiment
 import { experimentDefinition } from '@/config/experimentDefinition';
 import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
 import {router} from "expo-router";
+import {Alert} from "react-native";
 
 // Define context type
 interface ExperimentContextType {
@@ -11,8 +12,11 @@ interface ExperimentContextType {
     state: ExperimentState | null;            // The core stored state
     displayState: ExperimentDisplayState | null; // The calculated display state
     isLoading: boolean;                       // For loading screens
+    // Functions to change experiment state
     startExperiment: (condition: string, participantId?: string) => Promise<void>;
     completeTask: (taskName: string) => Promise<void>;
+    stopExperiment: () => Promise<void>;
+    confirmAndStopExperiment: () => void;
 }
 
 // init context as undefined
@@ -82,6 +86,32 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         setDisplayState(newDisplayState);
     }, []);
 
+    const stopExperiment = useCallback(async () => {
+        await ExperimentTracker.stopExperiment();
+        setState(null);
+        setDisplayState(null);
+        // App gate should automatically redirect to welcome page
+    }, []);
+
+    const confirmAndStopExperiment = useCallback(() => {
+        Alert.alert(
+            'WARNING',
+            "Experiment progress will be reset. Are you sure?",
+            [
+                {
+                    text: 'Reset experiment',
+                    onPress: () => void stopExperiment(),
+                    style: "destructive"
+                },
+                {
+                    text: 'Cancel',
+                    style: 'cancel',
+                },
+            ],
+            { cancelable: true }
+        );
+    }, [stopExperiment]); // Add dependency
+
     // Create object to pass to context
     const value: ExperimentContextType = {
         isLoading,
@@ -89,7 +119,9 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         state,
         displayState,
         startExperiment,
-        completeTask
+        completeTask,
+        stopExperiment,
+        confirmAndStopExperiment
     };
 
     // return provider
