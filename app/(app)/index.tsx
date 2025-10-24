@@ -19,7 +19,7 @@ export default function Index() {
     }
 
     return (
-        <StandardView safeAreaStyle={{padding: 30}}>
+        <StandardView contentContainerStyle={{margin: 10, paddingTop: 30}}>
             <Text>TO DO list: Day {displayState.experimentDay} / {definition.total_days}</Text>
 
             <ToDoList
