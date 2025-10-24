@@ -5,6 +5,7 @@ import ToDoList from "@/components/longitudinal/ToDoList";
 import { useExperiment } from "@/context/ExperimentContext";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
+import PageList from "@/components/debug/PageList";
 
 export default function Index() {
     const { displayState, isLoading, definition, confirmAndStopExperiment } = useExperiment();
@@ -30,6 +31,7 @@ export default function Index() {
                 }}
             />
             <SubmitButton text='Reset participant' onPress={confirmAndStopExperiment} style={{margin: 10}}/>
+            <PageList/>
         </StandardView>
     );
 }
