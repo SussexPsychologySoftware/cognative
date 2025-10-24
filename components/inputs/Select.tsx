@@ -25,10 +25,10 @@ export default function Select({ value, options, onSelect }: { value: string, op
             const groupTitle =
                 <TouchableOpacity
                     activeOpacity={1}
+                    key={groupName}
                 >
                     <Text
                         pointerEvents="none"
-                        key={groupName}
                         style={styles.groupTitle}
                     >
                         {groupName}
