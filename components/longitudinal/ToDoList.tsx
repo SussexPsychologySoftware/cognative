@@ -66,6 +66,7 @@ export default function ToDoList({ taskStates, data }: { taskStates: TaskDisplay
                     } else {
                         params.responseKey = task.definition.id
                     }
+                    params.taskName = task.definition.name; // Pass the name for completion tracking
                     return (
                         <Activity
                             key={task.definition.id}
