@@ -7,15 +7,15 @@ import {useSurvey} from "@/hooks/useSurvey";
 import {SurveyQuestion} from '@/types/surveyQuestions'
 import Survey from "@/components/survey/Survey";
 import Picture from "@/components/media/Picture";
-import { useLocalSearchParams } from 'expo-router';
+import {router, useLocalSearchParams} from 'expo-router';
 import {DataService} from "@/services/data/DataService";
 import {useExperiment} from "@/context/ExperimentContext"; // 1. Import hook
 
 
 export default function SurveyExample() {
     // Get a field called 'responseKey' from the todolist for saving and restoring the data
-    const { responseKey } = useLocalSearchParams<{ responseKey: string }>();
-    const { state } = useExperiment();
+    const { responseKey, taskName } = useLocalSearchParams<{ responseKey: string, taskName: string }>();
+    const { state, completeTask } = useExperiment();
 
     // Define survey questions with keys
     const optionsListNested = {
@@ -146,10 +146,18 @@ export default function SurveyExample() {
         resetSurvey,
         invalidQuestions
     } = useSurvey(questions,
-            async (responses) => {
-                await DataService.saveData(responses, responseKey, state?.participantId)
-            }, responseKey
-        );
+        async (responses) => {
+            await DataService.saveData(responses, responseKey, state?.participantId);
+            if (taskName) {
+                await completeTask(taskName);
+            }
+            if (router.canGoBack()) {
+                router.back();
+            } else {
+                router.replace('/');
+            }
+        }, responseKey
+    );
 
     return (
         <StandardView headerShown={true}>
