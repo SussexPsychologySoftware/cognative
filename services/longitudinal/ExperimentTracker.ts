@@ -167,6 +167,7 @@ export class ExperimentTracker {
         const taskDisplayStatuses = this.calculateTaskDisplayStatuses(visibleTasks, state.tasksLastCompletionDate);
 
         return {
+            participantId: state.participantId??'',
             experimentDay,
             currentCondition,
             isExperimentComplete: this.hasExperimentEnded(state),

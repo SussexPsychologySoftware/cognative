@@ -26,6 +26,7 @@ export interface TaskDisplayStatus { // This is essentially a to-do list item
 }
 
 export interface ExperimentDisplayState {
+    participantId: string;
     experimentDay: number; // Day 0, 1, 2, etc.
     currentCondition: string;
     isExperimentComplete: boolean;
