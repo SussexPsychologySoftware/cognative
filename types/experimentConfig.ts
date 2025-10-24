@@ -1,3 +1,5 @@
+// TODO: move this into trackExperimentState and rename to experiment.ts
+
 export interface TaskDefinition {
     id: string;
     name: string;
