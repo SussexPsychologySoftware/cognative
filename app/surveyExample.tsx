@@ -1,5 +1,4 @@
-import {View, StyleSheet, Text, AppState} from "react-native";
-import React, {useCallback, useEffect, useMemo, useState} from "react";
+import {View, StyleSheet, Text} from "react-native";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import {StandardView} from "@/components/layout/StandardView";
 import {StatusBar} from "expo-status-bar";
@@ -9,12 +8,14 @@ import {SurveyQuestion} from '@/types/surveyQuestions'
 import Survey from "@/components/survey/Survey";
 import Picture from "@/components/media/Picture";
 import { useLocalSearchParams } from 'expo-router';
-import {DataService} from "@/services/data/DataService"; // 1. Import hook
+import {DataService} from "@/services/data/DataService";
+import {useExperiment} from "@/context/ExperimentContext"; // 1. Import hook
 
 
 export default function SurveyExample() {
     // Get a field called 'responseKey' from the todolist for saving and restoring the data
     const { responseKey } = useLocalSearchParams<{ responseKey: string }>();
+    const { state } = useExperiment();
 
     // Define survey questions with keys
     const optionsListNested = {
@@ -145,10 +146,10 @@ export default function SurveyExample() {
         resetSurvey,
         invalidQuestions
     } = useSurvey(questions,
-        async (responses) => {
-            await DataService.saveData(responses, responseKey)
-        }, responseKey
-    );
+            async (responses) => {
+                await DataService.saveData(responses, responseKey, state?.participantId)
+            }, responseKey
+        );
 
     return (
         <StandardView headerShown={true}>

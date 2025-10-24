@@ -2,6 +2,7 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 import {Alert} from "react-native";
 import {SurveyQuestion} from '@/types/surveyQuestions'
 import {DataService} from "@/services/data/DataService";
+import { useExperiment } from "@/context/ExperimentContext";
 
 // Initialize responses from survey definition
 function initializeResponses(questions: SurveyQuestion[]): Record<string, any> {
@@ -35,6 +36,8 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
     const [warning, setWarning] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [invalidQuestions, setInvalidQuestions] = useState<Set<string>>(new Set());
+
+    const { state } = useExperiment();
 
     // Restore responses on mount if restoreKey is provided
     useEffect(() => {
@@ -184,7 +187,13 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
 
             setWarning('');
 
-            if (onSubmit) await onSubmit(responses);
+            if (onSubmit) {
+                await onSubmit(responses);
+            } else if (restoreKey && state?.participantId) {
+                // TODO: add save by default
+                console.log('Participant ID is:', state?.participantId);
+            }
+
             Alert.alert('Submitted', JSON.stringify(responses, null, 2));
             return true;
         } catch (error) {
@@ -194,7 +203,7 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
         } finally {
             setIsSubmitting(false);
         }
-    }, [isSubmitting, onSubmit, responses, validateResponses]);
+    }, [isSubmitting, onSubmit, responses, restoreKey, state?.participantId, validateResponses]);
 
     return {
         responses,
