@@ -7,7 +7,7 @@ import SubmitButton from "@/components/inputs/SubmitButton";
 import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
 
 export default function Index() {
-    const { displayState, isLoading, definition } = useExperiment();
+    const { displayState, isLoading, definition, confirmAndStopExperiment } = useExperiment();
 
     if(isLoading || !displayState) {
         // TODO: put loading spinner
@@ -29,7 +29,7 @@ export default function Index() {
                     condition: displayState.currentCondition,
                 }}
             />
-            <SubmitButton text='Reset participant' onPress={async () => {await ExperimentTracker.stopExperimentConfirmation()}}/>
+            <SubmitButton text='Reset participant' onPress={confirmAndStopExperiment} style={{margin: 10}}/>
         </StandardView>
     );
 }
