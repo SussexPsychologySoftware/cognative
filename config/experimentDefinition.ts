@@ -2,8 +2,9 @@ import {ExperimentDefinition} from "@/types/experimentConfig";
 
 export const experimentDefinition: ExperimentDefinition = {
     name: 'Experiment',
-    total_days: 14, //
+    total_days: 14,
     cutoff_hour: 4,
+    // TODO: add conditions as a nested interface {'conditions': string[], repeated_or_independent: '', datapipe_id: ''}
     conditions: ['control', 'monaural', 'binaural'],
     repeated_or_independent_conditions: 'repeated',
     condition_datapipe_id: 'dOS0nQ93xCSV',

@@ -11,14 +11,12 @@ interface ExperimentContextType {
     state: ExperimentState | null;            // The core stored state
     displayState: ExperimentDisplayState | null; // The calculated display state
     isLoading: boolean;                       // For loading screens
-    // TODO: add actions
 }
 
-// 2. CREATE THE CONTEXT
 // init context as undefined
 const ExperimentContext = createContext<ExperimentContextType | undefined>(undefined);
 
-// Easy way to use context here, gives custom error
+// Easy way to use this context here, gives custom error
 export function useExperiment() {
     const context = useContext(ExperimentContext);
     if (context === undefined) {
@@ -27,8 +25,7 @@ export function useExperiment() {
     return context;
 }
 
-// TODO add <ExperimentProvider> component
-
+// Component to wrap the app root in.
 export function ExperimentProvider({ children }: { children: ReactNode }) {
     // States for loading experiment state
     const [isLoading, setIsLoading] = useState(true);
@@ -76,7 +73,6 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         definition,
         state,
         displayState,
-        // TODO: actions like 'completeTask' here
     };
 
     // return provider
