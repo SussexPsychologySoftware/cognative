@@ -4,11 +4,10 @@ import {StandardView} from "@/components/layout/StandardView";
 import ToDoList from "@/components/longitudinal/ToDoList";
 import { useExperiment } from "@/context/ExperimentContext";
 import SubmitButton from "@/components/inputs/SubmitButton";
-import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
 import PageList from "@/components/debug/PageList";
 
 export default function Index() {
-    const { displayState, isLoading, definition, confirmAndStopExperiment } = useExperiment();
+    const { displayState, isLoading, definition, confirmAndStopExperiment, isActionLoading } = useExperiment();
 
     if(isLoading || !displayState) {
         // TODO: put loading spinner
@@ -30,7 +29,11 @@ export default function Index() {
                     condition: displayState.currentCondition,
                 }}
             />
-            <SubmitButton text='Reset participant' onPress={confirmAndStopExperiment} style={{margin: 10}}/>
+            <SubmitButton
+                text={isActionLoading ? "Resetting..." : "Reset Experiment (Debug)"}
+                onPress={confirmAndStopExperiment}
+                style={{margin: 10, backgroundColor: "red"}}
+            />
             <PageList/>
         </StandardView>
     );
