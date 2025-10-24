@@ -65,13 +65,14 @@ export default function ToDoList({ taskStates, data }: { taskStates: TaskDisplay
                         data.day
                     );
                     params.taskName = task.definition.name; // Pass the name for completion tracking
+                    params.datapipeId = task.definition.datapipe_id
                     return (
                         <Activity
                             key={task.definition.id}
                             prompt={task.definition.prompt}
                             buttonText={`Complete ${task.definition.name}`}
                             pathname={task.definition.path_to_screen as RelativePathString}
-                            params={params}
+                            params={params} // pass in any data you want
                             disabled={!task.isAllowed}
                             completed={task.completed}
                         />
