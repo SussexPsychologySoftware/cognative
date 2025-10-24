@@ -2,10 +2,7 @@ import React, { useState } from 'react';
 import {View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal} from 'react-native';
 import {globalStyles} from "@/styles/appStyles";
 
-
 // https://medium.com/@amolakapadi/react-native-implementing-a-multi-select-search-textinput-47ab2b4153d4
-
-
 export default function Select({ value, options, onSelect }: { value: string, options: Record<string, string[]>, onSelect: (selection: string) => void }) {
     //https://reactnative.dev/docs/modal
     const [modalVisible, setModalVisible] = useState(false);
@@ -137,8 +134,7 @@ const styles = StyleSheet.create({
         color: 'grey',
     },
 
-    // LIST CONTAINER -----
-
+    // MODAL LIST CONTAINER -----
     modalContainer: {
     },
     touchableOpacityContainer: {

@@ -136,7 +136,8 @@ export default function SurveyExample() {
 
     const onSubmit = async (responses: object) => {
         if (taskId) {
-            await submitTaskData(taskId, responses, datapipeId);
+            // TODO: Construct filename for response data - probably good to do here so can ensure it's the same used to restore...
+            await submitTaskData(taskId, responses, datapipeId); // Maybe should pass in the response key here or?
         }
         if (router.canGoBack()) {
             router.back(); // Go back to the to-do list
