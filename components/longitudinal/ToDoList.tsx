@@ -60,18 +60,18 @@ export default function ToDoList({ taskStates, data }: { taskStates: TaskDisplay
                 taskStates.length > 0 && taskStates.map(task => {
                     // 3. Create the final params object
                     const params: Record<string, any> = { ...data }; // (includes day, condition)
-                    // 4. If this task has a responseKeyBase, build the full key
                     if (data.day) {
-                        params.responseKey = `${task.id}_${data.day}`;
+                        // 'task.id' becomes 'task.definition.id'
+                        params.responseKey = `${task.definition.id}_${data.day}`;
                     } else {
-                        params.responseKey = task.id
+                        params.responseKey = task.definition.id
                     }
                     return (
                         <Activity
-                            key={task.id}
-                            prompt={task.prompt}
-                            buttonText={`Complete ${task.name}`}
-                            pathname={task.path_to_screen as RelativePathString}
+                            key={task.definition.id}
+                            prompt={task.definition.prompt}
+                            buttonText={`Complete ${task.definition.name}`}
+                            pathname={task.definition.path_to_screen as RelativePathString}
                             params={params}
                             disabled={!task.isAllowed}
                             completed={task.completed}

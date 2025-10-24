@@ -136,15 +136,11 @@ export class ExperimentTracker {
 
         for (const taskDef of visibleTasks) {
             const taskCompletionDate = taskCompletionDates[taskDef.name];
-            const taskCompleted = this.happenedToday(taskCompletionDate)
+            const taskCompleted = this.happenedToday(taskCompletionDate);
 
             // Task is allowed if all previous required tasks are done
             displayStatuses.push({
-                id: taskDef.id,
-                name: taskDef.name,
-                prompt: taskDef.prompt,
-                path_to_screen: taskDef.path_to_screen,
-                params: taskDef.params,
+                definition: taskDef, // Just pass the whole definition
                 isAllowed: allPreviousRequiredTasksComplete,
                 completed: taskCompleted,
             });
