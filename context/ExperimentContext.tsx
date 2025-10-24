@@ -9,10 +9,14 @@ import {Alert} from "react-native";
 
 // Define context type
 interface ExperimentContextType {
+    // Experiment info
     definition: ExperimentDefinition;         // The static config
     state: ExperimentState | null;            // The core stored state
     displayState: ExperimentDisplayState | null; // The calculated display state
+    // Expose action specific states
     isLoading: boolean;                       // For loading screens
+    isActionLoading: boolean;
+    actionError: string | null;
     // Functions to change experiment state
     startExperiment: (condition: string, participantId?: string) => Promise<void>;
     completeTask: (taskName: string) => Promise<void>;
@@ -35,11 +39,13 @@ export function useExperiment() {
 
 // Component to wrap the app root in.
 export function ExperimentProvider({ children }: { children: ReactNode }) {
-    // States for loading experiment state
-    const [isLoading, setIsLoading] = useState(true);
+    // States containing experiment info
     const [state, setState] = useState<ExperimentState | null>(null);
     const [displayState, setDisplayState] = useState<ExperimentDisplayState | null>(null);
-
+    // Current action progress states
+    const [isLoading, setIsLoading] = useState(true);
+    const [isActionLoading, setIsActionLoading] = useState(false);
+    const [actionError, setActionError] = useState<string | null>(null);
     // Pull in experiment definition
     const definition = experimentDefinition;
 
@@ -68,6 +74,22 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
 
         void loadExperimentStatus();
     }, []); // This runs once on app load
+
+    const startExperiment = useCallback(async (condition: string, participantId?: string) => {
+        setIsActionLoading(true);
+        setActionError(null);
+        try {
+            const newState = await ExperimentTracker.startExperiment(condition, participantId);
+            const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
+            setState(newState);
+            setDisplayState(newDisplayState);
+        } catch (e: any) {
+            console.error("Failed to start experiment:", e);
+            setActionError(e.message || "Failed to start experiment");
+        } finally {
+            setIsActionLoading(false);
+        }
+    }, []);
 
     const completeTask = useCallback(async (taskName: string) => {
         // Get current states using setState to ensure up to date (between rerenders?)
@@ -113,38 +135,42 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
 
     const submitTaskData = useCallback(async (taskName: string, data: any) => {
         if (!state || displayState === null) {
+            // Note this is state issue not action error
             console.error("Cannot submit data: no experiment state found.");
             return;
         }
+        // Note: Error state only set on failure - but useSurvey has own isSubmitting do isActionLoading not set
+        // TODO: should use isActionLoading instead?
+        setActionError(null);
         const { participantId } = state;
         const { experimentDay } = displayState;
         // Build the key to submit data with - by default experiment day is used
-        // TODO: make this more flexible - issue with
+        // TODO: make this more flexible - issue with non-longitudinal studies
         const responseKey = ExperimentTracker.constructResponseKey(taskName, experimentDay)
         try {
-            // 1. Save the actual survey/task data
             await DataService.saveData(data, responseKey, participantId);
-            // 2. Mark the task as complete
-            await completeTask(taskName);
+            await completeTask(taskName); // 'optimistic' function - updates state and uses that, expects saving will be fine.
         } catch (e) {
             console.error("Failed to submit task data:", e);
-            // We'll add better error handling in step 3
-            throw e; // Re-throw for now
+            setActionError(`Failed to submit data\n${e}`);
+            throw e; // Re-throw so useSurvey's 'handleSurveySubmit' can catch it
         }
 
     }, [state, displayState, completeTask]);
 
-    const startExperiment = useCallback(async (condition: string, participantId?: string) => {
-        const newState = await ExperimentTracker.startExperiment(condition, participantId);
-        const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
-        setState(newState);
-        setDisplayState(newDisplayState);
-    }, []);
-
     const stopExperiment = useCallback(async () => {
-        await ExperimentTracker.stopExperiment();
-        setState(null);
-        setDisplayState(null);
+        setIsActionLoading(true);
+        setActionError(null);
+        try {
+            await ExperimentTracker.stopExperiment();
+            setState(null);
+            setDisplayState(null);
+        } catch (e: any) {
+            console.error("Failed to stop experiment:", e);
+            setActionError(e.message || "Failed to stop experiment");
+        } finally {
+            setIsActionLoading(false);
+        }
         // App gate should automatically redirect to welcome page
     }, []);
 
@@ -177,7 +203,9 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         completeTask,
         submitTaskData,
         stopExperiment,
-        confirmAndStopExperiment
+        confirmAndStopExperiment,
+        isActionLoading,
+        actionError,
     };
 
     // return provider
