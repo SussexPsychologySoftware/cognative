@@ -8,12 +8,11 @@ import {SurveyQuestion} from '@/types/surveyQuestions'
 import Survey from "@/components/survey/Survey";
 import Picture from "@/components/media/Picture";
 import {router, useLocalSearchParams} from 'expo-router';
-import {DataService} from "@/services/data/DataService";
 import {useExperiment} from "@/context/ExperimentContext"; // 1. Import hook
 
 
 export default function SurveyExample() {
-    const { responseKey, taskName } = useLocalSearchParams<{ responseKey: string, taskName: string }>();
+    const { responseKey, taskName, datapipeId } = useLocalSearchParams<{ responseKey: string, taskName: string, datapipeId: string }>();
     const { submitTaskData } = useExperiment();
 
     // Define survey questions with keys
@@ -135,28 +134,27 @@ export default function SurveyExample() {
         }
     ];
 
+    const onSubmit = async (responses: object) => {
+        if (taskName) {
+            await submitTaskData(taskName, responses, datapipeId);
+        }
+        if (router.canGoBack()) {
+            router.back(); // Go back to the to-do list
+        } else {
+            router.replace('/');
+        }
+    }
+
     const {
-        responses,
-        updateResponses,
-        handleSurveySubmit,
-        warning,
-        isSubmitting,
-        progress,
-        resetSurvey,
-        invalidQuestions
-    } = useSurvey(questions,
-        // 3. THIS IS THE 'onSubmit' FUNCTION
-        async (responses) => {
-            if (taskName) {
-                await submitTaskData(taskName, responses);
-            }
-            if (router.canGoBack()) {
-                router.back(); // Go back to the to-do list
-            } else {
-                router.replace('/');
-            }
-        }, responseKey
-    );
+        responses, // Contains responses as {fieldKey: "response"} made from survey definition
+        updateResponses, // Function to update responses
+        handleSurveySubmit, // Function to run when submitting responses
+        warning, // Text listing first incorrect question in survey
+        isSubmitting, // Useful for blocking submit buttons
+        progress, // % of survey currently completed
+        resetSurvey, // Function to reset survey state
+        invalidQuestions // Contains an object of invalid responses to update state with
+    } = useSurvey(questions, onSubmit, responseKey);
 
     return (
         <StandardView headerShown={true}>
