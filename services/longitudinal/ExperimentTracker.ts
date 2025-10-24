@@ -162,6 +162,15 @@ export class ExperimentTracker {
         await this.saveState(state);
     }
 
+    static constructResponseKey(taskName: string, day: number | null | undefined): string {
+        if (day !== null && day !== undefined) {
+            // For longitudinal tasks
+            return `${taskName}_${day}`;
+        }
+        // For one-off tasks (e.g., initial demographics survey)
+        return taskName;
+    }
+
     // ============ Date Utilities ===========
     static calculateDaysPassed(eventDate: string): number {
         if (!eventDate) return 0;
