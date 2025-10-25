@@ -77,7 +77,8 @@ export default function SurveyExample() {
             key: 'Ethnicity',
             question: 'What is your ethnicity?',
             type: 'select',
-            options: optionsListNested
+            options: optionsListNested,
+            multiple: true,
         },
         {
             key: 'localTime',

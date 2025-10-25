@@ -147,6 +147,7 @@ export default function Survey({
                             value={responses[key]}
                             options={question.options}
                             onSelect={newValue => updateResponses(key, newValue)}
+                            multiple={question.multiple}
                         />
                         break;
                     default:

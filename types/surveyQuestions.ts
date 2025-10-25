@@ -46,6 +46,7 @@ export interface RadioQuestion extends BasicSurveyQuestion {
 export interface SelectQuestion extends BasicSurveyQuestion {
     type: 'select';
     options: Record<string, string[]>;
+    multiple?: boolean;
 }
 
 export interface CheckboxQuestion extends BasicSurveyQuestion {
