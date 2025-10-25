@@ -40,7 +40,7 @@ const ReorderableItem = ({ index, text, handleReorder, vertical }: { index: numb
     )
 }
 
-export default function Swap({ items, onChange, vertical, style }: { items: string[], onChange: (order: string[]) => void, vertical?: boolean, style?: object }) {
+export default function Reorderable({ items, onChange, vertical, style }: { items: string[], onChange: (order: string[]) => void, vertical?: boolean, style?: object }) {
     //e.g. const [order, setOrder] = useState(['control','binaural','monaural']);
     // <Swap items={order} onChange={setOrder} vertical={true}/>
     function mod(n: number, m: number) {
