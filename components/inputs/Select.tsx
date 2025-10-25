@@ -3,7 +3,7 @@ import {View, Text, TouchableOpacity, StyleSheet, ScrollView, Modal} from 'react
 import {globalStyles} from "@/styles/appStyles";
 
 // https://medium.com/@amolakapadi/react-native-implementing-a-multi-select-search-textinput-47ab2b4153d4
-export default function Select({ value, options, onSelect }: { value: string, options: Record<string, string[]>, onSelect: (selection: string) => void }) {
+export default function Select({ value, options, onSelect, multiple }: { value: string|string[], options: Record<string, string[]>, onSelect: (selection: string|string[]) => void, multiple?: boolean }) {
     //https://reactnative.dev/docs/modal
     const [modalVisible, setModalVisible] = useState(false);
 
@@ -12,8 +12,13 @@ export default function Select({ value, options, onSelect }: { value: string, op
     }
 
     const handleSelect = (option: string) => {
-        onSelect(option);
-        setModalVisible(false)
+        if(multiple && option){ // TODO: issue here in when multiple can return '' or [] as empty...
+            if(Array.isArray(value) && value.includes(option)) onSelect(value.filter(item => item !== option))
+            else onSelect([...value, option])
+        } else {
+            onSelect(option)
+        }
+        if(!multiple) setModalVisible(false)
     };
 
     function SelectOptions({options}: {options: Record<string, string[]>}) {
@@ -35,10 +40,18 @@ export default function Select({ value, options, onSelect }: { value: string, op
                 return(
                     <TouchableOpacity
                         key={`${groupName}-${item}`}
-                        style={[styles.listOption, value===item ? styles.selectedItemInList : {backgroundColor: 'inherit' }]}
+                        style={[styles.listOption,
+                            value===item || (Array.isArray(value) && value.includes(item)) ? styles.selectedItemInList : {backgroundColor: 'inherit' }
+                        ]}
                         onPress={() => handleSelect(item)}
                     >
-                        <Text style={[styles.optionText,value===item ? styles.selectedItemInList : {backgroundColor: 'inherit' }]}>{ item }</Text>
+                        <Text style={[
+                            styles.optionText,
+                            value===item || (Array.isArray(value) && value.includes(item)) ? styles.selectedItemInList : {backgroundColor: 'inherit' }
+                        ]}
+                        >
+                            { item }
+                        </Text>
                     </TouchableOpacity>
                 )
             })
@@ -56,7 +69,10 @@ export default function Select({ value, options, onSelect }: { value: string, op
                         adjustsFontSizeToFit={true}
                         style={[globalStyles.standardText, styles.selectedItemText]}
                     >
-                        {value ? value : 'Click to select an option'}
+                        {
+                            (!value || (Array.isArray(value) && value.length===0)) ? 'Click to select an option' :
+                            Array.isArray(value) ? value.join(',\n') : value
+                        }
                     </Text>
                 </View>
                 <TouchableOpacity style={styles.removeButtonContainer} onPress={() => handleSelect('')}>
@@ -80,6 +96,13 @@ export default function Select({ value, options, onSelect }: { value: string, op
                     style={styles.touchableOpacityContainer}
                 >
                     <View style={styles.listContainer}>
+                        {multiple &&
+                            <TouchableOpacity style={[styles.removeButtonContainer, styles.listCloseButton]} onPress={toggleModal}>
+                                <Text style={[styles.removeButton]}>
+                                    x
+                                </Text>
+                            </TouchableOpacity>
+                        }
                         <ScrollView style={styles.listScrollContainer}>
                             <SelectOptions
                                 options={options}
@@ -156,6 +179,12 @@ const styles = StyleSheet.create({
         shadowRadius: 10,
         elevation: 10,
         backgroundColor: 'white',
+    },
+    listCloseButton: {
+        backgroundColor: 'transparent',
+        alignItems: 'flex-end',
+        borderBottomWidth: 1,
+        borderBottomColor: 'lightgray',
     },
     listScrollContainer: {
         width: '100%',
