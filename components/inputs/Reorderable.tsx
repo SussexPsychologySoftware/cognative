@@ -1,6 +1,5 @@
-import {Pressable, StyleSheet, View, Text, TouchableOpacity} from "react-native";
+import { StyleSheet, View, Text, TouchableOpacity} from "react-native";
 import {globalStyles} from "@/styles/appStyles";
-import {useCallback} from "react";
 
 const ReorderButton = ({text, handleReorder, style}:{text: string, handleReorder: ()=>void, style?: object}) => {
     // const displayText = typeof text === 'symbol' ? text.description ?? text.toString() : text;
