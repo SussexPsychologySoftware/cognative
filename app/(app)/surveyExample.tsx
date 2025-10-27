@@ -16,7 +16,7 @@ export default function SurveyExample() {
     // Instead of serialising through local search params, just use the taskID to grab task def and grab experiment def from useExperiment() again
     // Keeps this component dumber, controls data flow...
     const { taskId } = useLocalSearchParams<{ responseKey: string, taskId: string, datapipeId: string }>();
-    const { submitTaskData, definition, displayState } = useExperiment();
+    const { submitTaskData, definition, displayState, state } = useExperiment();
 
     const taskDefinition = definition.tasks.find(t => t.id === taskId);
     const surveyFilename = displayState
