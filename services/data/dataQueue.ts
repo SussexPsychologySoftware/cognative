@@ -38,6 +38,10 @@ class DataQueue {
         }
     }
 
+    async clearQueue(): Promise<void> {
+        await AsyncStorage.removeItem(STORAGE_KEY);
+    }
+
     async setQueue(queue: QueueItem[]): Promise<void> {
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(queue));
     }
@@ -77,14 +81,14 @@ class DataQueue {
 
         try {
             const queue = await this.getQueue();
-            return ''
+            // return '' // to disable
             if(queue.length === 0) return 'No items to sync';
 
             let responseMessage = 'All items successfully sent to server';
             for (let i = queue.length - 1; i >= 0; i--) {
                 const item = queue[i];
                 try {
-                    console.log({item});
+                    // console.log({item});
                     // const uniqueName = `${item.name}_${Date.now()}`; // Timestamp to ensure unique if wanted.
                     const response = await HttpService.sendToServer(item.data, item.name, item.datapipeId)
                     if (response.status === 409 || (response.json && response.json.error === 'OSF_FILE_EXISTS')) {
