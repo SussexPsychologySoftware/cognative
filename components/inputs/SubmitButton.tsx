@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {Text, StyleSheet, Pressable} from 'react-native'
 
-export default function SubmitButton({ text, disabledText, disabled, onPress, style } : { text: string, disabledText?: string, disabled?: boolean, onPress: () => void | Promise<void>, style?: object }) {
+export default function SubmitButton({ text, disabledText, disabled, onPress, style, cooldown=0 } : { text: string, disabledText?: string, disabled?: boolean, onPress: () => void | Promise<void>, style?: object, cooldown?: number }) {
     const [pressExecuting, setPressExecuting] = useState(false); // Define pressExecuting state
 
     const handlePress = async () => {
@@ -15,13 +15,28 @@ export default function SubmitButton({ text, disabledText, disabled, onPress, st
         } catch (error) {
             console.error('Error executing press: ', error);
         } finally {
+            if (cooldown > 0) {
+                setTimeout(() => {
+                    setPressExecuting(false);
+                }, cooldown);
+            } else {
             setPressExecuting(false);
+        }
         }
     };
 
+    const disabledOrExecuting = disabled || pressExecuting;
+
     return(
-        <Pressable disabled={disabled} onPress={handlePress} style={[{backgroundColor: disabled?'grey':'white'}, styles.button, style]}>
-            <Text style={styles.text}>{ disabled ? (disabledText??text) : text}</Text>
+        <Pressable
+            disabled={disabled}
+            onPress={handlePress}
+            style={[{backgroundColor: disabledOrExecuting ? 'grey' : 'white'}, styles.button, style]}        >
+            <Text
+                style={styles.text}
+            >
+                { disabledOrExecuting ? (disabledText??text) : text}
+            </Text>
         </Pressable>
     )
 }
