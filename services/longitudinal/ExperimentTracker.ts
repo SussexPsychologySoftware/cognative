@@ -70,7 +70,7 @@ export class ExperimentTracker {
         // Get the correct initial empty task state
         // Update the state
         state.tasksLastCompletionDate = Object.fromEntries(
-            experimentDefinition.tasks.map((task) => [task.name, ''])
+            experimentDefinition.tasks.map((task) => [task.id, ''])
         );
 
         await this.saveState(state); // Persist the change
