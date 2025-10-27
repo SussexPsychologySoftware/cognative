@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import {globalStyles, colours} from "@/styles/appStyles";
 
 interface TimePickerProps {
     value: Date | null; // MODIFIED: Allow null values
@@ -46,7 +47,7 @@ export default function TimePicker({ value, onChange, cancellable }: TimePickerP
                     onPress={handleShowPicker}
                     style={styles.timeButton}
                 >
-                    <Text style={styles.timeText}>
+                    <Text style={[styles.timeText, globalStyles.standardText]}>
                         {!value ? 'Set Time' : formatTime(value)}
                     </Text>
                 </TouchableOpacity>
@@ -60,8 +61,9 @@ export default function TimePicker({ value, onChange, cancellable }: TimePickerP
                     mode="time"
                     is24Hour={true}
                     onChange={handleChange}
-                    textColor='white'
-                    themeVariant='light' // TODO: Control as prop??
+                    textColor={colours.text}
+                    accentColor={colours.text}
+                    themeVariant='dark' // TODO: Control as prop??
                 />
             }
 

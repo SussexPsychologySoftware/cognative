@@ -16,7 +16,7 @@ export default function Range({ value, min, max, step, showValue, onChange, styl
                 oneWordPerLine={true}
             />}
             <Slider
-                style={[styles.slider, style]}
+                style={[styles.slider, style, globalStyles.standardText]}
                 value={value}
                 minimumValue={min??0}
                 maximumValue={max??10}
@@ -27,7 +27,7 @@ export default function Range({ value, min, max, step, showValue, onChange, styl
                 renderStepNumber={!!step}
             />
             { showValue &&
-                <Text style={styles.valueDisplay}>
+                <Text style={[styles.valueDisplay, globalStyles.standardText]}>
                     {value}
                 </Text>
             }

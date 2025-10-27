@@ -8,6 +8,7 @@ import {
 import { SafeAreaView} from "react-native-safe-area-context";
 import { StatusBar } from 'expo-status-bar';
 import { Stack } from 'expo-router';
+import {colours} from "@/styles/appStyles";
 
 export const StandardView = ({
                                  children,
@@ -61,6 +62,9 @@ export const StandardView = ({
 const styles = StyleSheet.create({
     outerContainer: {
         // flex: 1,
+        backgroundColor: colours.background,
+        minHeight: '100%', //or flexGrow: 1?
+        maxWidth: '100%',
     },
     keyboardAvoidingView: {
         // flex: 1,

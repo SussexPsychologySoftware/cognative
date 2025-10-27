@@ -5,6 +5,7 @@ import ToDoList from "@/components/longitudinal/ToDoList";
 import { useExperiment } from "@/context/ExperimentContext";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import PageList from "@/components/debug/PageList";
+import {globalStyles} from "@/styles/appStyles";
 
 export default function Index() {
     const { displayState, isLoading, definition, confirmAndStopExperiment, isActionLoading } = useExperiment();
@@ -20,8 +21,8 @@ export default function Index() {
 
     return (
         <StandardView contentContainerStyle={{margin: 10, paddingTop: 30}}>
-            <Text>TO DO list: Day {displayState.experimentDay} / {definition.total_days}</Text>
-
+            <Text style={globalStyles.pageTitle}>Today&#39;s activities:</Text>
+            <Text style={[globalStyles.standardText, {alignSelf: 'center'}]}>Day {displayState.experimentDay+1} / {definition.total_days}</Text>
             <ToDoList
                 taskStates={displayState.tasks}
                 // TODO: just pass entire display state in here?

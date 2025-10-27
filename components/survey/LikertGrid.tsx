@@ -40,6 +40,7 @@ export function LikertQuestionRow(
                     globalStyles.whiteText,
                     styles.question,
                     styles.gridItem,
+                    oddRow ? styles.oddRow : styles.evenRow,
                 ]}>
                     {question}
                 </Text>
@@ -144,6 +145,7 @@ const styles = StyleSheet.create({
     },
     evenRow: {
         backgroundColor: 'lightgrey',
+        color: 'black',
     },
     optionsText: {
         textAlign: 'center',

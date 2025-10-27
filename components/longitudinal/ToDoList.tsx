@@ -6,6 +6,7 @@ import {TaskDisplayStatus} from "@/types/trackExperimentState";
 
 // TODO: add back in debounce
 function Activity({ task, params }: { task: TaskDisplayStatus, params: Record<string, any> }){
+    console.log({task, params});
     return (
         <View style={[
             styles.activity,
@@ -76,25 +77,13 @@ export default function ToDoList({ taskStates, data }: { taskStates: TaskDisplay
 }
 
 const styles = StyleSheet.create({
-    homeScreen: {
-        flex: 1,
-        paddingTop: 40,
-        gap: 20
-    },
-    dayCounter: {
-        color: 'rgba(255, 255, 255, 0.7)',
-        fontSize: 16,
-        textAlign: 'center',
-        marginTop: -10,
-        marginBottom: 10,
-    },
-
     // TO DO LIST
     todoList: {
+        marginVertical: 30,
         gap: 15,
     },
     activity: {
-        backgroundColor: 'rgba(255, 255, 255, 0.1)',
+        // backgroundColor: 'rgba(255, 255, 255, 0.1)',
         borderRadius: 12,
         padding: 16,
         borderWidth: 1,
@@ -119,7 +108,7 @@ const styles = StyleSheet.create({
     checkbox: {
         width: 24,
         height: 24,
-        borderRadius: 4,
+        borderRadius: 24/2,
         borderWidth: 2,
         borderColor: 'rgba(255, 255, 255, 0.4)',
         backgroundColor: 'transparent',

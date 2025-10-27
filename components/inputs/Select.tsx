@@ -134,6 +134,7 @@ const styles = StyleSheet.create({
     selectedItemText: {
         fontSize: 16,
         fontWeight: '500',
+        color: 'black',
     },
 
     // REMOVE BUTTON -----
