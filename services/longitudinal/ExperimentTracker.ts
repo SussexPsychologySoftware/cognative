@@ -19,7 +19,7 @@ export class ExperimentTracker {
             return [task.id, ''];
         }))
 
-        console.log(emptyTaskStates)
+        // console.log(emptyTaskStates)
 
         return {
             startDate: new Date().toISOString(),
@@ -60,7 +60,7 @@ export class ExperimentTracker {
         if (this.TEST_MINUS_DAYS_FROM_START > 0) {
             state.startDate = this.testAddDaysToDate(state.startDate, this.TEST_MINUS_DAYS_FROM_START);
         }
-        await DataService.saveData(state, this.STORAGE_KEY, state.participantId);
+        await DataService.setData(this.STORAGE_KEY, state);
     }
 
     static async resetTasks(): Promise<ExperimentState | null> {
@@ -171,7 +171,7 @@ export class ExperimentTracker {
 
     static constructFilename(taskId: string, day?: number, participantID?: string): string {
         // TODO: should this be somewhere else?
-        if (!participantID && (day !== null && day !== undefined)) {
+        if (participantID && (day !== null && day !== undefined)) {
             // For longitudinal tasks
             return `${participantID}_${taskId}_${day}`;
         }
