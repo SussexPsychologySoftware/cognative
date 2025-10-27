@@ -7,12 +7,13 @@ import {TaskDisplayStatus} from "@/types/trackExperimentState";
 // TODO: add back in debounce
 function Activity({ task, params }: { task: TaskDisplayStatus, params: Record<string, any> }){
     console.log({task, params});
+    const diasbled = (!task.isAllowed && task.completed)
     return (
         <View style={[
             styles.activity,
             task.completed && styles.completedActivity,
             // TODO: (!task.isAllowed && task.completed) seems like isAllowed should handle this itself?
-            (!task.isAllowed && task.completed) && styles.disabledActivity
+            diasbled && styles.disabledActivity
         ]}>
             <View style={styles.activityContent}>
                 <View style={styles.checkboxContainer}>
@@ -27,14 +28,14 @@ function Activity({ task, params }: { task: TaskDisplayStatus, params: Record<st
                     <Text style={[
                         globalStyles.standardText,
                         task.completed && styles.completedText,
-                        (!task.isAllowed && task.completed) && styles.disabledText
+                        diasbled && styles.disabledText
                     ]}>
                         {task.definition.prompt}
                     </Text>
                 </View>
             </View>
             <SubmitButton
-                disabled={!task.isAllowed && task.completed} // TODO: Disable button while routing
+                disabled={diasbled} // TODO: Disable button while routing
                 text={`Complete ${task.definition.name}`} // TODO: better button naming
                 // TODO: add disabled text?
                 onPress={()=>{
@@ -137,30 +138,5 @@ const styles = StyleSheet.create({
     },
     activityButton: {
         alignSelf: 'stretch', // Stretch to full width
-    },
-
-    // Settings
-    settingsSection: {
-        alignItems: 'center',
-        gap: 12,
-        marginBottom: 40,
-    },
-
-    // Page list for debugging
-    pageList: {
-        gap: 5,
-        paddingTop: 20,
-        borderTopWidth: 1,
-        borderTopColor: 'grey',
-    },
-    debugTitle: {
-        color: 'grey',
-        fontSize: 14,
-        marginBottom: 8,
-    },
-    debugLink: {
-        color: 'grey',
-        fontSize: 14,
-        textDecorationLine: 'underline',
     },
 });
