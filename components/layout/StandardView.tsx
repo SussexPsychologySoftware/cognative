@@ -74,8 +74,6 @@ const styles = StyleSheet.create({
     outerContainer: {
         // flex: 1,
         backgroundColor: colours.background,
-        minHeight: '100%', //or flexGrow: 1?
-        maxWidth: '100%',
     },
     keyboardAvoidingView: {
         // flex: 1,
@@ -84,7 +82,10 @@ const styles = StyleSheet.create({
         // Pad inner content so scroll bar is pushed to right name of screen
         paddingHorizontal: 20,
         paddingBottom: 20,
+
     },
     scrollView: {
+        minHeight: '100%', //or flexGrow: 1?
+        maxWidth: '100%',
     }
 })
