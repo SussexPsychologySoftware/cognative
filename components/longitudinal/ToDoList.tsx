@@ -34,7 +34,7 @@ function Activity({ task, params }: { task: TaskDisplayStatus, params: Record<st
                 </View>
             </View>
             <SubmitButton
-                disabled={(!task.isAllowed && task.completed)} // TODO: Disable button while routing
+                disabled={!task.isAllowed && task.completed} // TODO: Disable button while routing
                 text={`Complete ${task.definition.name}`} // TODO: better button naming
                 // TODO: add disabled text?
                 onPress={()=>{
@@ -44,6 +44,7 @@ function Activity({ task, params }: { task: TaskDisplayStatus, params: Record<st
                     })
                 }}
                 style={styles.activityButton}
+                cooldown={500}
             />
         </View>
     );
