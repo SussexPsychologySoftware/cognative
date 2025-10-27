@@ -20,7 +20,7 @@ export default function Range({ value, min, max, step, showValue, onChange, styl
                 value={value}
                 minimumValue={min??0}
                 maximumValue={max??10}
-                onValueChange={onChange}
+                onValueChange={(val) => onChange(Math.round(val * 10) / 10)}
                 // onSlidingComplete={onChange}
                 step={step??0}
                 tapToSeek={true}
