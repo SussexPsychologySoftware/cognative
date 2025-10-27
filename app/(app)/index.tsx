@@ -24,10 +24,8 @@ export default function Index() {
 
             <ToDoList
                 taskStates={displayState.tasks}
-                data={{
-                    day: displayState.experimentDay,
-                    condition: displayState.currentCondition,
-                }}
+                // TODO: just pass entire display state in here?
+                // data={{}}
             />
             <SubmitButton
                 text={isActionLoading ? "Resetting..." : "Reset Experiment (Debug)"}

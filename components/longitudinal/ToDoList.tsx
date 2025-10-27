@@ -48,7 +48,7 @@ function Activity({ task, params }: { task: TaskDisplayStatus, params: Record<st
     );
 }
 
-export default function ToDoList({ taskStates, data }: { taskStates: TaskDisplayStatus[], data: Record<string, any> }) {
+export default function ToDoList({ taskStates, data }: { taskStates: TaskDisplayStatus[], data?: Record<string, any> }) {
 
     return (
         <View style={styles.todoList}>
@@ -58,7 +58,8 @@ export default function ToDoList({ taskStates, data }: { taskStates: TaskDisplay
                     // const params: Record<string, any> = { ...data }; // (includes day, condition)
                     // params = task.definition; // Pass the name for completion tracking
                     const params = {
-                        taskId: task.definition.id // Pass the name for completion tracking
+                        taskId: task.definition.id, // Pass the name for completion tracking
+                        // data // Optionally pass in other data here
                     }
                     return (
                         <Activity
