@@ -174,7 +174,7 @@ export class ExperimentTracker {
 
     // ============ Date Utilities ===========
     static calculateDaysPassed(eventDate: string): number {
-        if (!eventDate) return 0;
+        if (!eventDate) return -1; // -1 should be treated as incorrect - known as a 'sentinel value'
         const parsed = new Date(eventDate);
         const now = new Date();
 
