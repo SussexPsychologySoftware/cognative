@@ -146,8 +146,8 @@ export default function SurveyExample() {
     // TODO: return optional response key FROM useSurvey! already passing it in so.
     const onSubmit = async (responses: object, surveyFilename?: string) => {
         if (taskId) {
-            // TODO: submit task data should take in an optional response key, or construct if not provided.
-            await submitTaskData(taskId, responses, surveyFilename, taskDefinition?.datapipe_id, true); // Maybe should pass in the response key here or?
+            // Submit task data, taskId to record completion, filename for restoration, datapipeid for sending, and allow_edit to timestamp unique filename on server.
+            await submitTaskData(taskId, responses, surveyFilename, taskDefinition?.datapipe_id, taskDefinition?.allow_edit);
         }
         if (router.canGoBack()) {
             router.back(); // Go back to the to-do list

@@ -201,6 +201,10 @@ const styles = StyleSheet.create({
     },
     questionContainer: {
         gap: 10,
+
+        // paddingBottom: 20,
+        // borderBottomWidth: 1,
+        // borderBottomColor: 'grey',
     },
     invalidContainer: {
         borderWidth: 2,

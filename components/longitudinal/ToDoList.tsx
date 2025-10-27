@@ -6,7 +6,7 @@ import {TaskDisplayStatus} from "@/types/trackExperimentState";
 
 // TODO: add back in debounce
 function Activity({ task, params }: { task: TaskDisplayStatus, params: Record<string, any> }){
-    console.log({task, params});
+    // console.log({task, params});
     return (
         <View style={[
             styles.activity,
