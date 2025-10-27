@@ -97,8 +97,8 @@ export class ExperimentTracker {
 
     // Need function to create daily tasks list
     // Separate function to refresh daily tasks list
-    static getTaskDefinition(taskName: string): TaskDefinition | undefined {
-        return experimentDefinition.tasks.find(t => t.name === taskName);
+    static getTaskDefinition(taskId: string): TaskDefinition | undefined {
+        return experimentDefinition.tasks.find(t => t.id === taskId);
     }
 
     static filterPendingTasks(experimentDay: number, condition: string): TaskDefinition[] {
