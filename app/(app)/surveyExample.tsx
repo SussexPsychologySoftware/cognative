@@ -20,7 +20,7 @@ export default function SurveyExample() {
 
     const taskDefinition = definition.tasks.find(t => t.id === taskId);
     const surveyFilename = displayState
-        ? ExperimentTracker.constructFilename(state?.participantId, taskId, displayState.experimentDay)
+        ? ExperimentTracker.constructFilename(taskId, displayState.experimentDay, state?.participantId)
         : undefined;
 
     // Define survey questions with keys
@@ -147,7 +147,7 @@ export default function SurveyExample() {
     const onSubmit = async (responses: object, surveyFilename?: string) => {
         if (taskId) {
             // TODO: submit task data should take in an optional response key, or construct if not provided.
-            await submitTaskData(taskId, responses, surveyFilename, taskDefinition?.datapipe_id); // Maybe should pass in the response key here or?
+            await submitTaskData(taskId, responses, surveyFilename, taskDefinition?.datapipe_id, true); // Maybe should pass in the response key here or?
         }
         if (router.canGoBack()) {
             router.back(); // Go back to the to-do list

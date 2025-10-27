@@ -169,9 +169,9 @@ export class ExperimentTracker {
         await this.saveState(state);
     }
 
-    static constructFilename(participantID: string|null|undefined, taskId: string, day: number | null | undefined): string {
+    static constructFilename(taskId: string, day?: number, participantID?: string): string {
         // TODO: should this be somewhere else?
-        if ((participantID !== null && participantID !== undefined) && (day !== null && day !== undefined)) {
+        if (!participantID && (day !== null && day !== undefined)) {
             // For longitudinal tasks
             return `${participantID}_${taskId}_${day}`;
         }

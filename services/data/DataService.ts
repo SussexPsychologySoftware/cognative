@@ -28,16 +28,17 @@ export class DataService {
         return dataString ? this.prepDataString(dataString) : null;
     }
 
-    static async saveData(data: Record<string, any>, name: string, datapipeId?: string, participantId?: string) {
+    static async saveData(data: Record<string, any>, name: string, datapipeId?: string, participantId?: string, addTimestamp?: boolean) {
         data.timestamp = new Date().toISOString();
         data.participantId = participantId;
         // Save local copy
         const dataString = await this.setData(name, data)
 
         // If datapipeId then send to server
+        const queueFilename = addTimestamp ? name+data.timestamp : name
         if (datapipeId) {
             try {
-                await dataQueue.addToQueue(dataString, name, datapipeId);
+                await dataQueue.addToQueue(dataString, queueFilename, datapipeId);
             } catch (error) {
                 console.error('Error adding to queue: ', error);
             }
