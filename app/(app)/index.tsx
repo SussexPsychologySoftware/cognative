@@ -20,7 +20,11 @@ export default function Index() {
     }
 
     return (
-        <StandardView contentContainerStyle={{margin: 10, paddingTop: 30}}>
+        <StandardView
+            contentContainerStyle={{margin: 10, paddingTop: 30}}
+            headerShown={false}
+            statusBarStyle={'light'}
+        >
             <Text style={globalStyles.pageTitle}>Today&#39;s activities:</Text>
             <Text style={[globalStyles.standardText, {alignSelf: 'center'}]}>Day {displayState.experimentDay+1} / {definition.total_days}</Text>
             <ToDoList
