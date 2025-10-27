@@ -1,9 +1,13 @@
 import {Text, View, StyleSheet} from 'react-native';
+import ResetButtons from "@/components/debug/ResetButtons";
+import PageList from "@/components/debug/PageList";
 
 export default function EndScreen() {
     return (
         <View style={styles.container}>
             <Text>The experiment is now over</Text>
+            <ResetButtons/>
+            <PageList/>
         </View>
     );
 }
