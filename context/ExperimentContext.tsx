@@ -139,7 +139,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         if(!filename) {
             console.log("No filename passed, creating filename");
             const { experimentDay } = displayState;
-            filename = ExperimentTracker.constructResponseKey(taskId, experimentDay)
+            filename = ExperimentTracker.constructFilename(participantId, taskId, experimentDay)
         }
         try {
             await DataService.saveData(data, filename, datapipeID, participantId);

@@ -36,9 +36,8 @@ export class DataService {
 
         // If datapipeId then send to server
         if (datapipeId) {
-            const filename = participantId ? `${participantId}_${name}` : name
             try {
-                await dataQueue.addToQueue(dataString, filename, datapipeId);
+                await dataQueue.addToQueue(dataString, name, datapipeId);
             } catch (error) {
                 console.error('Error adding to queue: ', error);
             }

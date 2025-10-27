@@ -169,11 +169,11 @@ export class ExperimentTracker {
         await this.saveState(state);
     }
 
-    static constructResponseKey(taskId: string, day: number | null | undefined): string {
-        if (day !== null && day !== undefined) {
+    static constructFilename(participantID: string|null|undefined, taskId: string, day: number | null | undefined): string {
+        // TODO: should this be somewhere else?
+        if ((participantID !== null && participantID !== undefined) && (day !== null && day !== undefined)) {
             // For longitudinal tasks
-            console.log(`${taskId}_${day}`)
-            return `${taskId}_${day}`;
+            return `${participantID}_${taskId}_${day}`;
         }
         // For one-off tasks (e.g., initial demographics survey)
         return taskId;
