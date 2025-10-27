@@ -10,7 +10,7 @@ import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
 import ResetButtons from "@/components/debug/ResetButtons";
 
 export default function Index() {
-    const { displayState, isLoading, definition, confirmAndStopExperiment, isActionLoading, resetTaskCompletion } = useExperiment();
+    const { displayState, isLoading, definition } = useExperiment();
 
     if(isLoading || !displayState) {
         // TODO: put loading spinner

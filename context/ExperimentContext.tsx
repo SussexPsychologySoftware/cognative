@@ -6,7 +6,7 @@ import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
 import { DataService } from '@/services/data/DataService';
 import {router} from "expo-router";
 import {Alert} from "react-native";
-
+import { useAutoRefresh } from '@/hooks/useAutoRefresh'
 // Define context type
 interface ExperimentContextType {
     // Experiment info
@@ -17,6 +17,8 @@ interface ExperimentContextType {
     isLoading: boolean;                       // For loading screens
     isActionLoading: boolean;
     actionError: string | null;
+    refreshing: boolean;
+
     // Functions to change experiment state
     startExperiment: (condition: string, participantId?: string) => Promise<void>;
     completeTask: (taskId: string) => Promise<void>;
@@ -25,6 +27,8 @@ interface ExperimentContextType {
     resetTaskCompletion: () => Promise<void>;
     stopExperiment: () => Promise<void>;
     confirmAndStopExperiment: () => void;
+
+    refreshState: () => Promise<void>;
 }
 
 // init context as undefined
@@ -45,37 +49,39 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
     const [state, setState] = useState<ExperimentState | null>(null);
     const [displayState, setDisplayState] = useState<ExperimentDisplayState | null>(null);
     // Current action progress states
-    const [isLoading, setIsLoading] = useState(true);
+    // const [isLoading, setIsLoading] = useState(true);
     const [isActionLoading, setIsActionLoading] = useState(false);
     const [actionError, setActionError] = useState<string | null>(null);
     // Pull in experiment definition
     const definition = experimentDefinition;
 
-    // Loading state logic
-    useEffect(() => {
-        const loadExperimentStatus = async () => {
-            try {
-                let experimentState = await ExperimentTracker.getState();
-                if (experimentState) { // state remains null if it doesn't exist
-                    const newDisplayState = ExperimentTracker.calculateDisplayState(experimentState);
+    const loadExperimentState = useCallback(async () => {
+        try {
+            let experimentState = await ExperimentTracker.getState();
+            if (experimentState) {
+                const newDisplayState = ExperimentTracker.calculateDisplayState(experimentState);
 
-                    if (newDisplayState.isExperimentComplete) {
-                        router.replace('/end'); // TODO: consider a more flexible restoration router routeUsingState()
-                        return;
-                    }
-                    setState(experimentState);
-                    setDisplayState(newDisplayState);
+                if (newDisplayState.isExperimentComplete) {
+                    router.replace('/end');
+                    return;
                 }
-
-            } catch (error) {
-                console.error("Error loading experiment status:", error);
-            } finally {
-                setIsLoading(false);
+                setState(experimentState);
+                setDisplayState(newDisplayState);
             }
-        };
+        } catch (error) {
+            console.error("Error loading experiment status:", error);
+            // Let the hook handle errors, or setActionError here
+        }
+        // NO 'finally' block with setIsLoading
+    }, []); // Empty dependency array is fine
 
-        void loadExperimentStatus();
-    }, []); // This runs once on app load
+    const { refreshing, refresh, loading } = useAutoRefresh({
+        onRefresh: loadExperimentState, // Pass the function directly
+        refreshOnMount: true,
+        refreshOnFocus: false,
+        refreshOnAppActive: true,
+        scheduledRefreshHour: definition.cutoff_hour,
+    });
 
     const startExperiment = useCallback(async (condition: string, participantId?: string) => {
         setIsActionLoading(true);
@@ -211,10 +217,12 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
 
     // Create object to pass to context
     const value: ExperimentContextType = {
-        isLoading,
+        isLoading: loading,
         definition,
         state,
         displayState,
+        refreshState: refresh,
+        refreshing,
         startExperiment,
         completeTask,
         submitTaskData,

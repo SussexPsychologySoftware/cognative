@@ -1,9 +1,8 @@
-import React from 'react';
 import {
     KeyboardAvoidingView,
     ScrollView,
     Platform,
-    StyleSheet
+    StyleSheet, RefreshControl
 } from 'react-native';
 import { SafeAreaView} from "react-native-safe-area-context";
 import { StatusBar } from 'expo-status-bar';
@@ -19,6 +18,8 @@ export const StandardView = ({
                                  keyboardAvoidingViewStyle,
                                  contentContainerStyle,
                                  scrollViewStyle,
+                                 refreshState,
+                                 refreshing,
                               }:
                               {
                                   children?: any,
@@ -29,6 +30,8 @@ export const StandardView = ({
                                   keyboardAvoidingViewStyle?: object,
                                   contentContainerStyle?: object,
                                   scrollViewStyle?: object,
+                                  refreshState?: () => Promise<void>,
+                                  refreshing?: boolean,
                               }) => {
 
     return (
@@ -51,6 +54,14 @@ export const StandardView = ({
                     contentContainerStyle={[styles.scrollViewContentContainer, contentContainerStyle]}
                     style={[styles.scrollView, scrollViewStyle]}
                     keyboardShouldPersistTaps="handled"
+                    refreshControl={refreshState &&
+                        <RefreshControl
+                            refreshing={refreshing??false}
+                            onRefresh={refreshState}
+                            tintColor="#fff" // For iOS
+                            colors={['#fff']} // For Android
+                        />
+                    }
                 >
                     {children}
                 </ScrollView>
