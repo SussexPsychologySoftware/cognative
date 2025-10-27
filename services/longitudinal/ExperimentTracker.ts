@@ -123,7 +123,7 @@ export class ExperimentTracker {
             // Task is allowed if all previous required tasks are done
             displayStatuses.push({
                 definition: taskDef, // Just pass the whole definition
-                isAllowed: allPreviousRequiredTasksComplete,
+                isAllowed: (allPreviousRequiredTasksComplete && !taskCompleted) || (taskCompleted && taskDef.allow_edit),
                 completed: taskCompleted,
             });
 
