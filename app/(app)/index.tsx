@@ -1,4 +1,4 @@
-import {Text} from "react-native";
+import {Text, View} from "react-native";
 import React from "react";
 import {StandardView} from "@/components/layout/StandardView";
 import ToDoList from "@/components/longitudinal/ToDoList";
@@ -7,6 +7,7 @@ import SubmitButton from "@/components/inputs/SubmitButton";
 import PageList from "@/components/debug/PageList";
 import {globalStyles} from "@/styles/appStyles";
 import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
+import ResetButtons from "@/components/debug/ResetButtons";
 
 export default function Index() {
     const { displayState, isLoading, definition, confirmAndStopExperiment, isActionLoading, resetTaskCompletion } = useExperiment();
@@ -33,15 +34,7 @@ export default function Index() {
                 // TODO: just pass entire display state in here?
                 // data={{}}
             />
-            <SubmitButton
-                text='Reset Tasks'
-                onPress={resetTaskCompletion}
-            />
-            <SubmitButton
-                text={isActionLoading ? "Resetting..." : "Reset Experiment"}
-                onPress={confirmAndStopExperiment}
-                style={{margin: 10, backgroundColor: "red"}}
-            />
+            <ResetButtons/>
             <PageList/>
         </StandardView>
     );
