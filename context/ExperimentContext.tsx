@@ -21,6 +21,8 @@ interface ExperimentContextType {
     startExperiment: (condition: string, participantId?: string) => Promise<void>;
     completeTask: (taskId: string) => Promise<void>;
     submitTaskData: (taskId: string, data: any, filename?: string, datapipeId?: string) => Promise<void>;
+
+    resetTaskCompletion: () => Promise<void>;
     stopExperiment: () => Promise<void>;
     confirmAndStopExperiment: () => void;
 }
@@ -159,6 +161,28 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
 
     }, [state, displayState, completeTask]);
 
+    const resetTaskCompletion = useCallback(async () => {
+        setIsActionLoading(true);
+        setActionError(null);
+        try {
+            const newState = await ExperimentTracker.resetTasks();
+
+            if (newState) {
+                // Recalculate the display state
+                const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
+                setState(newState);
+                setDisplayState(newDisplayState);
+            } else {
+                throw new Error("No state found to reset.");
+            }
+        } catch (e: any) {
+            console.error("Failed to reset tasks:", e); // Corrected error
+            setActionError(e.message || "Failed to reset tasks"); // Corrected error
+        } finally {
+            setIsActionLoading(false);
+        }
+    }, []); // No dependencies needed as the tracker handles getting the state
+
     const stopExperiment = useCallback(async () => {
         setIsActionLoading(true);
         setActionError(null);
@@ -203,6 +227,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         startExperiment,
         completeTask,
         submitTaskData,
+        resetTaskCompletion,
         stopExperiment,
         confirmAndStopExperiment,
         isActionLoading,

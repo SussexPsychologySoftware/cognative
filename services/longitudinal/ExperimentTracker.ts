@@ -1,10 +1,9 @@
-import {Alert} from "react-native";
-import {RelativePathString, router} from "expo-router";
 import * as Notifications from "expo-notifications";
 import {ExperimentDisplayState, ExperimentState, TaskDisplayStatus} from "@/types/trackExperimentState";
 import {DataService} from "@/services/data/DataService";
 import {experimentDefinition} from "@/config/experimentDefinition";
 import {TaskDefinition} from "@/types/experimentConfig";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // ============ State Management ============
 // TODO: some of this is a bit high level - maybe needs to be split into 'diary study'  and 'todo list' and 'experiment state' etc?
@@ -50,8 +49,9 @@ export class ExperimentTracker {
 
      static async stopExperiment(): Promise<void> {
         // TODO: resetExperiment() also needed?
-        await DataService.deleteData(this.STORAGE_KEY)
-        await Notifications.cancelAllScheduledNotificationsAsync();
+        // await DataService.deleteData(this.STORAGE_KEY)
+         await AsyncStorage.clear() // risky - maybe use AsyncStorage.multiRemove() for multiple keys instead?
+         await Notifications.cancelAllScheduledNotificationsAsync();
     }
 
     // ============ SET STATE ============
@@ -63,11 +63,18 @@ export class ExperimentTracker {
         await DataService.saveData(state, this.STORAGE_KEY, state.participantId);
     }
 
-    static async resetDailyTasks(): Promise<void> {
-        const state = await this.getState()
-        if(!state) return
-        // loop: if(task.type === 'repeating') state.dateOfX = ''
-        await this.saveState(state)
+    static async resetTasks(): Promise<ExperimentState | null> {
+        const state = await this.getState();
+        if (!state) return null;
+
+        // Get the correct initial empty task state
+        // Update the state
+        state.tasksLastCompletionDate = Object.fromEntries(
+            experimentDefinition.tasks.map((task) => [task.name, ''])
+        );
+
+        await this.saveState(state); // Persist the change
+        return state;
     }
 
     // ============ GET STATE ============
