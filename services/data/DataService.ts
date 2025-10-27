@@ -36,6 +36,7 @@ export class DataService {
 
         // If datapipeId then send to server
         const queueFilename = addTimestamp ? name+data.timestamp : name
+        // console.log({data, name, queueFilename});
         if (datapipeId) {
             try {
                 await dataQueue.addToQueue(dataString, queueFilename, datapipeId);
@@ -47,19 +48,5 @@ export class DataService {
 
     static async deleteData(id: string) {
         await AsyncStorage.removeItem(id);
-    }
-
-    // Special method to tag with participantID - makes sure this is set
-    static async setParticipantID(id: string) {
-        const participantID = await AsyncStorage.getItem('participantID');
-        if (participantID) throw new Error("Participant already exists");
-
-        await AsyncStorage.setItem('participantID', id);
-    }
-
-    static async getParticipantID() {
-        const participantID = await AsyncStorage.getItem('participantID');
-        if (!participantID) throw new Error("Participant ID not found");
-        return participantID;
     }
 }
