@@ -7,13 +7,12 @@ import {TaskDisplayStatus} from "@/types/trackExperimentState";
 // TODO: add back in debounce
 function Activity({ task, params }: { task: TaskDisplayStatus, params: Record<string, any> }){
     console.log({task, params});
-    const diasbled = (!task.isAllowed && task.completed)
     return (
         <View style={[
             styles.activity,
             task.completed && styles.completedActivity,
             // TODO: (!task.isAllowed && task.completed) seems like isAllowed should handle this itself?
-            diasbled && styles.disabledActivity
+            !task.isAllowed && styles.disabledActivity
         ]}>
             <View style={styles.activityContent}>
                 <View style={styles.checkboxContainer}>
@@ -28,15 +27,15 @@ function Activity({ task, params }: { task: TaskDisplayStatus, params: Record<st
                     <Text style={[
                         globalStyles.standardText,
                         task.completed && styles.completedText,
-                        diasbled && styles.disabledText
+                        !task.isAllowed && styles.disabledText
                     ]}>
                         {task.definition.prompt}
                     </Text>
                 </View>
             </View>
             <SubmitButton
-                disabled={diasbled} // TODO: Disable button while routing
-                text={`Complete ${task.definition.name}`} // TODO: better button naming
+                disabled={!task.isAllowed}
+                text={(task.completed && task.definition.allow_edit) ? `Edit ${task.definition.name} responses` : `Complete ${task.definition.name}`} // TODO: better button naming
                 // TODO: add disabled text?
                 onPress={()=>{
                     router.push({
