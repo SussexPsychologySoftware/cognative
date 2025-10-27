@@ -20,7 +20,7 @@ interface ExperimentContextType {
     // Functions to change experiment state
     startExperiment: (condition: string, participantId?: string) => Promise<void>;
     completeTask: (taskId: string) => Promise<void>;
-    submitTaskData: (taskId: string, data: any, datapipeId: string) => Promise<void>;
+    submitTaskData: (taskId: string, data: any, filename?: string, datapipeId?: string) => Promise<void>;
     stopExperiment: () => Promise<void>;
     confirmAndStopExperiment: () => void;
 }
@@ -133,7 +133,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
 
     }, [displayState, state]);
 
-    const submitTaskData = useCallback(async (taskId: string, data: any, datapipeID?: string) => {
+    const submitTaskData = useCallback(async (taskId: string, data: any, filename?: string, datapipeID?: string) => {
         if (!state || displayState === null) {
             // Note this is state issue not action error
             console.error("Cannot submit data: no experiment state found.");
@@ -143,13 +143,13 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         // TODO: should use isActionLoading instead?
         setActionError(null);
         const { participantId } = state;
-        const { experimentDay } = displayState;
-        // Build the key to submit data with - by default experiment day is used
-        // TODO: make this more flexible - issue with non-longitudinal studies
-        const responseKey = ExperimentTracker.constructResponseKey(taskId, experimentDay)
-        console.log({responseKey})
+        if(!filename) {
+            console.log("No filename passed, creating filename");
+            const { experimentDay } = displayState;
+            filename = ExperimentTracker.constructResponseKey(taskId, experimentDay)
+        }
         try {
-            await DataService.saveData(data, responseKey, datapipeID, participantId);
+            await DataService.saveData(data, filename, datapipeID, participantId);
             await completeTask(taskId); // 'optimistic' function - updates state and uses that, expects saving will be fine.
         } catch (e) {
             console.error("Failed to submit task data:", e);
@@ -157,7 +157,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             throw e; // Re-throw so useSurvey's 'handleSurveySubmit' can catch it
         }
 
-    }, [state, completeTask]);
+    }, [state, displayState, completeTask]);
 
     const stopExperiment = useCallback(async () => {
         setIsActionLoading(true);

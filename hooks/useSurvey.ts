@@ -30,19 +30,19 @@ async function restoreResponses(restoreKey: string){
     return data
 }
 
-export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object) => void, restoreKey?: string) {
+export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object, filename?:string) => void, filename?: string) {
     const [responses, setResponses] = useState(initializeResponses(questions));
-    const [isLoading, setIsLoading] = useState(!!restoreKey);
+    const [isLoading, setIsLoading] = useState(!!filename);
     const [warning, setWarning] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [invalidQuestions, setInvalidQuestions] = useState<Set<string>>(new Set());
 
     const { state } = useExperiment();
 
-    // Restore responses on mount if restoreKey is provided
+    // Restore responses on mount if filename is provided
     useEffect(() => {
-        if (restoreKey) {
-            restoreResponses(restoreKey).then(data => {
+        if (filename) {
+            restoreResponses(filename).then(data => {
                 if (data) {
                     setResponses(data);
                 }
@@ -52,7 +52,7 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
                 setIsLoading(false);
             });
         }
-    }, [restoreKey]);
+    }, [filename]);
 
     const isEmpty = (value: any) => {
         return value === null || value === undefined || value === '' ||
@@ -60,6 +60,8 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
     };
 
     const updateResponses = useCallback((key: string, answer: any, nestedKey?: string) => {
+        // console.log({ key, answer, nestedKey });
+
         setResponses(prev => {
             if (nestedKey) {
                 return {
@@ -188,8 +190,8 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
             setWarning('');
 
             if (onSubmit) {
-                await onSubmit(responses);
-            } else if (restoreKey && state?.participantId) {
+                await onSubmit(responses, filename);
+            } else if (filename && state?.participantId) {
                 // TODO: add save by default
                 console.log('Participant ID is:', state?.participantId);
             }
@@ -203,7 +205,7 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object)
         } finally {
             setIsSubmitting(false);
         }
-    }, [isSubmitting, onSubmit, responses, restoreKey, state?.participantId, validateResponses]);
+    }, [isSubmitting, onSubmit, responses, filename, state?.participantId, validateResponses]);
 
     return {
         responses,

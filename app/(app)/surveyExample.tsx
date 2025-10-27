@@ -8,12 +8,20 @@ import {SurveyQuestion} from '@/types/surveyQuestions'
 import Survey from "@/components/survey/Survey";
 import Picture from "@/components/media/Picture";
 import {router, useLocalSearchParams} from 'expo-router';
-import {useExperiment} from "@/context/ExperimentContext"; // 1. Import hook
+import {useExperiment} from "@/context/ExperimentContext";
+import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker"; // 1. Import hook
 
 
 export default function SurveyExample() {
-    const { responseKey, taskId, datapipeId } = useLocalSearchParams<{ responseKey: string, taskId: string, datapipeId: string }>();
-    const { submitTaskData } = useExperiment();
+    // Instead of serialising through local search params, just use the taskID to grab task def and grab experiment def from useExperiment() again
+    // Keeps this component dumber, controls data flow...
+    const { taskId } = useLocalSearchParams<{ responseKey: string, taskId: string, datapipeId: string }>();
+    const { submitTaskData, definition, displayState } = useExperiment();
+
+    const taskDefinition = definition.tasks.find(t => t.id === taskId);
+    const surveyFilename = displayState
+        ? ExperimentTracker.constructResponseKey(taskId, displayState.experimentDay)
+        : undefined;
 
     // Define survey questions with keys
     const optionsListNested = {
@@ -61,7 +69,7 @@ export default function SurveyExample() {
             key: 'gender',
             question: 'What is your gender?',
             type: 'radio',
-            // TODO: add difference between label and value {label: value}
+            // TODO: add difference between label and value {label: value}, or auto capilatise first letter?
             options: ['Male', 'Female', 'Other or prefer to self describe', 'Prefer not to say'],
         },
         {
@@ -78,7 +86,7 @@ export default function SurveyExample() {
             question: 'What is your ethnicity?',
             type: 'select',
             options: optionsListNested,
-            multiple: true,
+            multiple: false,
         },
         {
             key: 'localTime',
@@ -135,10 +143,11 @@ export default function SurveyExample() {
         }
     ];
 
-    const onSubmit = async (responses: object) => {
+    // TODO: return optional response key FROM useSurvey! already passing it in so.
+    const onSubmit = async (responses: object, surveyFilename?: string) => {
         if (taskId) {
-            // TODO: Construct filename for response data - probably good to do here so can ensure it's the same used to restore...
-            await submitTaskData(taskId, responses, datapipeId); // Maybe should pass in the response key here or?
+            // TODO: submit task data should take in an optional response key, or construct if not provided.
+            await submitTaskData(taskId, responses, surveyFilename, taskDefinition?.datapipe_id); // Maybe should pass in the response key here or?
         }
         if (router.canGoBack()) {
             router.back(); // Go back to the to-do list
@@ -156,7 +165,7 @@ export default function SurveyExample() {
         progress, // % of survey currently completed
         resetSurvey, // Function to reset survey state
         invalidQuestions // Contains an object of invalid responses to update state with
-    } = useSurvey(questions, onSubmit, responseKey);
+    } = useSurvey(questions, onSubmit, surveyFilename);
 
     return (
         <StandardView headerShown={true}>

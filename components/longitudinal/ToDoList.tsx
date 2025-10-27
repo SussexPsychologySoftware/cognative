@@ -3,47 +3,44 @@ import {globalStyles} from "@/styles/appStyles";
 import {RelativePathString, router} from "expo-router";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import {TaskDisplayStatus} from "@/types/trackExperimentState";
-import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
 
 // TODO: add back in debounce
-function Activity({ prompt, buttonText, pathname, disabled, completed, params }: {
-    prompt?: string,
-    buttonText: string,
-    pathname: RelativePathString,
-    disabled: boolean,
-    completed?: boolean,
-    params?: Record<string, any>
-}){
+function Activity({ task, params }: { task: TaskDisplayStatus, params: Record<string, any> }){
     return (
         <View style={[
             styles.activity,
-            completed && styles.completedActivity,
-            disabled && !completed && styles.disabledActivity
+            task.completed && styles.completedActivity,
+            // TODO: (!task.isAllowed && task.completed) seems like isAllowed should handle this itself?
+            (!task.isAllowed && task.completed) && styles.disabledActivity
         ]}>
             <View style={styles.activityContent}>
                 <View style={styles.checkboxContainer}>
                     <View style={[
                         styles.checkbox,
-                        completed && styles.checkboxCompleted
+                        task.completed && styles.checkboxCompleted
                     ]}>
-                        {completed && <Text style={styles.checkmark}>✓</Text>}
+                        {task.completed && <Text style={styles.checkmark}>✓</Text>}
                     </View>
                 </View>
                 <View style={styles.textContainer}>
                     <Text style={[
                         globalStyles.standardText,
-                        completed && styles.completedText,
-                        disabled && !completed && styles.disabledText
+                        task.completed && styles.completedText,
+                        (!task.isAllowed && task.completed) && styles.disabledText
                     ]}>
-                        {prompt}
+                        {task.definition.prompt}
                     </Text>
                 </View>
             </View>
             <SubmitButton
-                disabled={disabled} // Disable button while routing
-                text={buttonText}
+                disabled={(!task.isAllowed && task.completed)} // TODO: Disable button while routing
+                text={`Complete ${task.definition.name}`} // TODO: better button naming
+                // TODO: add disabled text?
                 onPress={()=>{
-                    router.push({pathname, params})
+                    router.push({
+                        pathname: task.definition.path_to_screen as RelativePathString,
+                        params
+                    })
                 }}
                 style={styles.activityButton}
             />
@@ -57,23 +54,17 @@ export default function ToDoList({ taskStates, data }: { taskStates: TaskDisplay
         <View style={styles.todoList}>
             {
                 taskStates.length > 0 && taskStates.map(task => {
-                    // Create params TODO: this feels messy and not maintainable
-                    const params: Record<string, any> = { ...data }; // (includes day, condition)
-                    params.responseKey = ExperimentTracker.constructResponseKey(
-                        task.definition.id,
-                        data.day
-                    );
-                    params.taskName = task.definition.name; // Pass the name for completion tracking
-                    params.datapipeId = task.definition.datapipe_id
+                    // TODO: consider passing in all data to all children, and task definition entirely?
+                    // const params: Record<string, any> = { ...data }; // (includes day, condition)
+                    // params = task.definition; // Pass the name for completion tracking
+                    const params = {
+                        taskId: task.definition.id // Pass the name for completion tracking
+                    }
                     return (
                         <Activity
                             key={task.definition.id}
-                            prompt={task.definition.prompt}
-                            buttonText={`Complete ${task.definition.name}`}
-                            pathname={task.definition.path_to_screen as RelativePathString}
-                            params={params} // pass in any data you want
-                            disabled={!task.isAllowed}
-                            completed={task.completed}
+                            task={task}
+                            params={params}
                         />
                     )
                 })
