@@ -112,16 +112,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             },
         };
 
-        // Update display state - faster than recalculating
-        const newDisplayState: ExperimentDisplayState = {
-            ...displayState, // No error here
-            tasks: displayState.tasks.map(task =>
-                task.definition.id === taskId
-                    ? { ...task, completed: true }
-                    : task
-            ),
-            // TODO: Update 'allTasksCompleteToday'
-        };
+        const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
 
         // Set react states
         setState(newState);
