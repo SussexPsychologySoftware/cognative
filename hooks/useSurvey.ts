@@ -39,12 +39,34 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object,
 
     const { state } = useExperiment();
 
-    // Restore responses on mount if filename is provided
+// Restore responses on mount if filename is provided
     useEffect(() => {
         if (filename) {
             restoreResponses(filename).then(data => {
                 if (data) {
-                    setResponses(data);
+                    // Create a mutable copy of the restored data
+                    const processedData = { ...data };
+
+                    // Loop through questions to find and process 'time' types
+                    for (const question of questions) {
+                        const key = question.key || question.question;
+
+                        // Check if this question is a time picker
+                        if (question.type === 'time') {
+                            const storedValue = processedData[key];
+
+                            // Re-hydrate the ISO string back into a Date object
+                            // Also handles empty strings or null, which TimePicker accepts as null
+                            if (storedValue && typeof storedValue === 'string') {
+                                processedData[key] = new Date(storedValue);
+                            } else {
+                                // Ensure null/undefined/'' becomes null, which TimePicker handles
+                                processedData[key] = null;
+                            }
+                        }
+                    }
+                    // Set the fully processed data as the response state
+                    setResponses(processedData);
                 }
                 setIsLoading(false);
             }).catch(error => {
@@ -52,7 +74,7 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object,
                 setIsLoading(false);
             });
         }
-    }, [filename]);
+    }, [filename, questions]);
 
     const isEmpty = (value: any) => {
         return value === null || value === undefined || value === '' ||
