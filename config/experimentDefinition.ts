@@ -23,7 +23,7 @@ export const experimentDefinition: ExperimentDefinition = {
             show_on_days: [0,1,2,3],
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: ['control'], //independent conditions
-            allow_edit: true,
+            allow_edit: false,
             // required: true,
             // optional fields
             // showWhen: (context: object) => {
