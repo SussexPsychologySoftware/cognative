@@ -7,6 +7,7 @@ import { DataService } from '@/services/data/DataService';
 import {router} from "expo-router";
 import {Alert} from "react-native";
 import { useAutoRefresh } from '@/hooks/useAutoRefresh'
+import {ConditionAssignment} from "@/services/ConditionAssignment";
 // Define context type
 interface ExperimentContextType {
     // Experiment info
@@ -20,7 +21,7 @@ interface ExperimentContextType {
     refreshing: boolean;
 
     // Functions to change experiment state
-    startExperiment: (condition: string, participantId?: string) => Promise<void>;
+    startExperiment: (participantId?: string, condition?: string) => Promise<void>;
     completeTask: (taskId: string) => Promise<void>;
     submitTaskData: (taskId: string, data: any, filename?: string, datapipeId?: string, addTimestampWhenSending?: boolean) => Promise<void>;
 
@@ -57,6 +58,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
 
     const loadExperimentState = useCallback(async () => {
         try {
+            // TODO: why not load the state directly from the context???
             let experimentState = await ExperimentTracker.getState();
             if (experimentState) {
                 const newDisplayState = ExperimentTracker.calculateDisplayState(experimentState);
@@ -83,11 +85,19 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         scheduledRefreshHour: definition.cutoff_hour,
     });
 
-    const startExperiment = useCallback(async (condition: string, participantId?: string) => {
+    const startExperiment = useCallback(async (participantId?: string, condition?: string) => {
         setIsActionLoading(true);
         setActionError(null);
         try {
-            const newState = await ExperimentTracker.startExperiment(condition, participantId);
+            let newCondition: string|string[];
+            if(!condition) {
+                const conditionDef = definition.conditions
+                newCondition = await ConditionAssignment.getCondition(conditionDef.conditions,conditionDef.repeatedMeasures,conditionDef.datapipe_id)
+            } else {
+                newCondition = condition
+            }
+             // State needs
+            const newState = await ExperimentTracker.startExperiment(Array.isArray(newCondition) ? newCondition[0] : newCondition, Array.isArray(newCondition) ? newCondition : undefined, participantId);
             const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
             setState(newState);
             setDisplayState(newDisplayState);
@@ -97,7 +107,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         } finally {
             setIsActionLoading(false);
         }
-    }, []);
+    }, [definition.conditions]);
 
     const completeTask = useCallback(async (taskId: string) => {
         // Get current states using setState to ensure up to date (between rerenders?)

@@ -13,20 +13,35 @@ export class ExperimentTracker {
 
     // ============ START EXPERIMENT ============
 
-    private static createInitialState(participantId: string, currentCondition: string): ExperimentState {
+    private static createInitialState(participantId: string, firstCondition: string, repeatedMeasuresConditionOrder?: string[]): ExperimentState {
+
+        // 1. Create the common properties
         const emptyTaskStates = Object.fromEntries(
             experimentDefinition.tasks.map((task, index)=> {
-            return [task.id, ''];
-        }))
+                return [task.id, ''];
+            })
+        );
 
-        // console.log(emptyTaskStates)
-
-        return {
+        const baseState = {
             startDate: new Date().toISOString(),
             participantId,
-            currentCondition,
             tasksLastCompletionDate: emptyTaskStates
         };
+
+        if (repeatedMeasuresConditionOrder) {
+            return {
+                ...baseState,
+                conditionType: 'repeated',
+                repeatedMeasuresConditionOrder: repeatedMeasuresConditionOrder
+            };
+
+        } else {
+            return {
+                ...baseState,
+                conditionType: 'independent',
+                assignedCondition: firstCondition // Use 'firstCondition' as the one and only condition
+            };
+        }
     }
 
     static generateRandomID(length: number)  {
@@ -38,9 +53,9 @@ export class ExperimentTracker {
         return id
     }
 
-    static async startExperiment(condition: string, participantId?: string): Promise<ExperimentState> {
+    static async startExperiment(firstCondition: string, repeatedMeasuresConditionOrder?: string[], participantId?: string): Promise<ExperimentState> {
         if(!participantId) participantId = this.generateRandomID(16)
-        const initialState = this.createInitialState(participantId, condition)
+        const initialState = this.createInitialState(participantId, firstCondition, repeatedMeasuresConditionOrder)
         await this.saveState(initialState);
         return initialState
     }
@@ -136,9 +151,43 @@ export class ExperimentTracker {
         return displayStatuses;
     }
 
+    private static updateCondition(state: ExperimentState, experimentDay: number) {
+        let currentCondition: string;
+        let currentConditionIndex: number = 0;
+        const { conditions } = experimentDefinition;
+
+        switch (state.conditionType) {
+            case 'independent':
+                currentCondition = state.assignedCondition;
+                currentConditionIndex = 0;
+                break;
+
+            case 'repeated':
+                if (!("increase_on_days" in conditions)) {
+                    // This is a state/definition mismatch, a serious error
+                    console.error("Experiment state is 'repeated', but definition is not!");
+                    currentCondition = 'error_condition';
+                    break; // Or throw
+                }
+
+                const { increase_on_days } = conditions;
+                const { repeatedMeasuresConditionOrder } = state; // No '?' needed
+                // Slightly too clever here - true for each element that matches condition, and length is then conditionIndex
+                currentConditionIndex = increase_on_days.filter(day => experimentDay >= day).length;
+                if (currentConditionIndex >= repeatedMeasuresConditionOrder.length) {
+                    // TODO: note sticking with end of array allows for different lengths of conditions, but looping would be a different design type.
+                    currentConditionIndex = repeatedMeasuresConditionOrder.length - 1;
+                }
+                currentCondition = repeatedMeasuresConditionOrder[currentConditionIndex];
+                break;
+        }
+
+        return { currentCondition, currentConditionIndex };
+    }
+
     static calculateDisplayState(state: ExperimentState): ExperimentDisplayState {
         const experimentDay = this.calculateDaysPassed(state.startDate);
-        const currentCondition = state.currentCondition;
+        const {currentCondition, currentConditionIndex} = this.updateCondition(state, experimentDay);
         // Get tasks that should show today
         const visibleTasks = this.filterPendingTasks(experimentDay, currentCondition);
         // Calculate display status for each visible task
@@ -148,6 +197,7 @@ export class ExperimentTracker {
             participantId: state.participantId??'',
             experimentDay,
             currentCondition,
+            currentConditionIndex,
             isExperimentComplete: this.hasExperimentEnded(state),
             allTasksCompleteToday: false,
             tasks: taskDisplayStatuses
