@@ -11,8 +11,7 @@ export default function WelcomeScreen() {
 
     const handleStart = async () => {
         try {
-            // TODO: Add condition selection logic
-            await startExperiment('control');
+            await startExperiment(); // Optionally pass in participant id and condition here if you want to set them yourself.
             // Navigate to the main app home screen
             router.replace('/');
         } catch (error) {
