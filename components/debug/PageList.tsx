@@ -27,18 +27,18 @@ const styles = StyleSheet.create({
     // Page list for debugging
     pageList: {
         gap: 5,
-            paddingTop: 20,
-            borderTopWidth: 1,
-            borderTopColor: 'grey',
+        paddingVertical: 8,
+        borderTopWidth: 1,
+        borderTopColor: 'grey',
     },
     debugTitle: {
         color: 'grey',
-            fontSize: 14,
-            marginBottom: 8,
+        fontSize: 14,
+        marginBottom: 8,
     },
     debugLink: {
         color: 'grey',
-            fontSize: 14,
-            textDecorationLine: 'underline',
+        fontSize: 14,
+        textDecorationLine: 'underline',
     },
 });
