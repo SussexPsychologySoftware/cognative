@@ -202,7 +202,10 @@ const styles = StyleSheet.create({
     questionContainer: {
         gap: 10,
 
-        // paddingBottom: 20,
+        paddingTop: 15,
+        borderTopWidth: 2,
+        borderTopColor: 'rgba(128, 128, 128,.2)',
+        // paddingBottom: 15,
         // borderBottomWidth: 1,
         // borderBottomColor: 'grey',
     },
