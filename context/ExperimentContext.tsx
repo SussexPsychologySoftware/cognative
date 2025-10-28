@@ -29,6 +29,8 @@ interface ExperimentContextType {
     stopExperiment: () => Promise<void>;
     confirmAndStopExperiment: () => void;
 
+    updateNotificationTimes: (times: Record<string, string>) => Promise<void>;
+
     refreshState: () => Promise<void>;
 }
 
@@ -108,6 +110,29 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             setIsActionLoading(false);
         }
     }, [definition.conditions]);
+
+    const updateNotificationTimes = useCallback(async (times: Record<string, string>) => {
+        setIsActionLoading(true);
+        setActionError(null);
+        try {
+            const newState = await ExperimentTracker.updateNotificationTimes(times);
+
+            if (newState) {
+                // new calculateDisplayState function uses new times to build the displayState.notifications array.
+                const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
+                setState(newState);
+                setDisplayState(newDisplayState);
+            } else {
+                throw new Error("No state found to update.");
+            }
+        } catch (e: any) {
+            console.error("Failed to update notification times:", e);
+            setActionError(e.message || "Failed to update notification times");
+            throw e; // Re-throw so the settings screen can catch it
+        } finally {
+            setIsActionLoading(false);
+        }
+    }, []); // No dependencies needed, tracker gets its own state
 
     const completeTask = useCallback(async (taskId: string) => {
         // Get current states using setState to ensure up to date (between rerenders?)
@@ -237,6 +262,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         completeTask,
         submitTaskData,
         resetTaskCompletion,
+        updateNotificationTimes,
         stopExperiment,
         confirmAndStopExperiment,
         isActionLoading,
