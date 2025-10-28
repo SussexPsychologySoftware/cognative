@@ -132,6 +132,18 @@ export const experimentDefinition: ExperimentDefinition = {
         datapipe_id: 'dOS0nQ93xCSV',
         increase_on_days: [2,6,10]
     },
+    notifications: [
+        {
+            for_task_id: 'surveyExample',
+            prompt: 'Set notification time for daily survey:',
+            default_time: '12:30',
+        },
+        {
+            for_task_id: 'surveyExample2',
+            prompt: 'Other survey:',
+            default_time: '12:30',
+        }
+    ],
     // blocks: {
     //     names: [],
     //     baseline_length: 2, //days
