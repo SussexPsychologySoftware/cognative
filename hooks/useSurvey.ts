@@ -205,8 +205,7 @@ export function useSurvey(questions: SurveyQuestion[] | undefined, onSubmit?: (d
             }
         }
 
-        return totalQuestions > 0 ? (answeredQuestions / totalQuestions) * 100 : 0;
-    }, [responses, questions]);
+        return totalQuestions > 0 ? Math.ceil((answeredQuestions / totalQuestions) * 100) : 0;
     }, [questions, responses, checkDisplayConditions]);
 
     const handleSurveySubmit = useCallback(async () => {
