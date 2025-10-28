@@ -5,9 +5,12 @@ export const experimentDefinition: ExperimentDefinition = {
     total_days: 14,
     cutoff_hour: 4,
     // TODO: add conditions as a nested interface {'conditions': string[], repeated_or_independent: '', datapipe_id: ''}
-    conditions: ['control', 'monaural', 'binaural'],
-    repeated_or_independent_conditions: 'repeated',
-    condition_datapipe_id: 'dOS0nQ93xCSV',
+    conditions: {
+        conditions: ['control', 'monaural', 'binaural'],
+        repeatedMeasures: true,
+        datapipe_id: 'dOS0nQ93xCSV',
+        increase_on_days: [2,6,10]
+    },
     // blocks: {
     //     names: [],
     //     baseline_length: 2, //days
