@@ -1,15 +1,15 @@
-import { TaskDefinition } from "@/types/experimentConfig";
+import { TaskDefinition, NotificationDefinition } from "@/types/experimentConfig";
 
 // STORED INFO ON PARTICIPANT STATE ********
 interface ParticipantInformation {
     // Stuff that never changes
     startDate: string; // ISO string
     participantId?: string;
-    repeatedMeasuresConditionOrder?: string[];
 }
 
 interface BaseExperimentState extends ParticipantInformation {
     tasksLastCompletionDate: Record<string, string>;
+    notificationTimes: Record<string, string>;
 }
 
 // Note
@@ -32,6 +32,11 @@ export interface TaskDisplayStatus {
     completed: boolean; // Let's make this non-optional for clarity
 }
 
+export interface scheduledNotification {
+    definition: NotificationDefinition,
+    time: string, // or date? going to be serialised
+}
+
 export interface ExperimentDisplayState {
     participantId: string;
     experimentDay: number; // Day 0, 1, 2, etc.
@@ -40,4 +45,5 @@ export interface ExperimentDisplayState {
     isExperimentComplete: boolean;
     allTasksCompleteToday: boolean;
     tasks: TaskDisplayStatus[];
+    notifications?: scheduledNotification[]
 }

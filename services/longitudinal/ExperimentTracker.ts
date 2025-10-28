@@ -14,8 +14,6 @@ export class ExperimentTracker {
     // ============ START EXPERIMENT ============
 
     private static createInitialState(participantId: string, firstCondition: string, repeatedMeasuresConditionOrder?: string[]): ExperimentState {
-
-        // 1. Create the common properties
         const emptyTaskStates = Object.fromEntries(
             experimentDefinition.tasks.map((task, index)=> {
                 return [task.id, ''];
@@ -25,7 +23,8 @@ export class ExperimentTracker {
         const baseState = {
             startDate: new Date().toISOString(),
             participantId,
-            tasksLastCompletionDate: emptyTaskStates
+            tasksLastCompletionDate: emptyTaskStates,
+            notificationTimes: emptyTaskStates,
         };
 
         if (repeatedMeasuresConditionOrder) {
