@@ -77,6 +77,16 @@ export class ExperimentTracker {
         await DataService.setData(this.STORAGE_KEY, state);
     }
 
+    static async updateNotificationTimes(times: Record<string, string>): Promise<ExperimentState | null> {
+        const state = await this.getState();
+        if (!state) return null;
+
+        state.notificationTimes = times; // Overwrite with the new object
+
+        await this.saveState(state); // Persist the change
+        return state;
+    }
+
     static async resetTasks(): Promise<ExperimentState | null> {
         const state = await this.getState();
         if (!state) return null;
