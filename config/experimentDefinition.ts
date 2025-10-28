@@ -88,10 +88,10 @@ const ExampleSurveyQuestions: SurveyQuestion[] = [
         key: 'content',
         question: 'On a scale of 0-1, how content are you?',
         type: 'slider',
-        default: 5,
+        default: .5,
         min: 0,
-        max: 10,
-        step: 1,
+        max: 1,
+        step: .1,
         labels: ['Content', 'Neither content nor uncontent', 'Uncontent']
     },
     {

@@ -107,7 +107,7 @@ export default function Survey({
                             max={question.max}
                             onChange={(newValue: number) => updateResponses(key, newValue)}
                             step={question.step}
-                            showValue={true}
+                            showValue={question.showValue}
                             labels={question.labels}
                         />;
                         break;

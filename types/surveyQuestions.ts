@@ -59,6 +59,7 @@ export interface SliderQuestion extends BasicSurveyQuestion {
     min?: number;
     max?: number;
     step?: number;
+    showValue?: boolean;
     labels?: string[];
 }
 
