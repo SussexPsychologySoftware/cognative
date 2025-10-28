@@ -1,5 +1,3 @@
-import {DataService} from "@/services/data/DataService";
-
 export class ConditionAssignment {
 
     static heapPermutations(arr: string[]): string[][] {
@@ -24,7 +22,7 @@ export class ConditionAssignment {
         return result;
     }
 
-    static shuffle(arr: string[]): string[] {
+    private static shuffle(arr: string[]): string[] {
         for (let i = arr.length -1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
             const temp = arr[i];
@@ -37,6 +35,10 @@ export class ConditionAssignment {
     private static getConditionFromNumber(conditions: string[], conditionNumber: number, repeatedMeasures: boolean) {
         let allConditions = repeatedMeasures ? this.heapPermutations(conditions) : conditions;
         return allConditions[conditionNumber]
+    }
+
+    private static getRandomInt(max: number) {
+        return Math.floor(Math.random() * max);
     }
 
     private static async requestConditionFromDatapipe(experimentId: string): Promise<number> {
@@ -64,17 +66,12 @@ export class ConditionAssignment {
             throw e;  // Re-throw to stop the setup process
         }
     }
-
-    static getRandomInt(max: number) {
-        return Math.floor(Math.random() * max);
-    }
-
-    static async getCondition(conditions: string[], repeatedMeasures: boolean, experimentId?: string, saveKey?: string) {
+    
+    static async getCondition(conditions: string[], repeatedMeasures: boolean, experimentId?: string) {
         // NOTE: repeatedMeasures true selects a permutation of entire array, false selects one condition from array
         // const conditions = ['control','monaural','binaural']
         const conditionNumber = experimentId ? await this.requestConditionFromDatapipe(experimentId) : this.getRandomInt(conditions.length)
-        const condition = this.getConditionFromNumber(conditions, conditionNumber, repeatedMeasures)
-        await DataService.setData(saveKey??'condition', condition)
-        return condition
+        // TODO: await DataService.setData(saveKey??'condition', condition)
+        return this.getConditionFromNumber(conditions, conditionNumber, repeatedMeasures)
     }
 }
