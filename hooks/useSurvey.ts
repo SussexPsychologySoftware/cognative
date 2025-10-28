@@ -30,8 +30,8 @@ async function restoreResponses(restoreKey: string){
     return data
 }
 
-export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object, filename?:string) => void, filename?: string) {
-    const [responses, setResponses] = useState(initializeResponses(questions));
+export function useSurvey(questions: SurveyQuestion[] | undefined, onSubmit?: (data: object, filename?:string) => void, filename?: string) {
+    const [responses, setResponses] = useState(initializeResponses(questions || []));
     const [isLoading, setIsLoading] = useState(!!filename);
     const [warning, setWarning] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,7 +43,7 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object,
     useEffect(() => {
         if (filename) {
             restoreResponses(filename).then(data => {
-                if (data) {
+                if (data && questions) {
                     // Create a mutable copy of the restored data
                     const processedData = { ...data };
 
@@ -73,6 +73,8 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object,
                 console.error('Error restoring responses:', error);
                 setIsLoading(false);
             });
+        } else {
+            setIsLoading(false); // Not loading if filename doesn't exist
         }
     }, [filename, questions]);
 
@@ -124,6 +126,8 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object,
     },[responses])
 
     const validateResponses = useCallback(() => {
+
+        if (!questions) return ''; // Return if no questions
         const invalid = new Set<string>();
         let firstInvalidQuestion = '';
 
@@ -171,12 +175,13 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object,
     }, [checkDisplayConditions, questions, responses]);
 
     const resetSurvey = useCallback(() => {
-        setResponses(initializeResponses(questions));
+        setResponses(initializeResponses(questions||[]));
         setWarning('');
         setInvalidQuestions(new Set());
     }, [questions]);
 
     const progress = useMemo(() => {
+        if (!questions) return 0; // Return 0 if no questions
         let totalQuestions = 0;
         let answeredQuestions = 0;
 
