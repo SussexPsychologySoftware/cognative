@@ -5,12 +5,25 @@ interface ParticipantInformation {
     // Stuff that never changes
     startDate: string; // ISO string
     participantId?: string;
+    repeatedMeasuresConditionOrder?: string[];
 }
 
-export interface ExperimentState extends ParticipantInformation {
-    currentCondition: string; // For repeated measures, or string for independent
+interface BaseExperimentState extends ParticipantInformation {
     tasksLastCompletionDate: Record<string, string>;
 }
+
+// Note
+interface IndependentMeasuresState extends BaseExperimentState {
+    conditionType: 'independent';
+    assignedCondition: string;
+}
+
+interface RepeatedMeasuresState extends BaseExperimentState {
+    conditionType: 'repeated';
+    repeatedMeasuresConditionOrder: string[];
+}
+
+export type ExperimentState = IndependentMeasuresState | RepeatedMeasuresState;
 
 // FOR DISPLAY STATE **************
 export interface TaskDisplayStatus {
@@ -23,6 +36,7 @@ export interface ExperimentDisplayState {
     participantId: string;
     experimentDay: number; // Day 0, 1, 2, etc.
     currentCondition: string;
+    currentConditionIndex: number;
     isExperimentComplete: boolean;
     allTasksCompleteToday: boolean;
     tasks: TaskDisplayStatus[];

@@ -23,13 +23,24 @@ export interface TaskDefinition {
     // conditional_on_tasks?: ['eveningDiary']
 }
 
+interface IndependentMeasuresCondition {
+    conditions: string[];
+    datapipe_id?: string;
+    repeatedMeasures: boolean;
+}
+
+export interface RepeatedMeasuresCondition extends IndependentMeasuresCondition {
+    repeatedMeasures: true;
+    increase_on_days: number[];
+}
+
+type ConditionDefinition = RepeatedMeasuresCondition | IndependentMeasuresCondition
+
 export interface ExperimentDefinition {
     name: string; // Human-readable name
     total_days: number; // Total length of experiment
     cutoff_hour: number; // Hour (0-23) when "day" switches (e.g., 4 = 4am)
-    conditions: string[];
-    condition_datapipe_id?: string;
-    repeated_or_independent_conditions: 'repeated'|'independent';
+    conditions: ConditionDefinition;
     tasks: TaskDefinition[];
     // Other ideas
     // blocks?: {
