@@ -24,7 +24,7 @@ export default function Range({ value, min, max, step, showValue, onChange, styl
                 // onSlidingComplete={onChange}
                 step={step??0}
                 tapToSeek={true}
-                renderStepNumber={!!step}
+                renderStepNumber={(!!step) && step>1}
             />
             { showValue &&
                 <Text style={[styles.valueDisplay, globalStyles.standardText]}>
