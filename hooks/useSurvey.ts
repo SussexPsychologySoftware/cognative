@@ -76,11 +76,6 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object,
         }
     }, [filename, questions]);
 
-    const isEmpty = (value: any) => {
-        return value === null || value === undefined || value === '' ||
-            (typeof value === 'string' && value.trim() === '');
-    };
-
     const updateResponses = useCallback((key: string, answer: any, nestedKey?: string) => {
         // console.log({ key, answer, nestedKey });
 
@@ -109,6 +104,10 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object,
         });
     }, []);
 
+    const isEmpty = (value: any) => {
+        return value === null || value === undefined || value === '' ||
+            (typeof value === 'string' && value.trim() === '');
+    };
     const validateResponses = useCallback(() => {
         const invalid = new Set<string>();
         let firstInvalidQuestion = '';
