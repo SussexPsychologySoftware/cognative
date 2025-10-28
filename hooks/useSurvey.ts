@@ -108,6 +108,21 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object,
         return value === null || value === undefined || value === '' ||
             (typeof value === 'string' && value.trim() === '');
     };
+
+    const checkDisplayConditions = useCallback((question: SurveyQuestion) => {
+        if(question.conditions && question.conditions.length > 0) {
+            let conditionMatched = false
+            for(let i=0; i<question.conditions.length; i++) {
+                const condition = question.conditions[i]
+                if(responses[condition.key] !== undefined && responses[condition.key] === condition.value){
+                    conditionMatched = true
+                }
+            }
+            if(!conditionMatched) return false;
+        }
+        return true
+    },[responses])
+
     const validateResponses = useCallback(() => {
         const invalid = new Set<string>();
         let firstInvalidQuestion = '';
@@ -118,16 +133,8 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object,
 
             if (question.required) {
                 // Handle conditional question
-                if(question.conditions && question.conditions.length > 0) {
-                    let conditionMatched = false
-                    for(let i=0; i<question.conditions.length; i++) {
-                        const condition = question.conditions[i]
-                        if(responses[condition.key] !== undefined && responses[condition.key] === condition.value){
-                            conditionMatched = true
-                        }
-                    }
-                    if(!conditionMatched) continue
-                }
+                const isDisplayed = checkDisplayConditions(question)
+                if(!isDisplayed) continue
 
                 let isInvalid = false;
                 if (question.type === 'likertGrid') {
@@ -161,7 +168,7 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object,
 
         setInvalidQuestions(invalid);
         return firstInvalidQuestion;
-    }, [questions, responses]);
+    }, [checkDisplayConditions, questions, responses]);
 
     const resetSurvey = useCallback(() => {
         setResponses(initializeResponses(questions));
@@ -176,7 +183,8 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object,
         for (const question of questions) {
             const key = question.key || question.question;
             const response = responses[key];
-
+            const isDisplayed = checkDisplayConditions(question)
+            if(!isDisplayed) continue
             if (question.type === 'likertGrid') {
                 const expectedCount = question.statements?.length || 0;
                 totalQuestions += expectedCount;
@@ -194,6 +202,7 @@ export function useSurvey(questions: SurveyQuestion[], onSubmit?: (data: object,
 
         return totalQuestions > 0 ? (answeredQuestions / totalQuestions) * 100 : 0;
     }, [responses, questions]);
+    }, [questions, responses, checkDisplayConditions]);
 
     const handleSurveySubmit = useCallback(async () => {
         if (isSubmitting) return false;
