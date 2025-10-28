@@ -153,7 +153,7 @@ export const experimentDefinition: ExperimentDefinition = {
     tasks: [
         {
             id: 'surveyExample',
-            name: 'Def survey',
+            name: 'Defined survey',
             type: 'survey',
             prompt: 'Here it is:',
             questions: ExampleSurveyQuestions,

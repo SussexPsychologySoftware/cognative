@@ -6,6 +6,8 @@ import {TaskDefinition} from "@/types/experimentConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 // ============ State Management ============
+// EXPERIMENT TRACKER - this saves and calculates states for display
+// Experiment Context deals with reacty style setting and getting of live states whilst app is open
 // TODO: some of this is a bit high level - maybe needs to be split into 'diary study'  and 'todo list' and 'experiment state' etc?
 export class ExperimentTracker {
     private static readonly STORAGE_KEY = 'experimentState'; // Storage

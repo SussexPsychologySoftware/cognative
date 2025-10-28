@@ -50,6 +50,7 @@ export const StandardView = ({
                 behavior={keyboardBehavior}
                 style={[styles.keyboardAvoidingView, keyboardAvoidingViewStyle]}
             >
+                {/*<TouchableWithoutFeedback onPress={Keyboard.dismiss}>*/}
                 <ScrollView
                     contentContainerStyle={[styles.scrollViewContentContainer, contentContainerStyle]}
                     style={[styles.scrollView, scrollViewStyle]}

@@ -98,7 +98,6 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             } else {
                 newCondition = condition
             }
-             // State needs
             const newState = await ExperimentTracker.startExperiment(Array.isArray(newCondition) ? newCondition[0] : newCondition, Array.isArray(newCondition) ? newCondition : undefined, participantId);
             const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
             setState(newState);
@@ -141,7 +140,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             return;
         }
 
-        // 2. Create the new state *optimistically*
+        // Create the new state *optimistically*
         const newCompletionDate = new Date().toISOString();
 
         // Update core state

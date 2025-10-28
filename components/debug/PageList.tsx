@@ -4,7 +4,7 @@ import {Link, RelativePathString} from "expo-router";
 
 export default function PageList({ pages }: { pages?: string[]}){
     //print out files with: `find app/ -type f -name "*.tsx"` in terminal
-    if(!pages) pages = ['','surveyExample','end'] // TODO: add pages here
+    if(!pages) pages = ['','surveyExample','end', 'settings'] // TODO: add pages here
     return (
         <View style={styles.pageList}>
             <Text style={styles.debugTitle}>Page List:</Text>

@@ -92,6 +92,7 @@ export default function SurveyExample() {
             key: 'localTime',
             question: 'What is the time where you are now?',
             type: "time",
+            required: true,
         },
         {
             key: 'multilineTextInput',
