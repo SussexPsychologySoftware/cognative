@@ -38,8 +38,16 @@ function Activity({ task, params }: { task: TaskDisplayStatus, params: Record<st
                 text={(task.completed && task.definition.allow_edit) ? `Edit ${task.definition.name} responses` : `Complete ${task.definition.name}`} // TODO: better button naming
                 // TODO: add disabled text?
                 onPress={()=>{
+                    let pathname;
+                    switch (task.definition.type) {
+                        case "screen":
+                            pathname = task.definition.path_to_screen
+                            break;
+                        default:
+                            pathname = '/'+task.definition.type
+                    }
                     router.push({
-                        pathname: task.definition.path_to_screen as RelativePathString,
+                        pathname: pathname as RelativePathString,
                         params
                     })
                 }}
