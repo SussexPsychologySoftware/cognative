@@ -159,7 +159,7 @@ export const experimentDefinition: ExperimentDefinition = {
             questions: ExampleSurveyQuestions,
             show_on_days: [0,1,2,3],
             datapipe_id: 'dOS0nQ93xCSV',
-            show_for_conditions: ['control'], //independent conditions
+            show_for_conditions: [],
             allow_edit: false,
             // required: true,
             // optional fields
@@ -182,7 +182,7 @@ export const experimentDefinition: ExperimentDefinition = {
             path_to_screen: '/surveyExample',
             show_on_days: [0, 1, 2, 3],
             datapipe_id: 'dOS0nQ93xCSV',
-            show_for_conditions: ['control'], //independent conditions
+            show_for_conditions: ['control'], //only show if condition is 'control'
             allow_edit: true,
         }
     ]
