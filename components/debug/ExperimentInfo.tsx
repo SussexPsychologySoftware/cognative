@@ -25,7 +25,7 @@ export default function ExperimentInfo({ object, showExperimentState=true, showD
     return (
         <View style={styles.container}>
             <Text style={styles.componentTitle}>Experiment Info: </Text>
-            { object && <InfoList object={state} title='Custom Object'/> }
+            { object && <InfoList object={object} title='Custom Object'/> }
             { showExperimentState && <InfoList object={state} title='Experiment State'/> }
             { showDisplayState && <InfoList object={displayState} title='Display State'/> }
             { showExperimentDefinition && <InfoList object={definition} title='Experiment Definition'/> }
