@@ -1,15 +1,16 @@
 // TODO: move this into trackExperimentState and rename to experiment.ts
+import {SurveyQuestion} from "@/types/surveyQuestions";
 
-export interface TaskDefinition {
+interface TaskDefinitionBasic {
     id: string;
     name: string;
     prompt?: string;
-    path_to_screen: string;
     show_on_days: number[]; // Empty array means show all days
     show_for_conditions: string[]; // Empty array means show for all conditions
     datapipe_id: string;
-    allow_edit: boolean;
-    params?: Record<string, any>;
+    allow_edit: boolean; // TODO: change to allow_once
+    params?: Record<string, any>; // other stuff to pass in
+    type: 'survey' | 'screen' | 'web'
     // Other ideas
     // required: true,
     // showWhen?: (context: object) => {
@@ -22,6 +23,26 @@ export interface TaskDefinition {
     // deadlineWarning?: '11:30',
     // conditional_on_tasks?: ['eveningDiary']
 }
+
+// Export type tasks for use in each screen displaying that type
+export interface SurveyTaskDefinition extends TaskDefinitionBasic {
+    type: 'survey',
+    questions: SurveyQuestion[],
+}
+
+export interface ScreenTaskDefinition extends TaskDefinitionBasic {
+    type: 'screen',
+    path_to_screen: string;
+}
+
+export interface WebTaskDefinition extends TaskDefinitionBasic {
+    type: 'web',
+    url: string;
+}
+
+export type TaskDefinition = SurveyTaskDefinition | ScreenTaskDefinition | WebTaskDefinition;
+
+// -*#*-*#*- EXPERIMENT -*#*-*#*-
 
 interface IndependentMeasuresCondition {
     conditions: string[];
