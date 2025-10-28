@@ -3,6 +3,8 @@ import { router } from 'expo-router';
 import { ExperimentTracker } from '@/services/longitudinal/ExperimentTracker';
 
 export const useRestore = (isNotificationHandled?: RefObject<boolean>) => {
+    // Simple restore function if not using app gate, run in _layout app root.
+    // is Notification handled can catch if a notification handler is also present, optionally
     useEffect(() => {
         const restoreAppState = async () => {
             if (isNotificationHandled?.current) return; // Skip if notification was handled
@@ -17,8 +19,6 @@ export const useRestore = (isNotificationHandled?: RefObject<boolean>) => {
                 const experimentHasEnded = ExperimentTracker.hasExperimentEnded(experimentState);
                 if (experimentHasEnded) {
                     await ExperimentTracker.stopExperiment();
-                // } else if (!experimentState.setVolume) {
-                    // router.replace('/');
                 } else {
                     router.replace('/');
                 }
