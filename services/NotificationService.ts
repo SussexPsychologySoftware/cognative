@@ -1,26 +1,18 @@
 import * as Notifications from 'expo-notifications';
+// import * as TaskManager from 'expo-task-manager';
 import {NotificationPermissionsStatus} from 'expo-notifications';
-import { Linking, Alert } from 'react-native';
+import {Linking, Alert, Platform} from 'react-native';
 import { ExperimentTracker } from '@/services/longitudinal/ExperimentTracker';
-
-type timeOfDay = 'morning' | 'evening'
-
-type NotificationTimes = { // Better formatted object for returning time of notifications
-    [time in timeOfDay]: {
-        id: string; // Notification ID
-        hour: number; // Hour of the notification
-        minute: number; // Minute of the notification
-        date: Date
-    };
-};
+import {experimentDefinition} from "@/config/experimentDefinition";
+import {ExperimentState} from "@/types/trackExperimentState";
 
 export class NotificationService {
-    private static readonly EXPERIMENT_ID = "4xr2ewHBUVld";
-
+    // TODO: consider push notification service
     static async initialize() {
+        // Decide what happens if notification received whilst app is running
         Notifications.setNotificationHandler({
             handleNotification: async () => ({
-                shouldShowAlert: true,
+                // priority: AndroidNotificationPriority.MAX,
                 shouldPlaySound: true,
                 shouldSetBadge: true,
                 shouldShowBanner: true,
@@ -64,87 +56,95 @@ export class NotificationService {
     }
 
     private static checkPermissionsGranted(permissions: NotificationPermissionsStatus): boolean {
-        return permissions.granted ||
-            permissions.ios?.status === Notifications.IosAuthorizationStatus.AUTHORIZED;
+        return permissions.granted || permissions.ios?.status === Notifications.IosAuthorizationStatus.AUTHORIZED;
     }
 
     // -*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*
 
-    static async scheduleNotifications(
-        morningTime: { hour: number; minute: number } | null,
-        eveningTime: { hour: number; minute: number } | null
-    ): Promise<void> {
+    static async scheduleAllNotifications(state: ExperimentState): Promise<void> {
+        // Could take in state here from Experiment Tracker, or the times array
+        // TODO: consider Headless Background Notifications so registerTaskAsync() can be run when app is terminated.
+
         // Cancel all existing notifications
         await Notifications.cancelAllScheduledNotificationsAsync();
-        const EXPERIMENT_LENGTH = 14;
-        const daysPassed = await ExperimentTracker.getDaysSinceStart();
-        const daysLeft = EXPERIMENT_LENGTH-daysPassed
-        await ExperimentTracker.getDaysSinceStart();
-        const experimentState = await ExperimentTracker.getState()
-        let completedMorningDiaryToday = false
-        let completedEveningDiaryToday = false
+        const currentDay = ExperimentTracker.calculateDaysPassed(state.startDate);
 
-        if(experimentState) {
-            completedMorningDiaryToday = ExperimentTracker.hasCompletedMorningDiary(experimentState)
-            completedEveningDiaryToday = ExperimentTracker.hasCompletedEveningDiary(experimentState)
-        }
+        // const daysRemainingInExperiment = experimentDefinition.total_days-currentDay
+        // TODO: concerned this might break if anything is improved in the conditions list?
+        let numberOfScheduledNotifications = 0;
+        let maxNotifications = Platform.OS === 'ios' ? 64 : 50; // Note some Android APIs allow manufacturers to lower notification limit
 
-        if (morningTime) {
-            await this.scheduleNotificationsForTimeOfDay(morningTime, daysLeft, 'morning', completedMorningDiaryToday);
-        }
+        for (const task of experimentDefinition.tasks) {
+            if(numberOfScheduledNotifications > maxNotifications) return
 
-        if (eveningTime) {
-            await this.scheduleNotificationsForTimeOfDay(eveningTime, daysLeft, 'evening', completedEveningDiaryToday);
-        }
-    }
+            // Check if this task has a notification and a user-set time
+            if (!task.notification) continue;
+            const notificationTime = state.notificationTimes[task.id];
+            if (!notificationTime) continue; // No time set, skip
 
-    private static async scheduleNotificationsForTimeOfDay(
-        time: { hour: number; minute: number },
-        daysLeft: number,
-        timeOfDay: timeOfDay,
-        completedToday: boolean
-    ){
-        if(timeOfDay==='evening') {
-            daysLeft = daysLeft-1  // No evening diary on last day
-        }
-        const reminderTile = `${timeOfDay.charAt(0).toUpperCase() + timeOfDay.slice(1)} Sleep Diary Reminder`
-        const reminderBody = `Click here to complete this ${timeOfDay}'s sleep diary`
+            // Get task definition
+            const taskCompletionDate = state.tasksLastCompletionDate[task.id];
+            const completedToday = taskCompletionDate ? ExperimentTracker.happenedToday(taskCompletionDate) : false;
 
-        const now = new Date();
-        for(let i= completedToday ? 1 : 0; i<daysLeft; i++){
-            const notificationDate = new Date();
-            notificationDate.setHours(time.hour)
-            notificationDate.setMinutes(time.minute)
-            notificationDate.setSeconds(0)
-            notificationDate.setDate(notificationDate.getDate() + i);
-            if (notificationDate > now) {
-                await this.scheduleNotification(reminderTile, reminderBody, notificationDate, timeOfDay, false);
+            // Get days task will run on
+            const remainingTaskDays = task.show_on_days.filter(day => completedToday ? day > currentDay : day >= currentDay)
+            // Get days where condition lines up
+            const daysToSchedule = remainingTaskDays.filter(day => {
+                // note updateCondition handles independent measures by not doing anything
+                const conditionOnDay = ExperimentTracker.updateCondition(state,day).currentCondition
+                // If show_for_conditions is empty then show on all conditions
+                return task.show_for_conditions.length === 0 || task.show_for_conditions.includes(conditionOnDay);
+            })
+            if(daysToSchedule.length === 0) return; //No days left to schedule
+
+            // Prep notification settings
+            const [hours, minutes] = notificationTime.split(':').map(Number);
+            const title = `${task.name} Reminder`
+            const body = `Click here to complete today's ${task.name}`
+
+            // Loop through days and schedule notifications
+            // TODO: deal with when too many - run scheduler every day?
+            for (const day of daysToSchedule) {
+                if (numberOfScheduledNotifications > maxNotifications) break;
+                // Construct date of notification
+                const notificationDate = new Date();
+                notificationDate.setHours(hours)
+                notificationDate.setMinutes(minutes)
+                notificationDate.setSeconds(0);
+                const daysInAdvance = day - currentDay;
+                notificationDate.setDate(notificationDate.getDate() + daysInAdvance);
+                // Make sure it's in the future
+                // https://developer.apple.com/documentation/usernotifications/pushing-background-updates-to-your-app#overview
+                numberOfScheduledNotifications += 1
+                let pathname;
+                switch (task.type) {
+                    case "screen":
+                        pathname = task.path_to_screen
+                        break;
+                    default:
+                        pathname = '/' + task.type // TODO: add getPathname helper somewhere..
+                }
+
+                // Make sure it's in the future (it should be)
+                if (notificationDate > new Date()) {
+                    numberOfScheduledNotifications += 1;
+                    await this.scheduleNotification(title, body, notificationDate, task.id, pathname);
+                }
+                // return {taskId: task.id, taskName: task.name, notificationDate} // List of notifications
             }
         }
-    }
-
-    static date2Day(date: Date) {
-        return date.toISOString().split('T')[0]
     }
 
     private static async scheduleNotification(
         title: string,
         body: string,
         date: Date,
-        timeOfDay: string,
-        reminder: boolean
+        taskId: string,
+        path_to_screen?: string,
     ): Promise<string> {
-        // console.log('SCHEDULING NOTIFICATION', {title, body, date, timeOfDay})
         return await Notifications.scheduleNotificationAsync({
-            content: {
-                title,
-                body,
-                sound: 'default',
-                data: {
-                    timeOfDay,
-                    reminder,
-                    date: this.date2Day(date)
-                },
+            content: { title, body, sound: 'default',
+                data: { taskId, date, path_to_screen }
             },
             trigger: {
                 type: Notifications.SchedulableTriggerInputTypes.DATE,
@@ -153,14 +153,29 @@ export class NotificationService {
         });
     }
 
-    static async cancelNotificationForSurveyToday(timeOfDay: timeOfDay): Promise<void> {
-        const notifications = await Notifications.getAllScheduledNotificationsAsync()
-        // console.log({notifications})
-        const currentDate = this.date2Day(new Date())
-        for (const n of notifications) {
-            const triggerData = n.content.data
-            if(triggerData.timeOfDay === timeOfDay && triggerData.date === currentDate) {
-                await Notifications.cancelScheduledNotificationAsync(n.identifier)
+    // Cancel a scheduled notification (on task completion) *********
+    static isSameDay(date1: Date, date2: Date) {
+        date1.setHours(0, 0, 0, 0);
+        date2.setHours(0, 0, 0, 0);
+        return (
+            date1.getFullYear() === date2.getFullYear() &&
+            date1.getMonth() === date2.getMonth() &&
+            date1.getDate() === date2.getDate()
+        );
+    }
+
+    static async cancelNotificationForToday(taskId: string): Promise<void> {
+        const scheduledNotifications = await Notifications.getAllScheduledNotificationsAsync()
+        for (const notification of scheduledNotifications) {
+            const triggerData = notification.content.data
+            if(triggerData.taskId !== taskId) continue;
+
+            const currentDate = new Date()
+            // TODO: implement trigger data type to avoid type coercion here? consider using notification.trigger?.date
+            const triggerDate = new Date(triggerData.date as string)
+            if(this.isSameDay(triggerDate, currentDate)){
+                const notificationIdentifier = notification.identifier
+                await Notifications.cancelScheduledNotificationAsync(notificationIdentifier)
                 break
             }
         }
