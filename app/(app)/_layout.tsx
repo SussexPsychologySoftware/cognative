@@ -2,7 +2,12 @@ import React from 'react';
 import { Stack } from 'expo-router';
 
 // This is the layout for the main app screens
+// export const unstable_settings = {
+//     initialRouteName: '/', // Ensure any route can link back to `/`
+// };
+
 export default function AppLayout() {
+
     return (
         <Stack>
             <Stack.Screen name="index" options={{ title: 'Home' }} />
