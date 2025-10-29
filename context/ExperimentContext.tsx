@@ -8,6 +8,7 @@ import {router} from "expo-router";
 import {Alert} from "react-native";
 import { useAutoRefresh } from '@/hooks/useAutoRefresh'
 import {ConditionAssignment} from "@/services/ConditionAssignment";
+import {NotificationService} from "@/services/NotificationService";
 // Define context type
 interface ExperimentContextType {
     // Experiment info
@@ -87,6 +88,16 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         scheduledRefreshHour: definition.cutoff_hour,
     });
 
+    useEffect(() => {
+        if (state && displayState) {
+            // Re-sync all notifications when app loads
+            // This is a "fire-and-forget" background task
+            NotificationService.scheduleAllNotifications(state).catch(err => {
+                console.error("Failed to sync notifications on load:", err);
+            });
+        }
+    }, [state, displayState]); // Runs once when state is loaded
+
     const startExperiment = useCallback(async (participantId?: string, condition?: string) => {
         setIsActionLoading(true);
         setActionError(null);
@@ -115,8 +126,11 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         setActionError(null);
         try {
             const newState = await ExperimentTracker.updateNotificationTimes(times);
+            // TODO: await NotificationService.scheduleNotifications() - should maybe take in state or times instead?
+            // or should updateNotificationTimes take in the Notification
 
             if (newState) {
+                await NotificationService.scheduleAllNotifications(newState);
                 // new calculateDisplayState function uses new times to build the displayState.notifications array.
                 const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
                 setState(newState);
@@ -184,6 +198,11 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         try {
             await DataService.saveData(data, filename, datapipeID, participantId, addTimestampWhenSending);
             await completeTask(taskId); // 'optimistic' function - updates state and uses that, expects saving will be fine.
+            // Fire and forget the notification canceller so users don't get notifications for tasks they've already commpleted
+            NotificationService.cancelNotificationForToday(taskId).catch(err => {
+                console.error("Failed to cancel notification:", err);
+            });
+
         } catch (e) {
             console.error("Failed to submit task data:", e);
             setActionError(`Failed to submit data\n${e}`);
