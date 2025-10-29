@@ -150,8 +150,7 @@ export const experimentDefinition: ExperimentDefinition = {
             show_for_conditions: [],
             allow_edit: false,
             notification: {
-                prompt: 'Set notification time for daily survey:',
-                default_time: '12:30',
+                prompt: 'Daily survey:',
             },
             // required: true,
             // optional fields
