@@ -5,17 +5,14 @@ export default function NumericInput({ value, placeholder, maxLength, onChange, 
     // TODO: min, max,
     // controlled component, no internal state
     function handleInput(response: string) {
+        // Remove non-numeric characters
+        const onlyNumbers = response.replace(/[^0-9]/g, '');
         // Allow empty string for clearing the input
-        if (response === '') {
+        if (!onlyNumbers) {
             onChange('');
             return;
         }
-
-        // Remove non-numeric characters
-        const onlyNumbers = response.replace(/[^0-9]/g, '');
-
-        // Convert to number and back to remove leading zeros
-        // This prevents "00" but allows "0"
+        // Convert to number and back to remove leading zeros - prevents "00" but allows "0"
         const number = String(parseInt(onlyNumbers, 10) || 0);
         onChange(number);
     }
