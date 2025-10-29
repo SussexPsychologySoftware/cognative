@@ -59,24 +59,28 @@ export default function SettingsScreen() {
     return (
         <StandardView>
             <View style={styles.notificationSettings}>
-                <Text style={globalStyles.pageTitle}>Notification times</Text>
-                <Text style={globalStyles.completeSurveyPrompt}>
-                    Enter times you would like to receive reminders below - these can be changed at any time during the study.
-                    Reminders are optional.
-                </Text>
                 { notifications &&
-                    <NotificationsInput
-                        notifications={notifications}
-                        times={localTimes} // local state
-                        onChange={handleTimeChange} // local updater
-                    />
+                    <>
+                        <Text style={globalStyles.pageTitle}>Notification times</Text>
+                        <Text style={globalStyles.completeSurveyPrompt}>
+                            Enter times you would like to receive reminders below - these can be changed at any time during the study.
+                            Reminders are optional.
+                        </Text>
+
+                        <NotificationsInput
+                            notifications={notifications}
+                            times={localTimes} // local state
+                            onChange={handleTimeChange} // local updater
+                        />
+                        <SubmitButton
+                            text={"Save"}
+                            onPress={handleSave} // submit
+                            disabled={isActionLoading} // Disable when saving
+                            disabledText={"Saving..."}
+                        />
+                    </>
                 }
-                <SubmitButton
-                    text={"Save"}
-                    onPress={handleSave} // submit
-                    disabled={isActionLoading} // Disable when saving
-                    disabledText={"Saving..."}
-                />
+
                 <Text style={[globalStyles.pageTitle, globalStyles.sectionTitle]}>Other Settings</Text>
                 <Text style={globalStyles.standardText}>Participant ID: {state.participantId}</Text>
                 <ResetButtons/>
