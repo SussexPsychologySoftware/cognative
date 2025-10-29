@@ -10,7 +10,7 @@ import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
 import {SurveyTaskDefinition} from "@/types/experimentConfig";
 
 export default function SurveyScreen() { // Renamed component
-    const { taskId } = useLocalSearchParams<{ responseKey: string, taskId: string, datapipeId: string }>();
+    const { taskId } = useLocalSearchParams<{ taskId: string }>();
     const { submitTaskData, definition, displayState, state } = useExperiment();
 
     // Get task definition and questions dynamically
