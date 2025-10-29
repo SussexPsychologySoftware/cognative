@@ -4,7 +4,7 @@ import {SurveyQuestion} from "@/types/surveyQuestions";
 
 export interface NotificationDefinition {
     prompt?: string;
-    default_time: string;
+    default_time?: string;
     // repeat_daily: true;
 }
 
