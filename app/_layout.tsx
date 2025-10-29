@@ -8,7 +8,7 @@ import {ExperimentProvider} from "@/context/ExperimentContext";
 import {AppGate} from "@/components/auth/AppGate";
 
 export default function RootLayout() {
-    // void dataQueue.processQueue(); // To process queue on app load
+    void dataQueue.processQueue(); // To process queue on app load
     //useRestore(); // Restore app to specific screen when opened
 
     return (
