@@ -26,7 +26,7 @@ export class ExperimentTracker {
             startDate: new Date().toISOString(),
             participantId,
             tasksLastCompletionDate: emptyTaskStates,
-            notificationTimes: emptyTaskStates,
+            notificationTimes: {},
         };
 
         if (repeatedMeasuresConditionOrder) {
