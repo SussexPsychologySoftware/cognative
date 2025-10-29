@@ -67,6 +67,7 @@ export function useAutoRefresh(options: AutoRefreshOptions): AutoRefreshReturn {
 
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
+    const [timerId, setTimerId] = useState(0); // Just a dummy number to re-run the effect
 
     // Core refresh function
     const executeRefresh = useCallback(
@@ -147,10 +148,12 @@ export function useAutoRefresh(options: AutoRefreshOptions): AutoRefreshReturn {
         const timeoutId = setTimeout(async () => {
             console.log(`Scheduled refresh triggered at ${scheduledRefreshHour}:${scheduledRefreshMinute}`);
             await executeRefresh();
+            // RE-TRIGGER THE EFFECT TO SET THE *NEXT* TIMER
+            setTimerId(id => id + 1);
         }, msUntilScheduledTime);
 
         return () => clearTimeout(timeoutId);
-    }, [scheduledRefreshHour, scheduledRefreshMinute, executeRefresh]);
+    }, [scheduledRefreshHour, scheduledRefreshMinute, executeRefresh, timerId]);
 
     // Manual refresh function
     const manualRefresh = useCallback(async () => {
