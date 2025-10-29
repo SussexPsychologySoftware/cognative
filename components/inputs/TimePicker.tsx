@@ -3,32 +3,47 @@ import { View, Text, TouchableOpacity, StyleSheet, Platform } from 'react-native
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {globalStyles, colours} from "@/styles/appStyles";
 
+// --- Helper functions to convert time string to Date type and back  ---
+function createDateFromTime(timeString: string | null): Date {
+    if (!timeString || !timeString.includes(':')) {
+        return new Date(); // Fallback to now
+    }
+    const [hours, minutes] = timeString.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+}
+
+function createTimeFromDate(date: Date): string {
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+}
+
 interface TimePickerProps {
-    value: Date | null; // MODIFIED: Allow null values
-    onChange: (date: Date | null) => void; // MODIFIED: Allow setting null
+    value: string | null; // MODIFIED: Allow null values
+    onChange: (time: string | null) => void; // MODIFIED: Allow setting null
     cancellable?: boolean;
 }
 
-export default function TimePicker({ value, onChange, cancellable }: TimePickerProps) {
+export default function TimePicker({ value, onChange, cancellable=true }: TimePickerProps) {
     // Nullable time picker component - scroll type and cross-platform similar.
     const [showPicker, setShowPicker] = useState(false);
-
-    const formatTime = (date: Date | null) => {
-        if (!date) return '--:--'
-        const hours = date.getHours().toString().padStart(2, '0');
-        const minutes = date.getMinutes().toString().padStart(2, '0');
-        return `${hours}:${minutes}`;
-    };
 
     const handleChange = (event: any, selectedTime?: Date) => {
         // On Android, dismissing the picker can trigger onChange with an undefined time
         setShowPicker(false);
-        onChange(selectedTime??null);
+        if(selectedTime) {
+            onChange(createTimeFromDate(selectedTime));
+        }
     };
 
     const handleShowPicker = () => {
         setShowPicker(true);
-        onChange(new Date());
+        // If no value, set to now and emit
+        if (!value) {
+            onChange(createTimeFromDate(new Date()));
+        }
     }
 
     // ADDED: Handler to clear the time
@@ -36,9 +51,6 @@ export default function TimePicker({ value, onChange, cancellable }: TimePickerP
         setShowPicker(false);
         onChange(null);
     };
-
-    // Use a default date if value is null, otherwise the picker can crash
-    const pickerValue = value || new Date();
 
     return (
         <View style={styles.container}>
@@ -48,7 +60,8 @@ export default function TimePicker({ value, onChange, cancellable }: TimePickerP
                     style={styles.timeButton}
                 >
                     <Text style={[styles.timeText, globalStyles.standardText]}>
-                        {!value ? 'Set Time' : formatTime(value)}
+                        {/*WHY DOESN'T A NULL COALESCING OPERATOR WORK HERE?*/}
+                        {value ? value : 'Set Time' }
                     </Text>
                 </TouchableOpacity>
             }
@@ -56,8 +69,8 @@ export default function TimePicker({ value, onChange, cancellable }: TimePickerP
             {((Platform.OS === 'ios' && value) || (Platform.OS === 'android' && showPicker)) &&
                 // NOTE: the fact this renders at present as an inline modal pop-up is an iOS display rule quirk liable to break...
                 <DateTimePicker
-                    value={pickerValue}
-                    display={Platform.OS === 'android'?'spinner':undefined}
+                    value={createDateFromTime(value)}
+                    display={Platform.OS === 'android'? 'spinner' : undefined}
                     mode="time"
                     is24Hour={true}
                     onChange={handleChange}
@@ -67,7 +80,7 @@ export default function TimePicker({ value, onChange, cancellable }: TimePickerP
                 />
             }
 
-            {(cancellable===undefined || cancellable) && value &&
+            {cancellable && value &&
                 <TouchableOpacity onPress={handleClear} style={styles.clearButton}>
                     <Text style={styles.clearButtonText}>X</Text>
                 </TouchableOpacity>
