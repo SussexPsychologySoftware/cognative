@@ -7,9 +7,11 @@ interface ParticipantInformation {
     participantId?: string;
 }
 
+export type NullableStringRecord = Record<string, string|null>
+
 interface BaseExperimentState extends ParticipantInformation {
-    tasksLastCompletionDate: Record<string, string>;
-    notificationTimes: Record<string, string>;
+    tasksLastCompletionDate: NullableStringRecord;
+    notificationTimes: NullableStringRecord;
 }
 
 // Note
