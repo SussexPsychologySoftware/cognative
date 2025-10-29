@@ -7,6 +7,7 @@ import {globalStyles} from "@/styles/appStyles";
 import NotificationsInput from "@/components/longitudinal/NotificationsInput";
 import ResetButtons from "@/components/debug/ResetButtons";
 import {NotificationDefinition, TaskNotification} from "@/types/experimentConfig";
+import {NotificationService} from "@/services/NotificationService";
 
 export default function SettingsScreen() {
     const { state, isLoading, definition, updateNotificationTimes, isActionLoading } = useExperiment();
@@ -33,6 +34,7 @@ export default function SettingsScreen() {
     // save local state to persistent state
     const handleSave = async () => {
         try {
+            await NotificationService.requestPermissions();
             await updateNotificationTimes(localTimes);
             Alert.alert("Success", "Notification times saved.");
         } catch (error: any) {
