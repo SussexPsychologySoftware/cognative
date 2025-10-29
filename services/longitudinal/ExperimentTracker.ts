@@ -162,7 +162,7 @@ export class ExperimentTracker {
         return displayStatuses;
     }
 
-    private static updateCondition(state: ExperimentState, experimentDay: number) {
+     static updateCondition(state: ExperimentState, experimentDay: number) {
         let currentCondition: string;
         let currentConditionIndex: number = 0;
         const { conditions } = experimentDefinition;
@@ -263,7 +263,7 @@ export class ExperimentTracker {
         return this.calculateDaysPassed(state.startDate);
     }
 
-    private static happenedToday(dateString: string): boolean {
+    static happenedToday(dateString: string): boolean {
         return this.calculateDaysPassed(dateString) === 0;
     }
 
