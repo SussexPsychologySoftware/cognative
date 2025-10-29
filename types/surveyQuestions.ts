@@ -1,3 +1,5 @@
+import {NullableStringRecord} from "@/types/trackExperimentState";
+
 export type SurveyQuestionType =
     'number' |
     'text' |
@@ -11,7 +13,7 @@ export type SurveyQuestionType =
     'select' |
     'likertSingle';
 
-export type SurveyDataType = string | number | boolean | Date | null | Record<string, string>;
+export type SurveyDataType = string | number | boolean | null | NullableStringRecord;
 
 export interface DisplayCondition {
     key: string
