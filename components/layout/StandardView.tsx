@@ -6,8 +6,9 @@ import {
 } from 'react-native';
 import { SafeAreaView} from "react-native-safe-area-context";
 import { StatusBar } from 'expo-status-bar';
-import { Stack } from 'expo-router';
+import {router, Stack} from 'expo-router';
 import {colours} from "@/styles/appStyles";
+import {Ionicons} from "@expo/vector-icons";
 
 export const StandardView = ({
                                  children,
@@ -43,6 +44,14 @@ export const StandardView = ({
             <Stack.Screen
                 options={{
                     headerShown: headerShown,
+                    // headerLeft: () => (
+                    //     <Ionicons
+                    //         name={Platform.OS === "ios" ? "chevron-back" : "arrow-back-sharp"}
+                    //         size={25}
+                    //         color="white"
+                    //         onPress={() => router.replace('/')}
+                    //     />
+                    // ),
                 }}
             />
             <StatusBar style={statusBarStyle}/>
