@@ -15,7 +15,8 @@ export default function NotificationsInput({ notifications, times, onChange }: {
         <View style={styles.container}>
             {
                 notifications.map((notification) => {
-                    const timeString = times[notification.taskId] || notification.default_time;
+                    const stateValue = times[notification.taskId];
+                    const timeString = stateValue === undefined && notification.default_time !== undefined ? notification.default_time : stateValue;
                     return (
                         <View
                             key={notification.taskId}
