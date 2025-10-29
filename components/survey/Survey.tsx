@@ -89,7 +89,7 @@ export default function Survey({
                     case 'time':
                         input = <TimePicker
                             value={responses[key]}
-                            onChange={(newValue: Date | null) => updateResponses(key, newValue)}
+                            onChange={(newValue: string|null) => updateResponses(key, newValue)}
                         />;
                         break;
                     case 'checkbox':

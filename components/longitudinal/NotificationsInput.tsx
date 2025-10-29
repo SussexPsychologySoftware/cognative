@@ -3,6 +3,7 @@ import TimePicker from "@/components/inputs/TimePicker";
 import {NotificationDefinition} from "@/types/experimentConfig";
 // Removed useState, it's not needed here
 import {globalStyles} from "@/styles/appStyles";
+import {NullableStringRecord} from "@/types/trackExperimentState";
 
 /**
  * Creates a Date object for today with a specific time.
@@ -34,18 +35,15 @@ function createTimeFromDate(date: Date): string {
 
 export default function NotificationsInput({ notifications, times, onChange }: {
     notifications: NotificationDefinition[],
-    times: Record<string, string>,
-    onChange: (taskId: string, newTime: string) => void
+    times: NullableStringRecord,
+    onChange: (taskId: string, newTime: string|null) => void
 }) {
 
     return (
         <View style={styles.container}>
             {
                 notifications.map((notification) => {
-                    // 3. Fix the logic for finding the time string Use || to handle empty strings, not ??
                     const timeString = times[notification.for_task_id] || notification.default_time;
-                    // 4. Create a valid Date object for the TimePicker
-                    const valueAsDate = createDateFromTime(timeString);
                     return (
                         <View
                             key={notification.for_task_id}
@@ -57,14 +55,9 @@ export default function NotificationsInput({ notifications, times, onChange }: {
                                 {notification.prompt}
                             </Text>
                             <TimePicker
-                                value={valueAsDate}
-                                onChange={(newTime: Date | null) => {
-                                    if (newTime) {
-                                        const newTimeString = createTimeFromDate(newTime);
-                                        onChange(notification.for_task_id, newTimeString);
-                                    } else {
-                                        onChange(notification.for_task_id, '');
-                                    }
+                                value={timeString}
+                                onChange={(newTimeString) => {
+                                    onChange(notification.for_task_id, newTimeString);
                                 }}
                             />
                         </View>

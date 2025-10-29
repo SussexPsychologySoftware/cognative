@@ -1,5 +1,5 @@
 import * as Notifications from "expo-notifications";
-import {ExperimentDisplayState, ExperimentState, TaskDisplayStatus} from "@/types/trackExperimentState";
+import {ExperimentDisplayState, ExperimentState, TaskDisplayStatus, NullableStringRecord} from "@/types/trackExperimentState";
 import {DataService} from "@/services/data/DataService";
 import {experimentDefinition} from "@/config/experimentDefinition";
 import {TaskDefinition} from "@/types/experimentConfig";
@@ -18,7 +18,7 @@ export class ExperimentTracker {
     private static createInitialState(participantId: string, firstCondition: string, repeatedMeasuresConditionOrder?: string[]): ExperimentState {
         const emptyTaskStates = Object.fromEntries(
             experimentDefinition.tasks.map((task, index)=> {
-                return [task.id, ''];
+                return [task.id, null];
             })
         );
 
@@ -79,7 +79,7 @@ export class ExperimentTracker {
         await DataService.setData(this.STORAGE_KEY, state);
     }
 
-    static async updateNotificationTimes(times: Record<string, string>): Promise<ExperimentState | null> {
+    static async updateNotificationTimes(times: NullableStringRecord): Promise<ExperimentState | null> {
         const state = await this.getState();
         if (!state) return null;
 
@@ -138,13 +138,13 @@ export class ExperimentTracker {
     }
 
     static calculateTaskDisplayStatuses(visibleTasks: TaskDefinition[],
-                                        taskCompletionDates: Record<string, string>): TaskDisplayStatus[] {
+                                        taskCompletionDates: NullableStringRecord): TaskDisplayStatus[] {
         const displayStatuses: TaskDisplayStatus[] = [];
         let allPreviousRequiredTasksComplete = true;
 
         for (const taskDef of visibleTasks) {
             const taskCompletionDate = taskCompletionDates[taskDef.id];
-            const taskCompleted = this.happenedToday(taskCompletionDate);
+            const taskCompleted = taskCompletionDate ? this.happenedToday(taskCompletionDate) : false;
 
             // Task is allowed if all previous required tasks are done
             displayStatuses.push({

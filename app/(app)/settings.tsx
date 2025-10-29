@@ -22,7 +22,7 @@ export default function SettingsScreen() {
 
 
     // updates local state
-    const handleTimeChange = (taskId: string, newTime: string) => {
+    const handleTimeChange = (taskId: string, newTime: string|null) => {
         setLocalTimes(prev => ({
             ...prev,
             [taskId]: newTime,

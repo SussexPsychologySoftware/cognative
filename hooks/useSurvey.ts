@@ -1,23 +1,25 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {Alert} from "react-native";
-import {SurveyQuestion} from '@/types/surveyQuestions'
+import {SurveyDataType, SurveyQuestion} from '@/types/surveyQuestions'
 import {DataService} from "@/services/data/DataService";
 import { useExperiment } from "@/context/ExperimentContext";
 
 // Initialize responses from survey definition
+// TODO: figure out how to make responses take in ResponseType = Record<string, SurveyDataType>
 function initializeResponses(questions: SurveyQuestion[]): Record<string, any> {
     const responses: Record<string, any> = {};
 
     for (const question of questions) {
         const key = question.key || question.question;
 
+        // Initialise the special nested likertGrid response type
         if (question.type === 'likertGrid') {
             responses[key] = {};
             question.statements?.forEach((statement, index) => {
-                responses[key][statement] = question.default??'';
+                responses[key][statement] = question.default ?? null;
             });
         } else {
-            responses[key] = question.default??'';
+            responses[key] = question.default ?? null;
         }
     }
 
@@ -46,25 +48,6 @@ export function useSurvey(questions: SurveyQuestion[] | undefined, onSubmit?: (d
                 if (data && questions) {
                     // Create a mutable copy of the restored data
                     const processedData = { ...data };
-
-                    // Loop through questions to find and process 'time' types
-                    for (const question of questions) {
-                        const key = question.key || question.question;
-
-                        // Check if this question is a time picker
-                        if (question.type === 'time') {
-                            const storedValue = processedData[key];
-
-                            // Re-hydrate the ISO string back into a Date object
-                            // Also handles empty strings or null, which TimePicker accepts as null
-                            if (storedValue && typeof storedValue === 'string') {
-                                processedData[key] = new Date(storedValue);
-                            } else {
-                                // Ensure null/undefined/'' becomes null, which TimePicker handles
-                                processedData[key] = null;
-                            }
-                        }
-                    }
                     // Set the fully processed data as the response state
                     setResponses(processedData);
                 }
@@ -78,7 +61,7 @@ export function useSurvey(questions: SurveyQuestion[] | undefined, onSubmit?: (d
         }
     }, [filename, questions]);
 
-    const updateResponses = useCallback((key: string, answer: any, nestedKey?: string) => {
+    const updateResponses = useCallback((key: string, answer: SurveyDataType, nestedKey?: string) => {
         // console.log({ key, answer, nestedKey });
 
         setResponses(prev => {

@@ -1,6 +1,6 @@
 import {createContext, ReactNode, useCallback, useContext, useEffect, useState} from 'react';
 import { ExperimentDefinition } from '@/types/experimentConfig';
-import { ExperimentDisplayState, ExperimentState } from '@/types/trackExperimentState';
+import {ExperimentDisplayState, ExperimentState, NullableStringRecord} from '@/types/trackExperimentState';
 import { experimentDefinition } from '@/config/experimentDefinition';
 import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
 import { DataService } from '@/services/data/DataService';
@@ -29,7 +29,7 @@ interface ExperimentContextType {
     stopExperiment: () => Promise<void>;
     confirmAndStopExperiment: () => void;
 
-    updateNotificationTimes: (times: Record<string, string>) => Promise<void>;
+    updateNotificationTimes: (times: NullableStringRecord) => Promise<void>;
 
     refreshState: () => Promise<void>;
 }
@@ -110,7 +110,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         }
     }, [definition.conditions]);
 
-    const updateNotificationTimes = useCallback(async (times: Record<string, string>) => {
+    const updateNotificationTimes = useCallback(async (times: NullableStringRecord) => {
         setIsActionLoading(true);
         setActionError(null);
         try {
