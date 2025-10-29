@@ -53,7 +53,7 @@ export default function SettingsScreen() {
             <View style={styles.notificationSettings}>
                 <Text style={globalStyles.pageTitle}>Notification times</Text>
                 <Text style={globalStyles.completeSurveyPrompt}>
-                    Enter times you would like to receive reminders to complete your sleep diaries below - these can be changed at any time during the study.
+                    Enter times you would like to receive reminders below - these can be changed at any time during the study.
                     Reminders are optional.
                 </Text>
                 { definition.notifications &&
