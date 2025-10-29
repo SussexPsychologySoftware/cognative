@@ -15,9 +15,8 @@ export class DataService {
             const parsed = JSON.parse(str);
             if (parsed && typeof parsed === 'object') {
                 return parsed;
-            } else {
-                return str
             }
+            return str
         } catch {
             return str;
         }
