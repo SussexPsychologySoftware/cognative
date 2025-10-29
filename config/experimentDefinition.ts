@@ -132,18 +132,6 @@ export const experimentDefinition: ExperimentDefinition = {
         datapipe_id: 'dOS0nQ93xCSV',
         increase_on_days: [2,6,10]
     },
-    notifications: [
-        {
-            for_task_id: 'surveyExample',
-            prompt: 'Set notification time for daily survey:',
-            default_time: '12:30',
-        },
-        {
-            for_task_id: 'surveyExample2',
-            prompt: 'Other survey:',
-            default_time: '12:30',
-        }
-    ],
     // blocks: {
     //     names: [],
     //     baseline_length: 2, //days
@@ -161,6 +149,10 @@ export const experimentDefinition: ExperimentDefinition = {
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: [],
             allow_edit: false,
+            notification: {
+                prompt: 'Set notification time for daily survey:',
+                default_time: '12:30',
+            },
             // required: true,
             // optional fields
             // showWhen: (context: object) => {
@@ -184,6 +176,10 @@ export const experimentDefinition: ExperimentDefinition = {
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: ['control'], //only show if condition is 'control'
             allow_edit: true,
+            notification: {
+                prompt: 'Other survey:',
+                default_time: '12:30',
+            }
         }
     ]
 }

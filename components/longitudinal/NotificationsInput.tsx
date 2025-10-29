@@ -1,12 +1,12 @@
 import {StyleSheet, View, Text} from "react-native";
 import TimePicker from "@/components/inputs/TimePicker";
-import {NotificationDefinition} from "@/types/experimentConfig";
 // Removed useState, it's not needed here
 import {globalStyles} from "@/styles/appStyles";
 import {NullableStringRecord} from "@/types/trackExperimentState";
+import {TaskNotification} from "@/types/experimentConfig";
 
 export default function NotificationsInput({ notifications, times, onChange }: {
-    notifications: NotificationDefinition[],
+    notifications: TaskNotification[],
     times: NullableStringRecord,
     onChange: (taskId: string, newTime: string|null) => void
 }) {
@@ -15,10 +15,10 @@ export default function NotificationsInput({ notifications, times, onChange }: {
         <View style={styles.container}>
             {
                 notifications.map((notification) => {
-                    const timeString = times[notification.for_task_id] || notification.default_time;
+                    const timeString = times[notification.taskId] || notification.default_time;
                     return (
                         <View
-                            key={notification.for_task_id}
+                            key={notification.taskId}
                             style={styles.notificationContainer}
                         >
                             <Text
@@ -29,7 +29,7 @@ export default function NotificationsInput({ notifications, times, onChange }: {
                             <TimePicker
                                 value={timeString}
                                 onChange={(newTimeString) => {
-                                    onChange(notification.for_task_id, newTimeString);
+                                    onChange(notification.taskId, newTimeString);
                                 }}
                             />
                         </View>

@@ -6,6 +6,7 @@ import SubmitButton from "@/components/inputs/SubmitButton";
 import {globalStyles} from "@/styles/appStyles";
 import NotificationsInput from "@/components/longitudinal/NotificationsInput";
 import ResetButtons from "@/components/debug/ResetButtons";
+import {NotificationDefinition, TaskNotification} from "@/types/experimentConfig";
 
 export default function SettingsScreen() {
     const { state, isLoading, definition, updateNotificationTimes, isActionLoading } = useExperiment();
@@ -48,6 +49,13 @@ export default function SettingsScreen() {
         );
     }
 
+    const notifications: TaskNotification[] = definition.tasks
+        .filter(task => !!task.notification) // Keep only tasks with a notification
+        .map(task => ({
+            ...(task.notification as NotificationDefinition), // Spread the notification details
+            taskId: task.id // Add the task ID
+        }));
+
     return (
         <StandardView>
             <View style={styles.notificationSettings}>
@@ -56,9 +64,9 @@ export default function SettingsScreen() {
                     Enter times you would like to receive reminders below - these can be changed at any time during the study.
                     Reminders are optional.
                 </Text>
-                { definition.notifications &&
+                { notifications &&
                     <NotificationsInput
-                        notifications={definition.notifications}
+                        notifications={notifications}
                         times={localTimes} // local state
                         onChange={handleTimeChange} // local updater
                     />

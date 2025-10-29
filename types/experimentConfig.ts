@@ -1,11 +1,15 @@
 // TODO: move this into trackExperimentState and rename to experiment.ts
 import {SurveyQuestion} from "@/types/surveyQuestions";
 
+
 export interface NotificationDefinition {
-    for_task_id: string;
     prompt?: string;
     default_time: string;
     // repeat_daily: true;
+}
+
+export interface TaskNotification extends NotificationDefinition {
+    taskId: string;
 }
 
 interface TaskDefinitionBasic {
@@ -17,7 +21,8 @@ interface TaskDefinitionBasic {
     datapipe_id: string;
     allow_edit: boolean; // TODO: change to allow_once
     params?: Record<string, any>; // other stuff to pass in
-    type: 'survey' | 'screen' | 'web'
+    type: 'survey' | 'screen' | 'web',
+    notification?: NotificationDefinition
     // Other ideas
     // required: true,
     // showWhen?: (context: object) => {
@@ -70,7 +75,6 @@ export interface ExperimentDefinition {
     cutoff_hour: number; // Hour (0-23) when "day" switches (e.g., 4 = 4am)
     conditions: ConditionDefinition;
     tasks: TaskDefinition[];
-    notifications?: NotificationDefinition[]
     // Other ideas
     // blocks?: {
     //     names: [],
