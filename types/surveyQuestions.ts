@@ -75,7 +75,7 @@ export interface LikertGridQuestion extends BasicSurveyQuestion {
 export interface LikertSingleQuestion extends BasicSurveyQuestion {
     type: 'likertSingle';
     options: string[];
-    labels: string[];
+    labels?: string[];
 }
 
 export type SingleInputQuestion = TextQuestion | TimeQuestion | SelectQuestion | CheckboxQuestion | SliderQuestion | RadioQuestion | LikertSingleQuestion;
