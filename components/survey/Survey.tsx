@@ -158,8 +158,9 @@ export default function Survey({
                 return (
                     <View key={`question-${index}`} style={[
                         styles.questionContainer,
+                        question.conditions && styles.conditionalQuestion,
+                        !isInvalid && styles.questionContainerSeparator,
                         isInvalid && globalStyles.invalidInput,
-                        question.conditions && styles.conditionalQuestion
                     ]}>
                         {title && (
                             <Text style={globalStyles.question}>
@@ -201,13 +202,17 @@ const styles = StyleSheet.create({
     },
     questionContainer: {
         gap: 10,
-
         paddingTop: 15,
+        // Put here to keep consisent when invalid or not (questionContainerSeparator colour below)
         borderTopWidth: 2,
-        borderTopColor: 'rgba(128, 128, 128,.2)',
+        borderWidth: 2,
+        borderColor: 'transparent',
         // paddingBottom: 15,
         // borderBottomWidth: 1,
         // borderBottomColor: 'grey',
+    },
+    questionContainerSeparator: {
+        borderTopColor: 'rgba(128, 128, 128,.2)',
     },
     invalidContainer: {
         borderWidth: 2,
