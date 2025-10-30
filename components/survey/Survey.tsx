@@ -12,6 +12,7 @@ import Tickbox from "@/components/inputs/Tickbox";
 import Range from "@/components/inputs/Range";
 import Select from "@/components/inputs/Select";
 import LikertSingle from "@/components/inputs/LikertSingle";
+import TimeInput from "@/components/inputs/TimeInput";
 
 interface SurveyProps {
     questions: SurveyQuestion[];
@@ -88,6 +89,13 @@ export default function Survey({
                         break;
                     case 'time':
                         input = <TimePicker
+                            value={responses[key]}
+                            onChange={(newValue: string|null) => updateResponses(key, newValue)}
+                        />;
+                        break;
+                    case 'lengthOfTime':
+                        input = <TimeInput
+                            clock={false}
                             value={responses[key]}
                             onChange={(newValue: string|null) => updateResponses(key, newValue)}
                         />;
