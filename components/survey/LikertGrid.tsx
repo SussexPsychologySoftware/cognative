@@ -87,7 +87,7 @@ export default function LikertGrid(
                                     key={`options-${i}`}
                                     labels={options}
                                     oneWordPerLine={oneWordPerLine}
-                                    prependEmptyMinWidth={questions.length ? 50 : 0} // Empty question with same min width
+                                    prependEmptyMinWidth={questions.length ? 55 : 0} // Empty question with same min width
                                 />
                             ),
                             <LikertQuestionRow
@@ -111,6 +111,7 @@ const styles = StyleSheet.create({
         fontSize: 17,
         fontStyle: 'italic',
         minWidth: 50,
+        paddingLeft: 5,
     },
 
     // Grid container and rows
@@ -120,7 +121,7 @@ const styles = StyleSheet.create({
         borderWidth: 1,
         borderColor: 'darkgrey',
         borderRadius: 5,
-        padding: 2
+        // padding: 2
     },
     row: {
         justifyContent: 'space-between',
@@ -140,6 +141,11 @@ const styles = StyleSheet.create({
         paddingVertical: 5,
         // marginHorizontal: 15,
     },
+    optionsText: {
+        textAlign: 'center',
+        // fontSize: 16,
+        fontWeight: "500",
+    },
     oddRow: {
         // backgroundColor: '#b0c4dd',
     },
@@ -147,11 +153,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'lightgrey',
         color: 'black',
     },
-    optionsText: {
-        textAlign: 'center',
-        // fontSize: 16,
-        fontWeight: "500",
-    },
+
 
     // Secondary labels
     secondaryLabelContainer: {
