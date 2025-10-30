@@ -67,7 +67,7 @@ export interface SliderQuestion extends BasicSurveyQuestion {
 
 export interface LikertGridQuestion extends BasicSurveyQuestion {
     type: 'likertGrid';
-    name: string;
+    name?: string; // TODO: not sure I've actually used this anywhere?
     options: string[];
     statements: string[];
 }
