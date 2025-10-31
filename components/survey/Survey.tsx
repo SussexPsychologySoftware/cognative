@@ -39,6 +39,7 @@ export default function Survey({
     return (
         <View style={styles.container}>
             {questions.map((question, index) => {
+                // Note key is responses object and react component key - index is unreliable due to conditional questions
                 const key = question.key || question.question;
                 const isInvalid = invalidQuestions?.has(key) ?? false;
                 let input;
@@ -174,7 +175,7 @@ export default function Survey({
 
                 // Wrap input in container
                 return (
-                    <View key={`question-${index}`} style={[
+                    <View key={`question-${key}`} style={[
                         styles.questionContainer,
                         question.conditions && styles.conditionalQuestion,
                         !isInvalid && styles.questionContainerSeparator,
