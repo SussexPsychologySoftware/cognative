@@ -1,4 +1,4 @@
-import { StyleSheet, Pressable } from "react-native";
+import {StyleSheet, Pressable, View} from "react-native";
 import {setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus} from 'expo-audio';
 import {useEffect, useRef} from "react";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
@@ -53,20 +53,7 @@ export default function Audio({
     const isDisabled = !audioSource || disabled;
     const player = useAudioPlayer(audioSource);
 
-    const { didJustFinish, currentTime, duration } = useAudioPlayerStatus(player);
-    // Make sure onFinish() only runs once but tracking it's function reference
-    const onFinishedRef = useRef(onFinished);
-    useEffect(() => { // Keep updated with last callback on every render
-        onFinishedRef.current = onFinished;
-    }, [onFinished]);
-
-    useEffect(() => {
-        if (didJustFinish && onFinishedRef.current) {
-            onFinishedRef.current();
-        }
-    }, [didJustFinish]);
-
-    // Sync player state with prop
+    // Sync player play/pause state with prop
     useEffect(() => {
         const playAudio = async () => {
             try {
@@ -96,6 +83,19 @@ export default function Audio({
     }, [isPlaying, player, resetOnPause]);
 
 
+    // AUDIO PLAYER STATUS ------------------
+    const { didJustFinish, currentTime, duration } = useAudioPlayerStatus(player);
+    // Make sure onFinish() only runs once but tracking it's function reference
+    const onFinishedRef = useRef(onFinished);
+    useEffect(() => { // Keep updated with last callback on every render
+        onFinishedRef.current = onFinished;
+    }, [onFinished]);
+
+    useEffect(() => {
+        if (didJustFinish && onFinishedRef.current) {
+            onFinishedRef.current();
+        }
+    }, [didJustFinish]);
 
     useEffect(() => {
         if (onTimeChange && currentTime !== time) {
