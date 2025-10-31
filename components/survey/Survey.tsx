@@ -2,7 +2,7 @@ import {StyleSheet, View, Text, TextInput} from 'react-native';
 import {globalStyles} from "@/styles/appStyles";
 import NumericInput from "@/components/inputs/NumericInput";
 import React from "react";
-import {SurveyComponent} from '@/types/surveyQuestions';
+import {displayOnlyTypes, SurveyComponent, SurveyQuestion} from '@/types/surveyQuestions';
 import MultilineTextInput from "@/components/inputs/MultilineTextInput";
 import RadioList from "@/components/inputs/RadioList";
 import TimePicker from "@/components/inputs/TimePicker";
@@ -14,6 +14,9 @@ import Select from "@/components/inputs/Select";
 import LikertSingle from "@/components/inputs/LikertSingle";
 import TimeInput from "@/components/inputs/TimeInput";
 import Paragraph from "@/components/inputParts/Paragraph";
+import Audio from  "@/components/media/Audio";
+import {DataService} from "@/services/data/DataService";
+import {RelativePathString, router} from "expo-router";
 
 interface SurveyProps {
     questions: SurveyComponent[];
@@ -40,9 +43,9 @@ export default function Survey({
         <View style={styles.container}>
             {questions.map((question, index) => {
                 // Note key is responses object and react component key - index is unreliable due to conditional questions
-                const key = question.key || question.question || String(index);
+                const key = question.key || String(index);
                 const isInvalid = invalidQuestions?.has(key) ?? false;
-                let input;
+                let component;
 
                 // Check for conditional question
                 if(question.conditions && question.conditions.length > 0) {
@@ -59,7 +62,7 @@ export default function Survey({
                 // Get input type
                 switch (question.type) {
                     case "text":
-                        input = <TextInput
+                        component = <TextInput
                             value={responses[key]}
                             placeholder={question.placeholder}
                             placeholderTextColor={'grey'}
@@ -68,34 +71,34 @@ export default function Survey({
                         />
                         break;
                     case 'number':
-                        input = <NumericInput
+                        component = <NumericInput
                             value={responses[key]}
                             placeholder={question.placeholder}
                             onChange={newValue => updateResponses(key, newValue)}
                         />;
                         break;
                     case 'multiline':
-                        input = <MultilineTextInput
+                        component = <MultilineTextInput
                             value={responses[key]}
                             placeholder={question.placeholder}
                             onChange={(newValue: string) => updateResponses(key, newValue)}
                         />;
                         break;
                     case 'radio':
-                        input = <RadioList
+                        component = <RadioList
                             options={question.options || []}
                             value={responses[key]}
                             onSelect={(newValue: string) => updateResponses(key, newValue)}
                         />;
                         break;
                     case 'time':
-                        input = <TimePicker
+                        component = <TimePicker
                             value={responses[key]}
                             onChange={(newValue: string|null) => updateResponses(key, newValue)}
                         />;
                         break;
                     case 'lengthOfTime':
-                        input = <TimeInput
+                        component = <TimeInput
                             clock={false}
                             value={responses[key]}
                             onChange={(newValue: string|null) => updateResponses(key, newValue)}
@@ -103,14 +106,14 @@ export default function Survey({
                         break;
                     case 'checkbox':
                         // TODO: question should maybe be in the text section?
-                        input = <Tickbox
+                        component = <Tickbox
                             checked={responses[key]}
                             text={question.label}
                             onChange={(newValue: boolean) => updateResponses(key, newValue)}
                         />;
                         break;
                     case 'slider':
-                        input = <Range
+                        component = <Range
                             value={responses[key]}
                             min={question.min}
                             max={question.max}
@@ -122,7 +125,7 @@ export default function Survey({
                         />;
                         break;
                     case 'likertSingle':
-                        input = <LikertSingle
+                        component = <LikertSingle
                             value={responses[key]}
                             options={question.options}
                             labels={question.labels}
@@ -141,7 +144,7 @@ export default function Survey({
                             });
                         }
 
-                        input = <LikertGrid
+                        component = <LikertGrid
                             questions={question.statements}
                             options={question.options}
                             responses={responses[key]}
@@ -153,15 +156,47 @@ export default function Survey({
                         />;
                         break;
                     case 'select':
-                        input = <Select
+                        component = <Select
                             value={responses[key]}
                             options={question.options}
                             onSelect={newValue => updateResponses(key, newValue)}
                             multiple={question.multiple}
                         />
                         break;
+                    case 'audio':
+                        console.log(responses[key])
+                        const isFinished = responses[key] === 'finished';
+                        const isPlaying = responses[key] === true;
+                        component = <>
+                            <Paragraph
+                                text={question.instructions??''}
+                                containerStyle={{
+                                    borderColor: 0,
+                                    marginTop: 0,
+                                    paddingTop: 0
+                            }}
+                            />
+                            <Audio
+                                audioSource={question.file}
+                                disabled={isFinished}
+                                isPlaying={isPlaying}
+                                onPress={() => {
+                                    if (isFinished) return;
+                                    updateResponses(key, !isPlaying);
+                                }}
+                                onFinished={() => {
+                                    updateResponses(key, 'finished')
+                                    // if(question.route_on_finish){
+                                    //     router.replace(question.route_on_finish as RelativePathString)
+                                    // }
+                                }}
+                                resetOnPause={question.resetOnPause}
+                                volume={question.volume}
+                            />
+                        </>
+                        break;
                     case 'paragraph':
-                        input = <Paragraph
+                        component = <Paragraph
                             text={question.text}
                             title={question.title}
                             containerStyle={question.containerStyle}
@@ -169,10 +204,11 @@ export default function Survey({
                         />
                         break;
                     default:
-                        input = <Text>Unsupported question type: {(question as any).type}</Text>;
+                        component = <Text>Unsupported question type: {(question as any).type}</Text>;
                 }
 
                 // Wrap input in container
+                const isInput = !displayOnlyTypes.includes(question.type);
                 return (
                     <View key={`question-${key}`} style={[
                         styles.questionContainer,
@@ -180,12 +216,12 @@ export default function Survey({
                         !isInvalid && styles.questionContainerSeparator,
                         isInvalid && globalStyles.invalidInput,
                     ]}>
-                        {question.question && (
+                        {isInput && (question as SurveyQuestion).question && (
                             <Text style={globalStyles.question}>
-                                {question.question}
+                                {(question as SurveyQuestion).question}
                             </Text>
                         )}
-                        {input}
+                        {component}
                     </View>
                 );
             })}

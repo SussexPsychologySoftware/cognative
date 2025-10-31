@@ -1,15 +1,21 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {Alert} from "react-native";
-import {SurveyDataType, SurveyComponent} from '@/types/surveyQuestions'
+import {SurveyDataType, SurveyComponent, SurveyQuestion, displayOnlyTypes} from '@/types/surveyQuestions'
 import {DataService} from "@/services/data/DataService";
 import { useExperiment } from "@/context/ExperimentContext";
 
 // Initialize responses from survey definition
+// Type Predicate (guard) for survey inputs
+function isSurveyInput(question: SurveyComponent): question is SurveyQuestion {
+    return !displayOnlyTypes.includes(question.type);
+}
+
 // TODO: figure out how to make responses take in ResponseType = Record<string, SurveyDataType>
 function initializeResponses(questions: SurveyComponent[]): Record<string, any> {
     const responses: Record<string, any> = {};
 
     for (const question of questions) {
+        if (!isSurveyInput(question)) continue;
         const key = question.key || question.question;
 
         // Initialise the special nested likertGrid response type
@@ -18,8 +24,6 @@ function initializeResponses(questions: SurveyComponent[]): Record<string, any> 
             question.statements?.forEach((statement, index) => {
                 responses[key][statement] = question.default ?? null;
             });
-        } else if (question.type === 'paragraph') {
-            //continue
         } else {
             responses[key] = question.default ?? null;
         }
@@ -34,8 +38,6 @@ async function restoreResponses(restoreKey: string){
     return data
 }
 
-const displayOnlyQuestions = ['paragraph']
-
 export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (data: object, filename?:string) => void, filename?: string) {
     const [responses, setResponses] = useState(initializeResponses(questions || []));
     const [isLoading, setIsLoading] = useState(!!filename);
@@ -45,13 +47,25 @@ export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (
 
     const { state } = useExperiment();
 
-// Restore responses on mount if filename is provided
+    // Restore responses on mount if filename is provided
     useEffect(() => {
         if (filename) {
             restoreResponses(filename).then(data => {
                 if (data && questions) {
                     // Create a mutable copy of the restored data
                     const processedData = { ...data };
+
+                    // Stop autoplay for audio - don't restore if 'currently playing'/ true
+                    for (const question of questions) {
+                        if (question.type === 'audio') {
+                            const key = question.key || question.question;
+                            // Reset to default if restored state is 'true' (playing),
+                            if (processedData[key] === true) {
+                                processedData[key] = question.default ?? false;
+                            }
+                        }
+                    }
+
                     // Set the fully processed data as the response state
                     setResponses(processedData);
                 }
@@ -66,8 +80,6 @@ export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (
     }, [filename, questions]);
 
     const updateResponses = useCallback((key: string, answer: SurveyDataType, nestedKey?: string) => {
-        // console.log({ key, answer, nestedKey });
-
         setResponses(prev => {
             if (nestedKey) {
                 return {
@@ -119,10 +131,13 @@ export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (
         let firstInvalidQuestion = '';
 
         for (const question of questions) {
+            if (!isSurveyInput(question)) continue;
+            if (!question.required) continue;
+
             const key = question.key || question.question;
             const response = responses[key];
 
-            if (question.required) {
+            if(question.required) {
                 // Handle conditional question
                 const isDisplayed = checkDisplayConditions(question)
                 if(!isDisplayed) continue
@@ -144,8 +159,11 @@ export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (
                     if (!firstInvalidQuestion) {
                         firstInvalidQuestion = question.label;
                     }
-                } else if (displayOnlyQuestions.includes(question.type)) {
-                        //continue
+                } else if (question.type === 'audio' && response !== 'finished') {
+                    isInvalid = true;
+                    if (!firstInvalidQuestion) {
+                        firstInvalidQuestion = 'Please listen to the audio file above in full';
+                    }
                 } else if (isEmpty(response)) {
                     isInvalid = true;
                 }
@@ -175,6 +193,7 @@ export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (
         let answeredQuestions = 0;
 
         for (const question of questions) {
+            if (!isSurveyInput(question)) continue;
             const key = question.key || question.question;
             const response = responses[key];
             const isDisplayed = checkDisplayConditions(question)
@@ -186,7 +205,6 @@ export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (
                 if (response && typeof response === 'object') {
                     answeredQuestions += Object.values(response).filter(v => !isEmpty(v)).length;
                 }
-            } else if (question.type === 'paragraph') {
             } else {
                 totalQuestions += 1;
                 if (!isEmpty(response)) {
