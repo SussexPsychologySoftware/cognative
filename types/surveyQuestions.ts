@@ -12,7 +12,8 @@ export type SurveyQuestionType =
     'checkbox' |
     'slider' |
     'select' |
-    'likertSingle';
+    'likertSingle' |
+    'audio';
 
 export type SurveyDataType = string | number | boolean | null | NullableStringRecord;
 
@@ -82,6 +83,32 @@ export interface LikertSingleQuestion extends BasicSurveyQuestion {
     oneWordPerLine?: boolean;
 }
 
-export type SingleInputQuestion = TextQuestion | TimeQuestion | SelectQuestion | CheckboxQuestion | SliderQuestion | RadioQuestion | LikertSingleQuestion;
+// TODO: maybe audio should be a question actually? allows for storing if listened to, requiring that, etc.
+export interface Audio extends BasicSurveyQuestion {
+    type: 'audio';
+    filepath: string;
+    instructions?: string|string[];
+    containerStyle?: object;
+    textStyle?: object;
+}
 
+// DISPLAY TYPES ******
+type SurveyDisplayType = 'paragraph' | 'picture' | 'video'
+
+interface BasicSurveyDisplay {
+    type: SurveyDisplayType;
+}
+
+export interface ParagraphDisplay extends BasicSurveyDisplay {
+    type: SurveyDisplayType;
+    text: string|string[];
+    title?: string;
+    containerStyle?: object;
+    textStyle?: object;
+}
+
+type SurveyDisplayOnly = ParagraphDisplay; // Add picture
+export type SingleInputQuestion = TextQuestion | TimeQuestion | SelectQuestion | CheckboxQuestion |
+    SliderQuestion | RadioQuestion | LikertSingleQuestion ;
 export type SurveyQuestion = SingleInputQuestion | LikertGridQuestion;
+export type SurveyComponent = SurveyQuestion | SurveyDisplayOnly;

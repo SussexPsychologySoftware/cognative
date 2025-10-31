@@ -1,5 +1,5 @@
 // TODO: move this into trackExperimentState and rename to experiment.ts
-import {SurveyQuestion} from "@/types/surveyQuestions";
+import {SurveyComponent} from "@/types/surveyQuestions";
 
 
 export interface NotificationDefinition {
@@ -39,7 +39,7 @@ interface TaskDefinitionBasic {
 // Export type tasks for use in each screen displaying that type
 export interface SurveyTaskDefinition extends TaskDefinitionBasic {
     type: 'survey',
-    questions: SurveyQuestion[],
+    questions: SurveyComponent[],
 }
 
 export interface ScreenTaskDefinition extends TaskDefinitionBasic {

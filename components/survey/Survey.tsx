@@ -2,7 +2,7 @@ import {StyleSheet, View, Text, TextInput} from 'react-native';
 import {globalStyles} from "@/styles/appStyles";
 import NumericInput from "@/components/inputs/NumericInput";
 import React from "react";
-import {SurveyQuestion} from '@/types/surveyQuestions';
+import {SurveyComponent} from '@/types/surveyQuestions';
 import MultilineTextInput from "@/components/inputs/MultilineTextInput";
 import RadioList from "@/components/inputs/RadioList";
 import TimePicker from "@/components/inputs/TimePicker";
@@ -16,7 +16,7 @@ import TimeInput from "@/components/inputs/TimeInput";
 import Paragraph from "@/components/inputParts/Paragraph";
 
 interface SurveyProps {
-    questions: SurveyQuestion[];
+    questions: SurveyComponent[];
     responses: Record<string, any>;
     updateResponses: (key: string, answer: any, nestedKey?: string) => void;
     handleSurveySubmit?: () => Promise<boolean>;

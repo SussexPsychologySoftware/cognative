@@ -4,7 +4,7 @@ import {StandardView} from "@/components/layout/StandardView";
 import {StatusBar} from "expo-status-bar";
 import {globalStyles} from "@/styles/appStyles";
 import {useSurvey} from "@/hooks/useSurvey";
-import {SurveyQuestion} from '@/types/surveyQuestions'
+import {SurveyComponent} from '@/types/surveyQuestions'
 import Survey from "@/components/survey/Survey";
 import Picture from "@/components/media/Picture";
 import {router, useLocalSearchParams} from 'expo-router';
@@ -58,7 +58,7 @@ export default function SurveyExample() {
     }
 
 
-    const questions: SurveyQuestion[] = [
+    const questions: SurveyComponent[] = [
         {
             key: 'age',
             question: 'What is your age?',

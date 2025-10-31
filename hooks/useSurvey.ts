@@ -1,12 +1,12 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {Alert} from "react-native";
-import {SurveyDataType, SurveyQuestion} from '@/types/surveyQuestions'
+import {SurveyDataType, SurveyComponent} from '@/types/surveyQuestions'
 import {DataService} from "@/services/data/DataService";
 import { useExperiment } from "@/context/ExperimentContext";
 
 // Initialize responses from survey definition
 // TODO: figure out how to make responses take in ResponseType = Record<string, SurveyDataType>
-function initializeResponses(questions: SurveyQuestion[]): Record<string, any> {
+function initializeResponses(questions: SurveyComponent[]): Record<string, any> {
     const responses: Record<string, any> = {};
 
     for (const question of questions) {
@@ -36,7 +36,7 @@ async function restoreResponses(restoreKey: string){
 
 const displayOnlyQuestions = ['paragraph']
 
-export function useSurvey(questions: SurveyQuestion[] | undefined, onSubmit?: (data: object, filename?:string) => void, filename?: string) {
+export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (data: object, filename?:string) => void, filename?: string) {
     const [responses, setResponses] = useState(initializeResponses(questions || []));
     const [isLoading, setIsLoading] = useState(!!filename);
     const [warning, setWarning] = useState('');
@@ -98,7 +98,7 @@ export function useSurvey(questions: SurveyQuestion[] | undefined, onSubmit?: (d
             (typeof value === 'string' && value.trim() === '');
     };
 
-    const checkDisplayConditions = useCallback((question: SurveyQuestion) => {
+    const checkDisplayConditions = useCallback((question: SurveyComponent) => {
         if(question.conditions && question.conditions.length > 0) {
             let conditionMatched = false
             for(let i=0; i<question.conditions.length; i++) {

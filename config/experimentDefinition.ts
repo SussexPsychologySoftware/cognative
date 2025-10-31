@@ -1,5 +1,6 @@
 import {ExperimentDefinition} from "@/types/experimentConfig";
-import {SurveyQuestion} from "@/types/surveyQuestions";
+import {SurveyComponent} from "@/types/surveyQuestions";
+import {soundSleepDefition} from "@/config/Example Studies/Sound Sleep/soundSleep";
 
 const ethnicitiesList = {
     'Asian or Asian British': [
