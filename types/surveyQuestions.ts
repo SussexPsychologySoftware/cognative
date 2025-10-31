@@ -1,5 +1,6 @@
 import {NullableStringRecord} from "@/types/trackExperimentState";
 
+// TODO: rename these from survey QUESTION to COMPONENT - many are display only or tasks in themselves at this point
 export type SurveyQuestionType =
     'number' |
     'text' |
@@ -21,10 +22,11 @@ export interface DisplayCondition {
 }
 
 export interface BasicSurveyQuestion {
+    key: string;
     question: string;
+
     type: SurveyQuestionType;
     required?: boolean;
-    key: string;
     default?: SurveyDataType;
     conditions?: DisplayCondition[];
 }
@@ -63,6 +65,7 @@ export interface SliderQuestion extends BasicSurveyQuestion {
     step?: number;
     showValue?: boolean;
     labels?: string[];
+    units?: string;
 }
 
 export interface LikertGridQuestion extends BasicSurveyQuestion {
@@ -76,6 +79,7 @@ export interface LikertSingleQuestion extends BasicSurveyQuestion {
     type: 'likertSingle';
     options: string[];
     labels?: string[];
+    oneWordPerLine?: boolean;
 }
 
 export type SingleInputQuestion = TextQuestion | TimeQuestion | SelectQuestion | CheckboxQuestion | SliderQuestion | RadioQuestion | LikertSingleQuestion;
