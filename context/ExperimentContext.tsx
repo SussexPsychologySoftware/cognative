@@ -24,7 +24,7 @@ interface ExperimentContextType {
     // Functions to change experiment state
     startExperiment: (participantId?: string, condition?: string) => Promise<void>;
     completeTask: (taskId: string) => Promise<void>;
-    submitTaskData: (taskId: string, data: any, filename?: string, datapipeId?: string, addTimestampWhenSending?: boolean) => Promise<void>;
+    submitTaskData: (taskId: string, data: any, filename: string, datapipeId?: string, addTimestampWhenSending?: boolean) => Promise<void>;
 
     resetTaskCompletion: () => Promise<void>;
     stopExperiment: () => Promise<void>;
@@ -199,18 +199,9 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             throw new Error(err);
         }
         const { participantId } = state;
-        const { experimentDay } = displayState;
-        let finalFilename = filename;
-        if (!finalFilename) {
-            finalFilename = ExperimentTracker.constructFilename(
-                taskId,
-                experimentDay,
-                participantId
-            );
-        }
 
         try {
-            await DataService.saveData(data, finalFilename!, datapipeID, participantId!, addTimestampWhenSending);
+            await DataService.saveData(data, filename, datapipeID, participantId, addTimestampWhenSending);
             await completeTask(taskId);
 
             // Fire and forget the notification canceller
