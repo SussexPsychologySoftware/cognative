@@ -7,10 +7,10 @@ export default function Radio({ selected, colour, size }: {
     size?: number
 }) {
     return(
-            <MaterialIcons
-                name={selected ? 'radio-button-on' : 'radio-button-off'}
-                size={size??30}
-                color={colour ?? colours.primary}
-            />
+        <MaterialIcons
+            name={selected ? 'radio-button-on' : 'radio-button-off'}
+            size={size??30}
+            color={colour ?? colours.primary}
+        />
     )
 }
