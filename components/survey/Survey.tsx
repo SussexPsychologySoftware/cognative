@@ -43,7 +43,6 @@ export default function Survey({
                 const key = question.key || question.question;
                 const isInvalid = invalidQuestions?.has(key) ?? false;
                 let input;
-                let title = question.question;
 
                 // Check for conditional question
                 if(question.conditions && question.conditions.length > 0) {
@@ -181,9 +180,9 @@ export default function Survey({
                         !isInvalid && styles.questionContainerSeparator,
                         isInvalid && globalStyles.invalidInput,
                     ]}>
-                        {title && (
+                        {question.question && (
                             <Text style={globalStyles.question}>
-                                {title}
+                                {question.question}
                             </Text>
                         )}
                         {input}
