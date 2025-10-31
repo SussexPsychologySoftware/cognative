@@ -1,7 +1,7 @@
 import React, {useState} from 'react'
 import {Text, StyleSheet, Pressable} from 'react-native'
 
-export default function SubmitButton({ text, disabledText, disabled, onPress, style, cooldown=0 } : { text: string, disabledText?: string, disabled?: boolean, onPress: () => void | Promise<void>, style?: object, cooldown?: number }) {
+export default function SubmitButton({ text, disabledText, disabled, onPress, style, cooldown=0, textStyle } : { text: string, disabledText?: string, disabled?: boolean, onPress: () => void | Promise<void>, style?: object, cooldown?: number, textStyle?: object }) {
     const [pressExecuting, setPressExecuting] = useState(false); // Define pressExecuting state
 
     const handlePress = async () => {
@@ -33,7 +33,10 @@ export default function SubmitButton({ text, disabledText, disabled, onPress, st
             onPress={handlePress}
             style={[{backgroundColor: disabledOrExecuting ? 'grey' : 'white'}, styles.button, style]}        >
             <Text
-                style={styles.text}
+                style={[
+                    styles.text,
+                    textStyle
+                ]}
             >
                 { disabledOrExecuting ? (disabledText??text) : text}
             </Text>
@@ -47,7 +50,7 @@ const styles = StyleSheet.create({
         paddingVertical: 10,
         paddingHorizontal: 15,
         borderRadius: 5,
-        alignSelf: 'center'
+        alignSelf: 'center',
     },
     text: {
         color: 'black',
