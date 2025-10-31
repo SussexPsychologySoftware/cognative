@@ -207,7 +207,9 @@ export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (
                 }
             } else {
                 totalQuestions += 1;
-                if (!isEmpty(response)) {
+                if(question.type === 'audio'){
+                    if(response === 'finished') answeredQuestions += 1;
+                } else if (!isEmpty(response)) {
                     answeredQuestions += 1;
                 }
             }
