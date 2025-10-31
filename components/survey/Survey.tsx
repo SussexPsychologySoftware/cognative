@@ -40,7 +40,7 @@ export default function Survey({
         <View style={styles.container}>
             {questions.map((question, index) => {
                 // Note key is responses object and react component key - index is unreliable due to conditional questions
-                const key = question.key || question.question;
+                const key = question.key || question.question || index;
                 const isInvalid = invalidQuestions?.has(key) ?? false;
                 let input;
 
