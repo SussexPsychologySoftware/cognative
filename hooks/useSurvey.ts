@@ -18,6 +18,8 @@ function initializeResponses(questions: SurveyQuestion[]): Record<string, any> {
             question.statements?.forEach((statement, index) => {
                 responses[key][statement] = question.default ?? null;
             });
+        } else if (question.type === 'paragraph') {
+            //continue
         } else {
             responses[key] = question.default ?? null;
         }
@@ -31,6 +33,8 @@ async function restoreResponses(restoreKey: string){
     if(!data) return null
     return data
 }
+
+const displayOnlyQuestions = ['paragraph']
 
 export function useSurvey(questions: SurveyQuestion[] | undefined, onSubmit?: (data: object, filename?:string) => void, filename?: string) {
     const [responses, setResponses] = useState(initializeResponses(questions || []));
@@ -140,6 +144,8 @@ export function useSurvey(questions: SurveyQuestion[] | undefined, onSubmit?: (d
                     if (!firstInvalidQuestion) {
                         firstInvalidQuestion = question.label;
                     }
+                } else if (displayOnlyQuestions.includes(question.type)) {
+                        //continue
                 } else if (isEmpty(response)) {
                     isInvalid = true;
                 }
@@ -180,6 +186,7 @@ export function useSurvey(questions: SurveyQuestion[] | undefined, onSubmit?: (d
                 if (response && typeof response === 'object') {
                     answeredQuestions += Object.values(response).filter(v => !isEmpty(v)).length;
                 }
+            } else if (question.type === 'paragraph') {
             } else {
                 totalQuestions += 1;
                 if (!isEmpty(response)) {
