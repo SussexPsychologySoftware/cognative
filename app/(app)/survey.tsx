@@ -4,10 +4,11 @@ import {StandardView} from "@/components/layout/StandardView";
 import {globalStyles} from "@/styles/appStyles";
 import {useSurvey} from "@/hooks/useSurvey";
 import Survey from "@/components/survey/Survey";
-import {router, useLocalSearchParams} from 'expo-router';
+import {RelativePathString, router, useLocalSearchParams} from 'expo-router';
 import {useExperiment} from "@/context/ExperimentContext";
 import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
 import {SurveyTaskDefinition} from "@/types/experimentConfig";
+import {useCallback, useEffect} from "react";
 
 export default function SurveyScreen() { // Renamed component
     const { taskId } = useLocalSearchParams<{ taskId: string }>();
@@ -24,16 +25,20 @@ export default function SurveyScreen() { // Renamed component
         ? ExperimentTracker.constructFilename(taskId, displayState.experimentDay, state?.participantId)
         : undefined;
 
-    const onSubmit = async (responses: object, surveyFilename?: string) => {
-        if (taskId) {
+    const onSubmit = useCallback(async (responses: object, surveyFilename?: string) => {
+        if (taskId && surveyFilename) {
             await submitTaskData(taskId, responses, surveyFilename, taskDefinition?.datapipe_id, taskDefinition?.allow_edit);
-        }
-        if (router.canGoBack()) {
-            router.back();
+            if(taskDefinition?.route_on_submit){
+                router.replace(taskDefinition.route_on_submit as RelativePathString);
+            } else if (router.canGoBack()) {
+                router.back();
+            } else {
+                router.replace('/');
+            }
         } else {
-            router.replace('/');
+            console.error("Unable to save responses: ", {taskId, surveyFilename, taskDefinition});
         }
-    }
+    }, [taskId, submitTaskData, taskDefinition]);
 
     const {
         responses,
