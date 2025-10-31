@@ -98,7 +98,6 @@ export interface Audio extends SurveyInputBase {
     volume?: number;
     containerStyle?: object;
     textStyle?: object;
-    route_on_finish?: string;
 }
 
 // -*#*- SURVEY DISPLAY ONLY -*#*-

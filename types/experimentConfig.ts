@@ -21,8 +21,10 @@ interface TaskDefinitionBasic {
     datapipe_id: string;
     allow_edit: boolean; // TODO: change to allow_once
     params?: Record<string, any>; // other stuff to pass in
-    type: 'survey' | 'screen' | 'web',
-    notification?: NotificationDefinition
+    type: 'survey' | 'screen' | 'web';
+    notification?: NotificationDefinition;
+    autosumbit_on_complete?: boolean;
+    route_on_submit?: string; // Maybe make this the input to router.replace({pathname,params})?
     // Other ideas
     // required: true,
     // showWhen?: (context: object) => {
