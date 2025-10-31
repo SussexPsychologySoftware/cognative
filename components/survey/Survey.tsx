@@ -118,6 +118,7 @@ export default function Survey({
                             step={question.step}
                             showValue={question.showValue}
                             labels={question.labels}
+                            units={question.units}
                         />;
                         break;
                     case 'likertSingle':
@@ -125,7 +126,7 @@ export default function Survey({
                             value={responses[key]}
                             options={question.options}
                             labels={question.labels}
-                            oneWordPerLine={true}
+                            oneWordPerLine={question.oneWordPerLine}
                             onChange={answer => updateResponses(key, answer)}
                         />
                         break;
