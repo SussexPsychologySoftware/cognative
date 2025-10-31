@@ -3,7 +3,7 @@ import {globalStyles} from "@/styles/appStyles";
 import Slider from "@react-native-community/slider";
 import Labels from "@/components/inputParts/Labels";
 
-export default function Range({ value, min, max, step, showValue=true, onChange, style, labels }: { value: number, min?: number, max?: number, step?: number, showValue?: boolean, onChange: (value: number) => void, style?: object, labels?: string[] }) {
+export default function Range({ value, min, max, step, showValue=true, onChange, style, labels, units }: { value: number, min?: number, max?: number, step?: number, showValue?: boolean, onChange: (value: number) => void, style?: object, labels?: string[], units?: string }) {
     // Note value/markers broken for steps between 0-1, floating point issues
     // TODO: implement my own simple version
     const trimNumber = (number: number) => {
@@ -18,9 +18,9 @@ export default function Range({ value, min, max, step, showValue=true, onChange,
                 labelMaxWidth={100}
                 oneWordPerLine={true}
             />}
-            { showValue &&
+            { showValue && value!==null &&
                 <Text style={[styles.valueDisplay, globalStyles.standardText]}>
-                    {value}
+                    {value + (units ?? '')}
                 </Text>
             }
             <Slider
@@ -32,7 +32,7 @@ export default function Range({ value, min, max, step, showValue=true, onChange,
                 // onSlidingComplete={onChange}
                 StepMarker={step ? (marker)=> (
                     <Text style={styles.customStepMarker}>
-                        {Number(marker.index.toPrecision(step?.toString().length))}
+                        {Number(marker.index.toPrecision(step?.toString().length)) + (units ?? '')}
                     </Text>
                 ) : undefined}
                 // StepMarker={ (step && step<1) ?
@@ -68,7 +68,8 @@ const styles = StyleSheet.create({
         height: 40
     },
     valueDisplay: {
-        marginVertical: 5
+        marginVertical: 5,
+        textAlign: "center"
     },
     customStepMarker: {
         color: "white",
