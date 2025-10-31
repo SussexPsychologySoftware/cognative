@@ -13,6 +13,7 @@ import Range from "@/components/inputs/Range";
 import Select from "@/components/inputs/Select";
 import LikertSingle from "@/components/inputs/LikertSingle";
 import TimeInput from "@/components/inputs/TimeInput";
+import Paragraph from "@/components/inputParts/Paragraph";
 
 interface SurveyProps {
     questions: SurveyQuestion[];
@@ -156,6 +157,14 @@ export default function Survey({
                             options={question.options}
                             onSelect={newValue => updateResponses(key, newValue)}
                             multiple={question.multiple}
+                        />
+                        break;
+                    case 'paragraph':
+                        input = <Paragraph
+                            text={question.text}
+                            title={question.title}
+                            containerStyle={question.containerStyle}
+                            textStyle={question.textStyle}
                         />
                         break;
                     default:
