@@ -1,6 +1,6 @@
 import { StyleSheet, Pressable } from "react-native";
 import {setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus} from 'expo-audio';
-import { useEffect } from "react";
+import {useEffect, useRef} from "react";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
 // Example using multiple sources:
@@ -22,9 +22,21 @@ export default function Audio({audioSource, isPlaying, onPress, resetOnPause, on
     // Note: audioSource is not loaded inside the component as this needs to be known at runtime, dynamic requires not allowed in RN
     // Volume works well with a slider if required dynamic setting
     // TODO: add volume controls? maybe separate component
-    const player = useAudioPlayer(audioSource);
-    const { didJustFinish, currentTime, duration } = useAudioPlayerStatus(player);
     const isDisabled = !audioSource || disabled;
+    const player = useAudioPlayer(audioSource);
+
+    const { didJustFinish, currentTime, duration } = useAudioPlayerStatus(player);
+    // Make sure onFinish() only runs once but tracking it's function reference
+    const onFinishedRef = useRef(onFinished);
+    useEffect(() => { // Keep updated with last callback on every render
+        onFinishedRef.current = onFinished;
+    }, [onFinished]);
+
+    useEffect(() => {
+        if (didJustFinish && onFinishedRef.current) {
+            onFinishedRef.current();
+        }
+    }, [didJustFinish]);
 
     // Sync player state with prop
     useEffect(() => {
@@ -55,11 +67,7 @@ export default function Audio({audioSource, isPlaying, onPress, resetOnPause, on
         void playAudio();
     }, [isPlaying, player, resetOnPause]);
 
-    useEffect(() => {
-        if (didJustFinish && onFinished) {
-            onFinished();
-        }
-    }, [didJustFinish, onFinished]);
+
 
     useEffect(() => {
         if (onTimeChange && currentTime !== time) {
