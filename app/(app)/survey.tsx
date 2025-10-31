@@ -75,7 +75,7 @@ export default function SurveyScreen() { // Renamed component
             </Text>
             <View style={styles.inputsContainer}>
                 {/* TODO: add a 'group' or 'page' property to SurveyQuestion type and render the survey in sections dynamically.*/}
-                <Text style={globalStyles.sectionTitle}>Please fill out the following survey</Text>
+                {/*<Text style={globalStyles.sectionTitle}>Please fill out the following survey</Text>*/}
                 <Survey
                     questions={questions}
                     responses={responses}
@@ -83,14 +83,14 @@ export default function SurveyScreen() { // Renamed component
                     handleSurveySubmit={handleSurveySubmit}
                     warning={warning}
                     isSubmitting={isSubmitting}
-                    progress={progress}
+                    // progress={progress}
                     invalidQuestions={invalidQuestions}
                 />
 
                 {/* Debug: Show current responses */}
-                <Text style={globalStyles.whiteText}>
-                    {JSON.stringify(responses, null, 2)}
-                </Text>
+                {/*<Text style={globalStyles.whiteText}>*/}
+                {/*    {JSON.stringify(responses, null, 2)}*/}
+                {/*</Text>*/}
 
                 <SubmitButton
                     onPress={() => {resetSurvey()}}
