@@ -6,6 +6,7 @@ export class DataService {
         // Direct setting of data, good for e.g. participantID
         let dataString = data
         if(typeof data === 'object') dataString = JSON.stringify(data)
+        else dataString = String(data)
         await AsyncStorage.setItem(key, dataString);
         return dataString;
     }
