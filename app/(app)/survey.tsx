@@ -8,11 +8,32 @@ import {RelativePathString, router, useLocalSearchParams} from 'expo-router';
 import {useExperiment} from "@/context/ExperimentContext";
 import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
 import {SurveyTaskDefinition} from "@/types/experimentConfig";
-import {useCallback, useEffect} from "react";
+import {useCallback, useEffect, useState} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function SurveyScreen() { // Renamed component
     const { taskId } = useLocalSearchParams<{ taskId: string }>();
     const { submitTaskData, definition, displayState, state } = useExperiment();
+    const [storedVolume, setStoredVolume] = useState<number | null>(null);
+
+    useEffect(() => {
+        const loadVolume = async () => {
+            try {
+                const savedVolumeStr = await AsyncStorage.getItem('volume');
+                if (savedVolumeStr !== null) {
+                    setStoredVolume(parseFloat(savedVolumeStr));
+                } else {
+                    // No volume saved, default to 1 (full volume)
+                    setStoredVolume(1);
+                }
+            } catch (e) {
+                console.error("Failed to load volume, defaulting to 1", e);
+                setStoredVolume(1);
+            }
+        };
+
+        void loadVolume();
+    }, []); // Empty array runs this once on mount
 
     // Get task definition and questions dynamically
     const taskDefinition = definition.tasks.find(t => t.id === taskId);
@@ -81,7 +102,7 @@ export default function SurveyScreen() { // Renamed component
     }
 
     // Handle loading state (especially for when restoring responses)
-    if (isLoading) {
+    if (isLoading || storedVolume === null) {
         return (
             <StandardView>
                 <Text style={globalStyles.pageTitle}>Loading Survey...</Text>
@@ -109,6 +130,7 @@ export default function SurveyScreen() { // Renamed component
                     isSubmitting={isSubmitting}
                     // progress={progress}
                     invalidQuestions={invalidQuestions}
+                    volume={storedVolume}
                 />
 
                 {/* Debug: Show current responses */}

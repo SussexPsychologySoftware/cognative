@@ -27,6 +27,7 @@ interface SurveyProps {
     isSubmitting?: boolean;
     progress?: number;
     invalidQuestions?: Set<string>;
+    volume?: number;
 }
 
 export default function Survey({
@@ -38,6 +39,7 @@ export default function Survey({
                                    isSubmitting,
                                    progress,
                                    invalidQuestions,
+                                   volume
                                }: SurveyProps) {
     return (
         <View style={styles.container}>
@@ -190,7 +192,7 @@ export default function Survey({
                                     }
                                 }}
                                 resetOnPause={question.resetOnPause}
-                                volume={question.volume}
+                                volume={question.volume ?? volume ?? 1}
                             />
                         </>
                         break;
