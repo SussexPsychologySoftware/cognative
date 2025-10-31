@@ -147,58 +147,73 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         }
     }, []); // No dependencies needed, tracker gets its own state
 
+
     const completeTask = useCallback(async (taskId: string) => {
-        // Get current states using setState to ensure up to date (between rerenders?)
-        if (!state || !displayState) {
-            console.warn("Cannot complete task: state is not loaded.");
-            return;
-        }
-
-        // Create the new state *optimistically*
+        //Optimistic State Updater
         const newCompletionDate = new Date().toISOString();
+        // Note using a functional update pattern to avoid dependency cycle with setting state and running on state updates
+        setState(currentState => {
+            if (!currentState) {
+                console.warn("Cannot complete task: state is not loaded.");
+                return currentState;
+            }
 
-        // Update core state
-        const newState: ExperimentState = {
-            ...state, // No error here
-            tasksLastCompletionDate: {
-                ...state.tasksLastCompletionDate,
-                [taskId]: newCompletionDate,
-            },
-        };
+            const newState: ExperimentState = {
+                ...currentState,
+                tasksLastCompletionDate: {
+                    ...currentState.tasksLastCompletionDate,
+                    [taskId]: newCompletionDate,
+                },
+            };
 
-        const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
+            // Calculate and set display state within the same update cycle as it relies on state
+            const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
+            setDisplayState(newDisplayState);
 
-        // Set react states
-        setState(newState);
-        setDisplayState(newDisplayState);
-
-        // UI already updated so fire and forget saving task
-        ExperimentTracker.setTaskCompleted(taskId).catch(err => {
-            console.error("Failed to save task completion to storage:", err);
-            // TODO: consider reverting state on error
+            return newState;
         });
 
-    }, [displayState, state]);
+        // Fire and forget
+        ExperimentTracker.setTaskCompleted(taskId).catch(err => {
+            // TODO: consider reverting state on error
+            console.error("Failed to save task completion to storage:", err);
+        });
+    }, []);
 
-    const submitTaskData = useCallback(async (taskId: string, data: any, filename?: string, datapipeID?: string, addTimestampWhenSending?:boolean) => {
-        if (!state || displayState === null) {
-            // Note this is state issue not action error
-            console.error("Cannot submit data: no experiment state found.");
-            return;
-        }
-        // Note: Error state only set on failure - but useSurvey has own isSubmitting do isActionLoading not set
+    const submitTaskData = useCallback(async (
+        taskId: string,
+        data: any,
+        filename: string,
+        datapipeID?: string,
+        addTimestampWhenSending?:boolean
+    ) => {
+        // Direct State-Reading Action for calling API
+        // Note: Error state only set on failure - but useSurvey has own isSubmitting, isActionLoading not set
         // TODO: should use isActionLoading instead?
         setActionError(null);
-        const { participantId } = state;
-        if(!filename) {
-            console.log("No filename passed, creating filename");
-            const { experimentDay } = displayState;
-            filename = ExperimentTracker.constructFilename(taskId, experimentDay, participantId)
+        // The dependency array ensures these are always fresh.
+        if (!state || displayState === null) {
+            const err = "Cannot submit data: no experiment state found.";
+            console.error(err);
+            setActionError(err);
+            throw new Error(err);
         }
+        const { participantId } = state;
+        const { experimentDay } = displayState;
+        let finalFilename = filename;
+        if (!finalFilename) {
+            finalFilename = ExperimentTracker.constructFilename(
+                taskId,
+                experimentDay,
+                participantId
+            );
+        }
+
         try {
-            await DataService.saveData(data, filename, datapipeID, participantId, addTimestampWhenSending);
-            await completeTask(taskId); // 'optimistic' function - updates state and uses that, expects saving will be fine.
-            // Fire and forget the notification canceller so users don't get notifications for tasks they've already commpleted
+            await DataService.saveData(data, finalFilename!, datapipeID, participantId!, addTimestampWhenSending);
+            await completeTask(taskId);
+
+            // Fire and forget the notification canceller
             NotificationService.cancelNotificationForToday(taskId).catch(err => {
                 console.error("Failed to cancel notification:", err);
             });
@@ -208,7 +223,6 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             setActionError(`Failed to submit data\n${e}`);
             throw e; // Re-throw so useSurvey's 'handleSurveySubmit' can catch it
         }
-
     }, [state, displayState, completeTask]);
 
     const resetTaskCompletion = useCallback(async () => {
@@ -216,7 +230,6 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         setActionError(null);
         try {
             const newState = await ExperimentTracker.resetTasks();
-
             if (newState) {
                 // Recalculate the display state
                 const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
