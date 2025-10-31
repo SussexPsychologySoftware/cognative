@@ -55,7 +55,7 @@ export default function ToDoList({ taskStates, data }: { taskStates: TaskDisplay
     return (
         <View style={styles.todoList}>
             {
-                taskStates.length > 0 && taskStates.map(task => {
+                taskStates.length > 0 ? taskStates.map(task => {
                     // TODO: consider passing in all data to all children, and task definition entirely?
                     // const params: Record<string, any> = { ...data }; // (includes day, condition)
                     // params = task.definition; // Pass the name for completion tracking
@@ -70,7 +70,10 @@ export default function ToDoList({ taskStates, data }: { taskStates: TaskDisplay
                             params={params}
                         />
                     )
-                })
+                }) :
+                <Text style={[globalStyles.sectionTitle]}>
+                    There are no activities to complete for today, please return tomorrow.
+                </Text>
             }
 
         </View>
