@@ -1,4 +1,4 @@
-import {StyleSheet, Pressable, View} from "react-native";
+import { StyleSheet, Pressable } from "react-native";
 import {setAudioModeAsync, useAudioPlayer, useAudioPlayerStatus} from 'expo-audio';
 import {useEffect, useRef} from "react";
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
@@ -29,8 +29,7 @@ interface AudioProps {
     disabled?: boolean,
     time?: number,
     onTimeChange?: (time:number) => void,
-    getDuration?: (duration:number) => number,
-    volumeSlider?: boolean,
+    getDuration?: (duration:number) => number
 }
 
 export default function Audio({
@@ -44,9 +43,7 @@ export default function Audio({
                                   disabled,
                                   time,
                                   onTimeChange,
-                                  getDuration,
-                                  volumeSlider
-                              }: AudioProps) {
+                                  getDuration }: AudioProps) {
     // Note: audioSource is not loaded inside the component as this needs to be known at runtime, dynamic requires not allowed in RN
     // Volume works well with a slider if required dynamic setting
     // TODO: add volume controls? maybe separate component
