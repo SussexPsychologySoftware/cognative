@@ -37,7 +37,7 @@ export default function Paragraph({ text, title, containerStyle, textStyle, titl
                     <ParagraphText
                         key={`paragraph-${index}`}
                         text={p}
-                        textStyle={[textStyle, {marginBottom: 10}]}
+                        textStyle={[{marginBottom: 10}, textStyle]}
                     />
                 )) :
                     <ParagraphText
