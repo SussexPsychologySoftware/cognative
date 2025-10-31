@@ -18,7 +18,35 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 //     />
 // </View>
 
-export default function Audio({audioSource, isPlaying, onPress, resetOnPause, onFinished, volume, style, disabled, time, onTimeChange, getDuration}: {audioSource: number, isPlaying: boolean, resetOnPause?: boolean, onPress: ()=>void, onFinished?: () => void, volume?: number, style?: object, disabled?: boolean, time?: number, onTimeChange?: (time:number) => void, getDuration?: (duration:number) => number}) {
+interface AudioProps {
+    audioSource: number,
+    isPlaying: boolean,
+    resetOnPause?: boolean,
+    onPress: ()=>void,
+    onFinished?: () => void,
+    volume?: number,
+    style?: object,
+    disabled?: boolean,
+    time?: number,
+    onTimeChange?: (time:number) => void,
+    getDuration?: (duration:number) => number,
+    volumeSlider?: boolean,
+}
+
+export default function Audio({
+                                  audioSource,
+                                  isPlaying,
+                                  onPress,
+                                  resetOnPause,
+                                  onFinished,
+                                  volume,
+                                  style,
+                                  disabled,
+                                  time,
+                                  onTimeChange,
+                                  getDuration,
+                                  volumeSlider
+                              }: AudioProps) {
     // Note: audioSource is not loaded inside the component as this needs to be known at runtime, dynamic requires not allowed in RN
     // Volume works well with a slider if required dynamic setting
     // TODO: add volume controls? maybe separate component
