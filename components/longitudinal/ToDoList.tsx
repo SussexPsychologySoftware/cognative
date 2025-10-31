@@ -51,7 +51,12 @@ function Activity({ task, params }: { task: TaskDisplayStatus, params: Record<st
                         params
                     })
                 }}
-                style={styles.activityButton}
+                style={[
+                    styles.activityButton,
+                    task.completed && styles.completedActivityButton,
+                    task.completed && task.isAllowed && styles.editActivityButton
+                ]}
+                textStyle={task.completed && task.isAllowed ? styles.editActivityButtonText : undefined}
                 cooldown={500}
             />
         </View>
@@ -149,4 +154,17 @@ const styles = StyleSheet.create({
     activityButton: {
         alignSelf: 'stretch', // Stretch to full width
     },
+    completedActivityButton: {
+        backgroundColor: 'rgba(255, 255, 255, 0.3)',
+        // borderColor: 'rgba(255, 255, 255, 0.3)',
+        // borderWidth: 1,
+    },
+    editActivityButton: {
+        backgroundColor: 'rgba(255, 255, 255, 0.6)',
+        borderColor: 'rgba(255, 255, 255, 0.3)',
+        // borderWidth: 1,
+    },
+    editActivityButtonText: {
+        color: 'rgba(0, 0, 0, 0.9)',
+    }
 });
