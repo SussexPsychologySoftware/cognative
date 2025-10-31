@@ -50,7 +50,9 @@ export default function LikertSingle(
         options,
         labels,
         onChange,
-        oneWordPerLine
+        oneWordPerLine=false,
+        spread=true,
+        labelMaxWidth
     }:
     {
         value: string,
@@ -58,6 +60,8 @@ export default function LikertSingle(
         labels?: string[], // Secondary labels
         onChange: (answer: string) => void,
         oneWordPerLine?: boolean,
+        spread?: boolean,
+        labelMaxWidth?: DimensionValue
     }) {
     return (
         <View style={styles.container}>
@@ -66,8 +70,8 @@ export default function LikertSingle(
                 <Labels
                     labels={labels}
                     oneWordPerLine={oneWordPerLine}
-                    spread={true}
-                    // labelMaxWidth={70}
+                    spread={spread}
+                    labelMaxWidth={labelMaxWidth}
                 />
             }
             <View style={{paddingHorizontal: labels ? '5%' : null}}>
@@ -87,7 +91,7 @@ export default function LikertSingle(
 
 const styles = StyleSheet.create({
     container: {
-        borderWidth: 1,
+        // borderWidth: 1,
         borderColor: 'darkgrey',
         borderRadius: 5,
         padding: 2,
