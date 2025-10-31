@@ -12,20 +12,37 @@ function hyphenate(text: string) {
 }
 
 // TODO: consider hyphenated text component as well
+// TODO: not sure this was worth the pain of abstraction tbh... just make it spread labels and put the other stuff in the actual components
 export default function Labels({labels, prependEmptyMinWidth, oneWordPerLine, spread, labelMaxWidth}: { labels: string[], prependEmptyMinWidth?: number, oneWordPerLine?: boolean, spread?: boolean, labelMaxWidth?: DimensionValue }) {
     return (
-        <View style={[styles.container, spread && {justifyContent: 'space-between'}]}>
-            {prependEmptyMinWidth && <Text style={[styles.labelContainer, {minWidth: prependEmptyMinWidth}]}></Text>}
+        <View style={[
+            styles.container,
+            spread && styles.spreadContainer
+        ]}>
+            {prependEmptyMinWidth && <Text style={[
+                styles.labelContainer,
+                {minWidth: prependEmptyMinWidth}
+            ]}></Text>}
             {labels.map((label, index) => (
                 <View
                     key={`label-container-${label}-${index}`}
                     style={[
                         styles.labelContainer,
-                        spread && {maxWidth: `${100/labels.length}%`, flex: 0},
+                        // spread && {maxWidth: `${100/labels.length}%`},
+                        spread && styles.spreadLabelContainer,
+                        spread && index===0 && {alignItems:'flex-start'},
+                        spread && index===labels.length-1 && {alignItems:'flex-end'},
+                        {maxWidth: labelMaxWidth},
                     ]}
                 >
                     <Text
-                        style={[globalStyles.whiteText, styles.labelText, {maxWidth: labelMaxWidth}]}
+                        style={[
+                            globalStyles.whiteText,
+                            styles.labelText,
+                            spread && styles.spreadText,
+                            index===0 && spread && {textAlign:'left'},
+                            index===labels.length-1 && spread && {textAlign:'right'},
+                        ]}
                         key={`label-text-${label}`}
                         android_hyphenationFrequency='full'
                         allowFontScaling={true}
@@ -42,22 +59,34 @@ export default function Labels({labels, prependEmptyMinWidth, oneWordPerLine, sp
 
 const styles = StyleSheet.create({
     container: {
-        width: '100%',
-        maxWidth: "100%",
+        flex: 1,
         alignItems: 'flex-end',
         flexDirection: 'row',
         gap: 5,
     },
     labelContainer: {
-        paddingVertical: 5,
         flex: 1,
         alignItems: 'center',
-        // borderWidth: 1,
+        justifyContent: 'center',
+        height: '100%'
     },
     labelText: {
         textAlign: 'center',
         fontWeight: "500",
+    },
+    // Spread mode
+    spreadContainer: {
+        justifyContent: 'space-between',
+        gap: 15,
+        paddingBottom: 5,
+    },
+    spreadLabelContainer: {
+        justifyContent: 'flex-start',
         // borderWidth: 1,
+        borderColor: 'white'
+    },
+    spreadText: {
+        fontWeight: "300",
+        fontSize: 13,
     }
-
 });
