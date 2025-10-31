@@ -185,10 +185,9 @@ export default function Survey({
                                     updateResponses(key, !isPlaying);
                                 }}
                                 onFinished={() => {
-                                    updateResponses(key, 'finished')
-                                    // if(question.route_on_finish){
-                                    //     router.replace(question.route_on_finish as RelativePathString)
-                                    // }
+                                    if (responses[key] !== 'finished') {
+                                        updateResponses(key, 'finished');
+                                    }
                                 }}
                                 resetOnPause={question.resetOnPause}
                                 volume={question.volume}
