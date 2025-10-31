@@ -90,13 +90,18 @@ export interface Audio extends BasicSurveyQuestion {
     instructions?: string|string[];
     containerStyle?: object;
     textStyle?: object;
+    // NOTE: default: bool not needed here, nor is 'question' really
 }
 
 // DISPLAY TYPES ******
-type SurveyDisplayType = 'paragraph' | 'picture' | 'video'
+
+export type SurveyDisplayType = 'paragraph' | 'picture' | 'video'
 
 interface BasicSurveyDisplay {
     type: SurveyDisplayType;
+    conditions?: DisplayCondition[];
+    key: string;
+    question: string;
 }
 
 export interface ParagraphDisplay extends BasicSurveyDisplay {
@@ -108,7 +113,8 @@ export interface ParagraphDisplay extends BasicSurveyDisplay {
 }
 
 type SurveyDisplayOnly = ParagraphDisplay; // Add picture
+
 export type SingleInputQuestion = TextQuestion | TimeQuestion | SelectQuestion | CheckboxQuestion |
-    SliderQuestion | RadioQuestion | LikertSingleQuestion ;
+    SliderQuestion | RadioQuestion | LikertSingleQuestion | Audio;
 export type SurveyQuestion = SingleInputQuestion | LikertGridQuestion;
 export type SurveyComponent = SurveyQuestion | SurveyDisplayOnly;
