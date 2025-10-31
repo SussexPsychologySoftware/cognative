@@ -18,13 +18,13 @@ import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 //     />
 // </View>
 
-export default function Audio({audioSource, isPlaying, onPress, resetOnPause, onFinished, volume}: {audioSource: number, isPlaying: boolean, resetOnPause?: boolean, onPress: ()=>void, onFinished?: () => void, volume?: number}) {
+export default function Audio({audioSource, isPlaying, onPress, resetOnPause, onFinished, volume, style, disabled, time, onTimeChange, getDuration}: {audioSource: number, isPlaying: boolean, resetOnPause?: boolean, onPress: ()=>void, onFinished?: () => void, volume?: number, style?: object, disabled?: boolean, time?: number, onTimeChange?: (time:number) => void, getDuration?: (duration:number) => number}) {
     // Note: audioSource is not loaded inside the component as this needs to be known at runtime, dynamic requires not allowed in RN
     // Volume works well with a slider if required dynamic setting
     // TODO: add volume controls? maybe separate component
     const player = useAudioPlayer(audioSource);
-    const { didJustFinish } = useAudioPlayerStatus(player);
-    const isDisabled = !audioSource;
+    const { didJustFinish, currentTime, duration } = useAudioPlayerStatus(player);
+    const isDisabled = !audioSource || disabled;
 
     // Sync player state with prop
     useEffect(() => {
@@ -62,6 +62,18 @@ export default function Audio({audioSource, isPlaying, onPress, resetOnPause, on
     }, [didJustFinish, onFinished]);
 
     useEffect(() => {
+        if (onTimeChange && currentTime !== time) {
+            onTimeChange(currentTime);
+        }
+    }, [currentTime, onTimeChange, time]);
+
+    useEffect(() => {
+        if(getDuration){
+            getDuration(duration)
+        }
+    }, [duration, getDuration]);
+
+    useEffect(() => {
         player.volume = volume??1;
     }, [player, volume])
 
@@ -73,7 +85,11 @@ export default function Audio({audioSource, isPlaying, onPress, resetOnPause, on
         <Pressable
             disabled={isDisabled}
             onPress={isDisabled ? undefined : handlePlayPause}
-            style={[styles.player, isDisabled && styles.disabled]}
+            style={[
+                styles.player,
+                isDisabled && styles.disabled,
+                style
+            ]}
         >
             <FontAwesome6
                 name={isPlaying ? 'pause' : 'play'}
@@ -90,6 +106,7 @@ const styles = StyleSheet.create({
         height: 50,
         justifyContent: 'center',
         alignItems: 'center',
+        alignSelf: 'center',
         backgroundColor: 'lightgrey',
         borderRadius: 10,
     },
