@@ -52,6 +52,25 @@ export default function SurveyScreen() { // Renamed component
         isLoading // Get the loading state from the hook
     } = useSurvey(questions, onSubmit, surveyFilename);
 
+
+    // TODO: Figure out how to do an autoroute without Max Depth Error - might be ExperimentContext re-rendering...
+    // Get task display state dynamically
+    const taskDisplayState = displayState
+        ? displayState.tasks.find(t => t.definition.id === taskId)
+        : undefined;
+
+    useEffect(() => {
+        const autoSubmitOnFirstCompletion = async () => {
+            if (!isSubmitting && !taskDisplayState?.completed && taskDefinition?.autosumbit_on_complete && progress === 100) {
+                await handleSurveySubmit();
+            }
+        };
+
+        // Call the async function
+        void autoSubmitOnFirstCompletion();
+    }, [isSubmitting, handleSurveySubmit, progress, taskDefinition?.autosumbit_on_complete, taskDisplayState?.completed])
+
+
     if (!questions) {
         return (
             <StandardView>
