@@ -1,7 +1,10 @@
 import {NullableStringRecord} from "@/types/trackExperimentState";
 
-// TODO: rename these from survey QUESTION to COMPONENT - many are display only or tasks in themselves at this point
-export type SurveyQuestionType =
+// -*#*-*#*- SURVEY COMPONENTS -*#*-*#*-
+export type SurveyDisplayType = 'paragraph' | 'picture' | 'video'
+export const displayOnlyTypes = ['paragraph', 'picture', 'video'];
+
+export type SurveyInputType =
     'number' |
     'text' |
     'multiline' |
@@ -15,51 +18,55 @@ export type SurveyQuestionType =
     'likertSingle' |
     'audio';
 
-export type SurveyDataType = string | number | boolean | null | NullableStringRecord;
-
 export interface DisplayCondition {
     key: string
     value: SurveyDataType
 }
 
-export interface BasicSurveyQuestion {
-    key: string;
-    question: string;
-
-    type: SurveyQuestionType;
-    required?: boolean;
-    default?: SurveyDataType;
+export interface SurveyComponentBase {
+    key: string; // The unique identifier
+    type: SurveyInputType | SurveyDisplayType; // The discriminator
     conditions?: DisplayCondition[];
 }
 
-interface TextQuestion extends BasicSurveyQuestion {
+// -*#*- SURVEY QUESTIONS -*#*-
+export type SurveyDataType = string | number | boolean | null | NullableStringRecord;
+
+export interface SurveyInputBase extends SurveyComponentBase {
+    type: SurveyInputType;
+    question: string; // The prompt/label for the input
+    required?: boolean;
+    default?: SurveyDataType;
+}
+
+export interface TextQuestion extends SurveyInputBase {
     type: 'number' | 'text' | 'multiline';
     placeholder?: string;
 }
 
-export interface TimeQuestion extends BasicSurveyQuestion {
+export interface TimeQuestion extends SurveyInputBase {
     type: 'time' | 'lengthOfTime';
     min?: string;
     max?: string;
 }
 
-export interface RadioQuestion extends BasicSurveyQuestion {
+export interface RadioQuestion extends SurveyInputBase {
     type: 'radio';
     options: string[];
 }
 
-export interface SelectQuestion extends BasicSurveyQuestion {
+export interface SelectQuestion extends SurveyInputBase {
     type: 'select';
     options: Record<string, string[]>;
     multiple?: boolean;
 }
 
-export interface CheckboxQuestion extends BasicSurveyQuestion {
+export interface CheckboxQuestion extends SurveyInputBase {
     type: 'checkbox';
     label: string;
 }
 
-export interface SliderQuestion extends BasicSurveyQuestion {
+export interface SliderQuestion extends SurveyInputBase {
     type: 'slider';
     min?: number;
     max?: number;
@@ -69,45 +76,40 @@ export interface SliderQuestion extends BasicSurveyQuestion {
     units?: string;
 }
 
-export interface LikertGridQuestion extends BasicSurveyQuestion {
+export interface LikertGridQuestion extends SurveyInputBase {
     type: 'likertGrid';
     name?: string; // TODO: not sure I've actually used this anywhere?
     options: string[];
     statements: string[];
 }
 
-export interface LikertSingleQuestion extends BasicSurveyQuestion {
+export interface LikertSingleQuestion extends SurveyInputBase {
     type: 'likertSingle';
     options: string[];
     labels?: string[];
     oneWordPerLine?: boolean;
 }
 
-// TODO: maybe audio should be a question actually? allows for storing if listened to, requiring that, etc.
-export interface Audio extends BasicSurveyQuestion {
+export interface Audio extends SurveyInputBase {
     type: 'audio';
-    filepath: string;
+    file: number;
     instructions?: string|string[];
+    resetOnPause?: boolean;
+    volume?: number;
     containerStyle?: object;
     textStyle?: object;
-    // NOTE: default: bool not needed here, nor is 'question' really
+    route_on_finish?: string;
 }
 
-// DISPLAY TYPES ******
-
-export type SurveyDisplayType = 'paragraph' | 'picture' | 'video'
-
-interface BasicSurveyDisplay {
+// -*#*- SURVEY DISPLAY ONLY -*#*-
+export interface SurveyDisplayBase extends SurveyComponentBase {
     type: SurveyDisplayType;
-    conditions?: DisplayCondition[];
-    key: string;
-    question: string;
 }
 
-export interface ParagraphDisplay extends BasicSurveyDisplay {
-    type: SurveyDisplayType;
+export interface ParagraphDisplay extends SurveyDisplayBase {
+    type: 'paragraph';
     text: string|string[];
-    title?: string;
+    title?: string; // This is used instead of 'question'
     containerStyle?: object;
     textStyle?: object;
 }
