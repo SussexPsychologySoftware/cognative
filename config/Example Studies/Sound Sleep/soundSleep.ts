@@ -1,5 +1,12 @@
-import {ExperimentDefinition} from "@/types/experimentConfig";
-import {DisplayCondition, SurveyComponent, SurveyDataType} from "@/types/surveyQuestions";
+import {ExperimentDefinition, TaskDefinition} from "@/types/experimentConfig";
+import {
+    AudioQuestion,
+    DisplayCondition,
+    ParagraphDisplay,
+    SurveyComponent,
+    SurveyDataType
+} from "@/types/surveyQuestions";
+import {ExperimentState} from "@/types/trackExperimentState";
 
 const ethnicitiesList = {
     'Asian or Asian British': [
@@ -319,24 +326,29 @@ const expectanciesQuestionnaire: SurveyComponent[] = [
     },
 ]
 
-const audioTaskBinaural: SurveyComponent[] = [
+const setVolumeTask: SurveyComponent[] = [
     {
         key: 'instructions',
         type: 'paragraph',
-        text: ['Connect your headphones and press play when you are ready to begin playing your nightly sleep audio.',
-            'Please do not exceed 50% volume on your device. Please make sure your phone is plugged in or has enough battery to last the night.'],
+        text: ['So that we can keep volume consistent throughout our experiment, we need you to adjust the volume on your phone and in the app.',
+            'Please put your headphones on and ensure they are connected to your phone via bluetooth.',
+            "Set your device's volume using the buttons on the side of your phone to approximately 50% (around halfway), and then adjust the slider so that the audio clip is barely audible.",
+            'This will be the maximum volume available later.'],
+        containerStyle: {marginTop: 0, paddingTop:0}
     },
     {
-        key: 'audioBinaural',
+        key: 'setVolumeQ',
         type: 'audio',
         question: '',
-        file: require('@/assets/sounds/binaural.mp3'),
-        required: true,
+        file: require('@/assets/sounds/monaural.mp3'),
         default: false, // autoplay
+        volume: .5,
+        volumeControls: true
     }
 ]
 
-const audioTaskControl: SurveyComponent[] = [
+
+const audioSurveyTemplate: SurveyComponent[] = [
     {
         key: 'instructions',
         type: 'paragraph',
@@ -344,32 +356,69 @@ const audioTaskControl: SurveyComponent[] = [
             'Please do not exceed 50% volume on your device. Please make sure your phone is plugged in or has enough battery to last the night.'],
     },
     {
-        key: 'audioControl',
+        key: 'audio',
         type: 'audio',
         question: '',
         file: require('@/assets/sounds/control.mp3'),
         required: true,
         default: false, // autoplay
+        overwrite_parameter_from_storage: [{
+            parameter: 'volume',
+            storage_key: 'setVolume',
+            response_key: 'setVolumeQ.volume'
+        }]
     }
 ]
 
-const audioTaskMonaural: SurveyComponent[] = [
-    {
-        key: 'instructions',
-        type: 'paragraph',
-        text: ['Connect your headphones and press play when you are ready to begin playing your nightly sleep audio.',
-            'Please do not exceed 50% volume on your device. Please make sure your phone is plugged in or has enough battery to last the night.'],
+// -=*#*=- LISTEN TO AUDIO TASK -=*#*=-
+const audioSurveyInstructions: ParagraphDisplay = {
+    key: 'instructions',
+    type: 'paragraph',
+    text: ['Connect your headphones and press play when you are ready to begin playing your nightly sleep audio.',
+        'Please do not exceed 50% volume on your device. Please make sure your phone is plugged in or has enough battery to last the night.'],
+};
 
-    },
+// Define the base settings for all audio component -  Omit to create a type excluding the parts that will change
+const audioSurveyBase: Omit<AudioQuestion, 'key' | 'file'> = {
+    type: 'audio',
+    question: '',
+    required: true,
+    default: false, // autoplay
+    overwrite_parameter_from_storage: [{
+        parameter: 'volume',
+        storage_key: 'setVolume',
+        response_key: 'setVolumeQ.volume'
+    }]
+};
+
+const audioSurveyControl: SurveyComponent[] = [
+    audioSurveyInstructions,
     {
+        ...audioSurveyBase,
+        key: 'audioControl',
+        file: require('@/assets/sounds/control.mp3')
+    }
+];
+
+const audioSurveyMonaural: SurveyComponent[] = [
+    audioSurveyInstructions,
+    {
+        ...audioSurveyBase,
         key: 'audioMonaural',
-        type: 'audio',
-        question: '',
-        file: require('@/assets/sounds/monaural.mp3'),
-        required: true,
-        default: false, // autoplay
+        file: require('@/assets/sounds/monaural.mp3')
     }
-]
+];
+
+
+const audioSurveyBinaural: SurveyComponent[] = [
+    audioSurveyInstructions,
+    {
+        ...audioSurveyBase,
+        key: 'audioBinaural',
+        file: require('@/assets/sounds/binaural.mp3')
+    }
+];
+
 
 function daysBetween(from: number, to: number) {
     return Array.from({ length: to - from + 1 }, (_, i) => i + from);
@@ -391,6 +440,23 @@ function phase2Days(phases: string[], daysOfPhase?: number[]|number){
         if(Array.isArray(daysOfPhase)) return daysOfPhase.flatMap(day => phaseDays.at(day) ?? [])
         return phaseDays.at(daysOfPhase) ?? []
     });
+}
+
+// TODO: task templates are a good idea... maybe it's own interface? would work well in a UI
+const audioTaskTemplate: TaskDefinition = {
+    id: '',
+    type: 'survey',
+    name: 'Sleep Audio',
+    prompt: 'Listen to daily audio:',
+    questions: [],
+    show_on_days: phase2Days(['block_1','block_2','block_3']),
+    datapipe_id: 'dOS0nQ93xCSV',
+    show_for_conditions: [],
+    allow_edit: false,
+    notification: {
+        prompt: 'Notification to listen to audio:',
+    },
+    autosumbit_on_complete: true
 }
 
 export const soundSleepDefinition: ExperimentDefinition = {
@@ -417,10 +483,11 @@ export const soundSleepDefinition: ExperimentDefinition = {
         },
         {
             id: 'setVolume',
-            type: 'screen',
+            type: 'survey',
             name: 'Set Volume',
             prompt: 'Set Audio Volume',
-            path_to_screen: '/setVolume',
+            // path_to_screen: '/setVolume',
+            questions: setVolumeTask,
             show_on_days: [0],
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: [],
@@ -477,49 +544,22 @@ export const soundSleepDefinition: ExperimentDefinition = {
             },
         },
         {
+            ...audioTaskTemplate,
             id: 'audioTaskControl',
-            type: 'survey',
-            name: 'Sleep Audio',
-            prompt: 'Listen to daily audio:',
-            questions: audioTaskControl,
-            show_on_days: phase2Days(['block_1','block_2','block_3']),
-            datapipe_id: 'dOS0nQ93xCSV',
+            questions: audioSurveyControl,
             show_for_conditions: ['control'],
-            allow_edit: false,
-            notification: {
-                prompt: 'Notification to listen to audio:',
-            },
-            autosumbit_on_complete: true
         },
         {
-            id: 'audioTaskMonaural',
-            type: 'survey',
-            name: 'Sleep Audio',
-            prompt: 'Listen to daily audio:',
-            questions: audioTaskMonaural,
-            show_on_days: phase2Days(['block_1','block_2','block_3']),
-            datapipe_id: 'dOS0nQ93xCSV',
+            ...audioTaskTemplate,
+            id: 'audioSurveyMonaural',
+            questions: audioSurveyMonaural,
             show_for_conditions: ['monaural'],
-            allow_edit: false,
-            notification: {
-                prompt: 'Notification to listen to audio:',
-            },
-            autosumbit_on_complete: true
         },
         {
+            ...audioTaskTemplate,
             id: 'audioTaskBinaural',
-            type: 'survey',
-            name: 'Sleep Audio',
-            prompt: 'Listen to daily audio:',
-            questions: audioTaskBinaural,
-            show_on_days: phase2Days(['block_1','block_2','block_3']),
-            datapipe_id: 'dOS0nQ93xCSV',
+            questions: audioSurveyBinaural,
             show_for_conditions: ['binaural'],
-            allow_edit: false,
-            notification: {
-                prompt: 'Notification to listen to audio:',
-            },
-            autosumbit_on_complete: true
         },
     ]
 }
