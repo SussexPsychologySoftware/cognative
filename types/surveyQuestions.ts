@@ -90,7 +90,7 @@ export interface LikertSingleQuestion extends SurveyInputBase {
     oneWordPerLine?: boolean;
 }
 
-export interface Audio extends SurveyInputBase {
+export interface AudioQuestion extends SurveyInputBase {
     type: 'audio';
     file: number;
     resetOnPause?: boolean;
@@ -114,6 +114,6 @@ export interface ParagraphDisplay extends SurveyDisplayBase {
 type SurveyDisplayOnly = ParagraphDisplay; // Add picture
 
 export type SingleInputQuestion = TextQuestion | TimeQuestion | SelectQuestion | CheckboxQuestion |
-    SliderQuestion | RadioQuestion | LikertSingleQuestion | Audio;
+    SliderQuestion | RadioQuestion | LikertSingleQuestion | AudioQuestion;
 export type SurveyQuestion = SingleInputQuestion | LikertGridQuestion;
 export type SurveyComponent = SurveyQuestion | SurveyDisplayOnly;
