@@ -230,14 +230,14 @@ export class ExperimentTracker {
         await this.saveState(state);
     }
 
-    static constructFilename(taskId: string, day?: number, participantID?: string): string {
+    static constructFilename(taskId: string, participantID: string, day?: number): string {
         // TODO: should this be somewhere else?
-        if (participantID && (day !== null && day !== undefined)) {
+        let filename = `${participantID}_${taskId}`
+        if (day !== null && day !== undefined) {
             // For longitudinal tasks
-            return `${participantID}_${taskId}_${day}`;
+            return filename + day;
         }
-        // For one-off tasks (e.g., initial demographics survey)
-        return taskId;
+        return filename;
     }
 
     // ============ Date Utilities ===========

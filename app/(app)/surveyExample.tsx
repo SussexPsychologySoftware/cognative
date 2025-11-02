@@ -20,7 +20,7 @@ export default function SurveyExample() {
 
     const taskDefinition = definition.tasks.find(t => t.id === taskId);
     const surveyFilename = displayState
-        ? ExperimentTracker.constructFilename(taskId, displayState.experimentDay, state?.participantId)
+        ? ExperimentTracker.constructFilename(taskId, state?.participantId, displayState.experimentDay)
         : undefined;
 
     // Define survey questions with keys
