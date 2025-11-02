@@ -1,13 +1,16 @@
 // app/(onboarding)/welcome.tsx
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, {useState} from 'react';
+import {View, Text, StyleSheet, TextInput} from 'react-native';
 import { StandardView } from '@/components/layout/StandardView';
 import { useExperiment } from '@/context/ExperimentContext';
 import { router } from 'expo-router';
 import SubmitButton from "@/components/inputs/SubmitButton";
+import {experimentDefinition} from "@/config/experimentDefinition";
+import {globalStyles} from "@/styles/appStyles";
 
 export default function WelcomeScreen() {
     const { startExperiment, isActionLoading, actionError } = useExperiment();
+    const [passphrase, setPassphrase] = useState<string>('');
 
     const handleStart = async () => {
         try {
@@ -21,20 +24,48 @@ export default function WelcomeScreen() {
     };
 
     return (
-        <StandardView>
-            <View style={{ flex: 1, justifyContent: 'center', gap: 20 }}>
-                {/* Add your welcome text, instructions, etc. here */}
+        <StandardView
+            contentContainerStyle={styles.container}
+            headerShown={false}
+            statusBarStyle={'light'}
+        >
+                <Text style={[globalStyles.pageTitle]}>
+                    Welcome
+                </Text>
+                {experimentDefinition.passphrase &&
+                    <TextInput
+                        autoFocus={true}
+                        autoCapitalize='none'
+                        autoCorrect={false}
+                        autoComplete='off'
+                        spellCheck={false}
+                        value={passphrase}
+                        placeholder={'Enter passphrase'}
+                        placeholderTextColor='grey'
+                        style={globalStyles.input}
+                        onChangeText={setPassphrase}
+                        returnKeyType='done'
+                    />
+                }
                 <SubmitButton
                     text={isActionLoading ? "Starting..." : "Start Experiment"}
                     onPress={handleStart}
-                    disabled={isActionLoading}
+                    disabled={isActionLoading || (!!experimentDefinition.passphrase && passphrase !== experimentDefinition.passphrase)}
                 />
                 {actionError && (
                     <Text style={{ color: 'red', textAlign: 'center' }}>
                         {actionError}
                     </Text>
                 )}
-            </View>
         </StandardView>
     );
 }
+
+const styles = StyleSheet.create({
+    container: {
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        gap: 30
+    },
+});
