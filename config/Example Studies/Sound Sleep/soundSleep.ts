@@ -347,29 +347,6 @@ const setVolumeTask: SurveyComponent[] = [
     }
 ]
 
-
-const audioSurveyTemplate: SurveyComponent[] = [
-    {
-        key: 'instructions',
-        type: 'paragraph',
-        text: ['Connect your headphones and press play when you are ready to begin playing your nightly sleep audio.',
-            'Please do not exceed 50% volume on your device. Please make sure your phone is plugged in or has enough battery to last the night.'],
-    },
-    {
-        key: 'audio',
-        type: 'audio',
-        question: '',
-        file: require('@/assets/sounds/control.mp3'),
-        required: true,
-        default: false, // autoplay
-        overwrite_parameter_from_storage: [{
-            parameter: 'volume',
-            storage_key: 'setVolume',
-            response_key: 'setVolumeQ.volume'
-        }]
-    }
-]
-
 // -=*#*=- LISTEN TO AUDIO TASK -=*#*=-
 const audioSurveyInstructions: ParagraphDisplay = {
     key: 'instructions',
@@ -409,7 +386,6 @@ const audioSurveyMonaural: SurveyComponent[] = [
     }
 ];
 
-
 const audioSurveyBinaural: SurveyComponent[] = [
     audioSurveyInstructions,
     {
@@ -419,6 +395,8 @@ const audioSurveyBinaural: SurveyComponent[] = [
     }
 ];
 
+
+// -=*#*=- DAY HELPERS -=*#*=-
 
 function daysBetween(from: number, to: number) {
     return Array.from({ length: to - from + 1 }, (_, i) => i + from);
@@ -442,8 +420,9 @@ function phase2Days(phases: string[], daysOfPhase?: number[]|number){
     });
 }
 
+
 // TODO: task templates are a good idea... maybe it's own interface? would work well in a UI
-const audioTaskTemplate: TaskDefinition = {
+const audioTaskTemplate: TaskDefinition = { // must be defined below phase2Days
     id: '',
     type: 'survey',
     name: 'Sleep Audio',
@@ -461,6 +440,7 @@ const audioTaskTemplate: TaskDefinition = {
 
 export const soundSleepDefinition: ExperimentDefinition = {
     name: 'Sound Sleep',
+    passphrase: 'suss3x',
     total_days: 14,
     cutoff_hour: 4, // TODO: maybe use hours and mins, day_cutoff_time: '04:32'
     conditions: {
@@ -486,7 +466,6 @@ export const soundSleepDefinition: ExperimentDefinition = {
             type: 'survey',
             name: 'Set Volume',
             prompt: 'Set Audio Volume',
-            // path_to_screen: '/setVolume',
             questions: setVolumeTask,
             show_on_days: [0],
             datapipe_id: 'dOS0nQ93xCSV',
