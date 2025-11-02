@@ -10,6 +10,8 @@ import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
 import {SurveyTaskDefinition} from "@/types/experimentConfig";
 import {useCallback, useEffect, useState} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import ExperimentInfo from "@/components/debug/ExperimentInfo";
+import {DataService} from "@/services/data/DataService";
 
 export default function SurveyScreen() { // Renamed component
     const { taskId } = useLocalSearchParams<{ taskId: string }>();
@@ -40,6 +42,7 @@ export default function SurveyScreen() { // Renamed component
     const questions = (taskDefinition && taskDefinition.type === 'survey')
         ? (taskDefinition as SurveyTaskDefinition).questions
         : undefined;
+
     const surveyTitle = taskDefinition?.name || "Survey"; // Get name for the title
 
     // TODO: this is feeling messy - the problem is that useSurvey and submitTaskData both take in surveyFilename
