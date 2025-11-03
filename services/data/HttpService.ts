@@ -1,7 +1,7 @@
 import * as Network from "expo-network";
 
 export class HttpService {
-    static async sendToServer(data: string, filename: string, datapipeId: string) {
+    static async sendDataToDataPipe(data: string, filename: string, datapipeId: string) {
         const requestBody = {
             experimentID: datapipeId,
             filename: `${filename}.json`,

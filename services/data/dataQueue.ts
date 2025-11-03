@@ -90,7 +90,7 @@ class DataQueue {
                 try {
                     // console.log({item});
                     // const uniqueName = `${item.name}_${Date.now()}`; // Timestamp to ensure unique if wanted.
-                    const response = await HttpService.sendToServer(item.data, item.name, item.datapipeId)
+                    const response = await HttpService.sendDataToDataPipe(item.data, item.name, item.datapipeId)
                     if (response.status === 409 || (response.json && response.json.error === 'OSF_FILE_EXISTS')) {
                         console.warn(`Skipping duplicate file: ${item.name}, response: ${JSON.stringify(response)}`);
                     } else if (!response.ok) {
