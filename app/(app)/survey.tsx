@@ -121,10 +121,11 @@ export default function SurveyScreen() {
                     disabledText={"Resetting..."}
                     disabled={false}
                 />
-                
+
                 { experimentDefinition.debug &&
                     <ExperimentInfo
                         object={responses}
+                        objectTitle={'Survey Responses'}
                         showExperimentDefinition={false}
                         showExperimentState={false}
                         showDisplayState={false}
