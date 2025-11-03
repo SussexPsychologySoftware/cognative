@@ -235,7 +235,7 @@ export class ExperimentTracker {
         let filename = `${participantID}_${taskId}`
         if (day !== null && day !== undefined) {
             // For longitudinal tasks
-            return filename + day;
+            return `${filename}_${day}`;
         }
         return filename;
     }
