@@ -1,3 +1,5 @@
+import {HttpService} from "@/services/data/HttpService";
+
 export class ConditionAssignment {
 
     static heapPermutations(arr: string[]): string[][] {
@@ -41,36 +43,12 @@ export class ConditionAssignment {
         return Math.floor(Math.random() * max);
     }
 
-    private static async requestConditionFromDatapipe(experimentId: string): Promise<number> {
-        try {
-            const jsonResponse = await fetch("https://pipe.jspsych.org/api/condition/", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    Accept: "*/*",
-                },
-                body: JSON.stringify({
-                    experimentID: experimentId,
-                }),
-            });
-            if (!jsonResponse.ok) {
-                throw new Error(`HTTP error! status: ${jsonResponse.status}`);
-            }
-            const json = await jsonResponse.json();
-            if (json.condition === undefined || json.condition === null) {
-                throw new Error('No condition received from server');
-            }
-            return Number(json.condition)
-        } catch (e) {
-            console.error(e);
-            throw e;  // Re-throw to stop the setup process
-        }
-    }
-    
     static async getCondition(conditions: string[], repeatedMeasures: boolean, experimentId?: string) {
         // NOTE: repeatedMeasures true selects a permutation of entire array, false selects one condition from array
         // const conditions = ['control','monaural','binaural']
-        const conditionNumber = experimentId ? await this.requestConditionFromDatapipe(experimentId) : this.getRandomInt(conditions.length)
+        const conditionNumber = experimentId ?
+            await HttpService.requestConditionFromDatapipe(experimentId) :
+            this.getRandomInt(conditions.length)
         // TODO: await DataService.setData(saveKey??'condition', condition)
         return this.getConditionFromNumber(conditions, conditionNumber, repeatedMeasures)
     }
