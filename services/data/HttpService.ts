@@ -2,18 +2,23 @@ import * as Network from "expo-network";
 
 export class HttpService {
     static async sendToServer(data: string, filename: string, datapipeId: string) {
+        const requestBody = {
+            experimentID: datapipeId,
+            filename: `${filename}.json`,
+            data: data,
+        }
+        return await this.sendRequest('data', requestBody);
+    }
+
+    static async sendRequest(endpoint: string = 'data', body: object) {
         try {
-            const res = await fetch("https://pipe.jspsych.org/api/data/", {
+            const res = await fetch(`https://pipe.jspsych.org/api/${endpoint}/`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     Accept: "application/json", // better than */*
                 },
-                body: JSON.stringify({
-                    experimentID: datapipeId,
-                    filename: `${filename}.json`,
-                    data: data,
-                }),
+                body: JSON.stringify(body),
             });
 
             const text = await res.text(); // first, read raw
