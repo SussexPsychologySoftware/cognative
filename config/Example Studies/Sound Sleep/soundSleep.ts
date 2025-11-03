@@ -437,6 +437,7 @@ const audioTaskTemplate: TaskDefinition = { // must be defined below phase2Days
 
 export const soundSleepDefinition: ExperimentDefinition = {
     name: 'Sound Sleep',
+    debug: true,
     passphrase: 'suss3x',
     total_days: 14,
     cutoff_hour: 4, // TODO: maybe use hours and mins, day_cutoff_time: '04:32'
