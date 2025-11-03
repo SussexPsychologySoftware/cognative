@@ -8,10 +8,10 @@ import NotificationsInput from "@/components/longitudinal/NotificationsInput";
 import ResetButtons from "@/components/debug/ResetButtons";
 import {NotificationDefinition, TaskNotification} from "@/types/experimentConfig";
 import {NotificationService} from "@/services/NotificationService";
+import Debug from "@/components/debug/Debug";
 
 export default function SettingsScreen() {
     const { state, isLoading, definition, updateNotificationTimes, isActionLoading } = useExperiment();
-
     // Init local state to hold responses before save with times from main state
     const [localTimes, setLocalTimes] = useState(state?.notificationTimes || {});
 
@@ -83,9 +83,9 @@ export default function SettingsScreen() {
                     </>
                 }
 
-                <Text style={[globalStyles.pageTitle, globalStyles.sectionTitle]}>Other Settings</Text>
+                <Text style={[globalStyles.pageTitle, globalStyles.sectionTitle]}>Settings</Text>
                 <Text style={globalStyles.standardText}>Participant ID: {state.participantId}</Text>
-                <ResetButtons/>
+                <Debug/>
             </View>
         </StandardView>
     );
