@@ -1,17 +1,16 @@
-import {Text, View} from "react-native";
-import React from "react";
+import {Text} from "react-native";
+import React, {useState} from "react";
 import {StandardView} from "@/components/layout/StandardView";
 import ToDoList from "@/components/longitudinal/ToDoList";
 import { useExperiment } from "@/context/ExperimentContext";
 import SubmitButton from "@/components/inputs/SubmitButton";
-import PageList from "@/components/debug/PageList";
 import {globalStyles} from "@/styles/appStyles";
-import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
-import ResetButtons from "@/components/debug/ResetButtons";
-import ExperimentInfo from "@/components/debug/ExperimentInfo";
+import {router} from "expo-router";
+import Debug from "@/components/debug/Debug";
 
 export default function Index() {
     const { displayState, isLoading, definition } = useExperiment();
+    const [routing, setRouting] = useState<boolean>(false);
 
     if(isLoading || !displayState) {
         // TODO: put loading spinner
@@ -38,9 +37,12 @@ export default function Index() {
                 taskStates={displayState.tasks} // Or pass in entire display state?
                 // data={{}} // Could pass experiment info through this?
             />
-            <ResetButtons/>
-            <PageList/>
-            <ExperimentInfo/>
+            <SubmitButton
+                text='Notification times'
+                onPress={()=>{router.push('/settings')}}
+                cooldown={500}
+            />
+            <Debug/>
         </StandardView>
     );
 }
