@@ -1,6 +1,6 @@
 // app/(onboarding)/welcome.tsx
 import React, {useState} from 'react';
-import {View, Text, StyleSheet, TextInput} from 'react-native';
+import {Text, StyleSheet, TextInput} from 'react-native';
 import { StandardView } from '@/components/layout/StandardView';
 import { useExperiment } from '@/context/ExperimentContext';
 import { router } from 'expo-router';
@@ -28,6 +28,7 @@ export default function WelcomeScreen() {
             contentContainerStyle={styles.container}
             headerShown={false}
             statusBarStyle={'light'}
+            debug={false}
         >
                 <Text style={[globalStyles.pageTitle]}>
                     Welcome
