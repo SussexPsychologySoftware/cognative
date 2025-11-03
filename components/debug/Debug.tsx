@@ -7,10 +7,10 @@ export default function Debug({object}:{object?: object}) {
     return (
         <View style={{marginTop: 50}}>
             <DebugButtons/>
-            <PageList/>
             <ExperimentInfo
                 object={object}
             />
+            <PageList/>
         </View>
     )
 }
