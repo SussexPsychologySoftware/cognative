@@ -7,39 +7,20 @@ import Survey from "@/components/survey/Survey";
 import {RelativePathString, router, useLocalSearchParams} from 'expo-router';
 import {useExperiment} from "@/context/ExperimentContext";
 import {SurveyTaskDefinition} from "@/types/experimentConfig";
-import {useCallback, useEffect, useState} from "react";
-import AsyncStorage from "@react-native-async-storage/async-storage";
+import {useCallback, useEffect} from "react";
 import ExperimentInfo from "@/components/debug/ExperimentInfo";
+import {useProcessTaskDefinition} from "@/hooks/useProcessTaskDefinition";
 
 export default function SurveyScreen() {
     // This is a typical screen setup (view layer),
         // Separation of concerns: orchestrates getting data from useExperiment, passing to useSurvey, when to submit, what to do after
     const { taskId } = useLocalSearchParams<{ taskId: string }>();
-    const { submitTaskData, definition, displayState, getTaskFilename } = useExperiment();
-
-    // LOAD VOLUME ------- TODO: Needs to grab dynamically
-    const [storedVolume, setStoredVolume] = useState<number | null>(null);
-    useEffect(() => {
-        const loadVolume = async () => {
-            try {
-                const savedVolumeStr = await AsyncStorage.getItem('volume');
-                if (savedVolumeStr !== null) {
-                    setStoredVolume(parseFloat(savedVolumeStr));
-                } else {
-                    // No volume saved, default to 1 (full volume)
-                    setStoredVolume(1);
-                }
-            } catch (e) {
-                console.error("Failed to load volume, defaulting to 1", e);
-                setStoredVolume(1);
-            }
-        };
-
-        void loadVolume();
-    }, []); // Empty array runs this once on mount
+    const { submitTaskData, displayState, getTaskFilename } = useExperiment();
 
     // LOAD TASK AND SURVEY INFO -------
-    const taskDefinition = definition.tasks.find(t => t.id === taskId);
+    // Note to avoid useProcessTaskDefinition load directly with:
+        // const taskDefinition = definition.tasks.find(t => t.id === taskId);
+    const {taskDefinition, isProcessingTask, taskProcessingError} = useProcessTaskDefinition(taskId);
     const questions = (taskDefinition && taskDefinition.type === 'survey')
         ? (taskDefinition as SurveyTaskDefinition).questions
         : undefined;
@@ -48,7 +29,6 @@ export default function SurveyScreen() {
     const taskDisplayState = displayState
         ? displayState.tasks.find(t => t.definition.id === taskId)
         : undefined;
-
 
     // SUBMISSION -------
     const surveyFilename = getTaskFilename(taskId);
@@ -93,7 +73,7 @@ export default function SurveyScreen() {
     }, [isSubmitting, handleSurveySubmit, progress, taskDefinition?.autosumbit_on_complete, taskDisplayState?.completed])
 
     // RENDER INCORRECT DATA STATES -------
-    if (!questions) {
+    if (!questions || taskProcessingError) {
         return (
             <StandardView>
                 <Text style={globalStyles.pageTitle}>Error</Text>
@@ -103,7 +83,7 @@ export default function SurveyScreen() {
     }
 
     // Handle loading state (especially for when restoring responses)
-    if (isLoading || storedVolume === null) {
+    if (isLoading || isProcessingTask) {
         return (
             <StandardView>
                 <Text style={globalStyles.pageTitle}>Loading Survey...</Text>
@@ -132,12 +112,12 @@ export default function SurveyScreen() {
                     isSubmitting={isSubmitting}
                     // progress={progress}
                     invalidQuestions={invalidQuestions}
-                    volume={storedVolume}
                 />
 
                  {/*Debug: Show current responses*/}
                 <Text style={globalStyles.whiteText}>
                     {JSON.stringify(responses, null, 2)}
+                    {/*{JSON.stringify(questions, null, 2)}*/}
                 </Text>
 
                 <ExperimentInfo/>
