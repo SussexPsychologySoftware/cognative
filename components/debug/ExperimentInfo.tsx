@@ -1,14 +1,20 @@
 import {View, Text, TouchableOpacity} from "react-native";
 import {globalStyles} from "@/styles/appStyles";
 import {useExperiment} from "@/context/ExperimentContext";
-import {useState} from "react";
+import {useCallback, useEffect, useState} from "react";
+import {dataQueue} from "@/services/data/dataQueue";
 
-function InfoList({object, title}:{object: any, title: string}) {
+function InfoList({object, title, onPress}: {object: any, title: string, onPress?: () => void}) {
     const [showState, setShowState] = useState(false);
 
     return (
         <>
-            <TouchableOpacity onPress={()=>setShowState(!showState)}>
+            <TouchableOpacity onPress={()=>{
+                setShowState(!showState)
+                if (onPress) {
+                    onPress();
+                }
+            }}>
                 <Text style={globalStyles.debugText}>{title} {showState ? '▼' : '▶'}
                 </Text>
             </TouchableOpacity>
@@ -19,8 +25,34 @@ function InfoList({object, title}:{object: any, title: string}) {
     )
 }
 
-export default function ExperimentInfo({ object, showExperimentState=true, showDisplayState=true, showExperimentDefinition=true}: { object?: object, showExperimentState?: boolean, showDisplayState?: boolean, showExperimentDefinition?: boolean }) {
+export default function ExperimentInfo({
+                                           object,
+                                           showExperimentState=true,
+                                           showDisplayState=true,
+                                           showExperimentDefinition=true,
+                                           showQueue=true}:
+                                       {
+                                           object?: object,
+                                           showExperimentState?: boolean,
+                                           showDisplayState?: boolean,
+                                           showExperimentDefinition?: boolean,
+                                           showQueue?: boolean,
+                                       }) {
     const { state, displayState, definition } = useExperiment();
+
+    // TODO: maybe unnecessary...
+    const [queue, setQueue] = useState<object[]|null>(null);
+    const [queueRefreshKey, setQueueRefreshKey] = useState(0);
+    const refreshQueue = useCallback(() => {
+        setQueueRefreshKey(prev => prev + 1);
+    }, []);
+    useEffect(() => {
+        const retrieveQueue = async()=>{
+            const currentQueue = await dataQueue.getQueue()
+            setQueue(currentQueue);
+        }
+        void retrieveQueue()
+    }, [queueRefreshKey])
 
     return (
         <View style={globalStyles.debugContainer}>
@@ -29,6 +61,7 @@ export default function ExperimentInfo({ object, showExperimentState=true, showD
             { showExperimentState && <InfoList object={state} title='Experiment State'/> }
             { showDisplayState && <InfoList object={displayState} title='Display State'/> }
             { showExperimentDefinition && <InfoList object={definition} title='Experiment Definition'/> }
+            { showQueue && <InfoList object={queue} title='Queue' onPress={refreshQueue}/> }
         </View>
     )
 }
