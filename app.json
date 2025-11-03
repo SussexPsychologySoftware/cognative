@@ -35,7 +35,8 @@
       "permissions": [
         "android.permission.WAKE_LOCK",
         "android.permission.MODIFY_AUDIO_SETTINGS"
-      ]
+      ],
+      "package": "com.maxlovell.cognative"
     },
     "web": {
       "bundler": "metro",
