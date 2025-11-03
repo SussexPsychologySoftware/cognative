@@ -11,9 +11,9 @@ export class HttpService {
     }
 
     static async requestConditionFromDatapipe(experimentId: string): Promise<number> {
-        const {json} = await HttpService.sendRequest('condition', {experimentID: experimentId})
-        if (!json || json.condition === undefined || json.condition === null) {
-            throw new Error('No condition received from server');
+        const {ok, json} = await HttpService.sendRequest('condition', {experimentID: experimentId})
+        if (!ok || !json || json.condition === undefined || json.condition === null) {
+            throw new Error('Error receiving condition from datapipe');
         }
         return Number(json.condition)
     }
