@@ -2,7 +2,6 @@ import {useCallback, useEffect, useMemo, useState} from "react";
 import {Alert} from "react-native";
 import {SurveyDataType, SurveyComponent, SurveyQuestion, displayOnlyTypes} from '@/types/surveyQuestions'
 import {DataService} from "@/services/data/DataService";
-import { useExperiment } from "@/context/ExperimentContext";
 
 // Initialize responses from survey definition
 // Type Predicate (guard) for survey inputs
@@ -43,14 +42,12 @@ async function restoreResponses(restoreKey: string){
     return data
 }
 
-export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (data: object, filename?:string) => void, filename?: string) {
+export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (data: object) => void, filename?: string) {
     const [responses, setResponses] = useState(initializeResponses(questions || []));
     const [isLoading, setIsLoading] = useState(!!filename);
     const [warning, setWarning] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [invalidQuestions, setInvalidQuestions] = useState<Set<string>>(new Set());
-
-    const { state } = useExperiment();
 
     // Restore responses on mount if filename is provided
     useEffect(() => {
@@ -239,10 +236,9 @@ export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (
             setWarning('');
 
             if (onSubmit) {
-                await onSubmit(responses, filename);
-            } else if (filename && state?.participantId) {
-                // TODO: add save by default
-                console.log('Participant ID is:', state?.participantId);
+                //Inversion of Control principal - useSurvey is generic question-response manager without useExperiment
+                    // The caller with onSubmit tells it what to do with saving responses.
+                await onSubmit(responses); // Await does nothing but optional async
             }
 
             // Alert.alert('Submitted', JSON.stringify(responses, null, 2));
@@ -254,7 +250,7 @@ export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (
         } finally {
             setIsSubmitting(false);
         }
-    }, [isSubmitting, onSubmit, responses, filename, state?.participantId, validateResponses]);
+    }, [isSubmitting, onSubmit, responses, validateResponses]);
 
     return {
         responses,

@@ -29,8 +29,9 @@ export class DataService {
     }
 
     static async saveData(data: Record<string, any>, name: string, datapipeId?: string, participantId?: string, addTimestamp?: boolean) {
+        // Note this function is intentionally dumb and doesn't know what a taskDef or displayState etc is, just strings and records.
         // TODO: add metadata object and just pass to data, add condition, day, participantID, taskId, etc to all data if required
-        // TODO: can pull from experimentContext state directly here? or just attach state to all objects?
+        // TODO: participantID should be required here - perhaps a taskID should as well.
         data.timestamp = new Date().toISOString();
         data.participantId = participantId;
         // Save local copy

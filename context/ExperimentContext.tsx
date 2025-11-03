@@ -23,8 +23,10 @@ interface ExperimentContextType {
 
     // Functions to change experiment state
     startExperiment: (participantId?: string, condition?: string) => Promise<void>;
+
+    getTaskFilename: (taskId: string) => string | undefined;
     completeTask: (taskId: string) => Promise<void>;
-    submitTaskData: (taskId: string, data: any, filename: string, datapipeId?: string, addTimestampWhenSending?: boolean) => Promise<void>;
+    submitTaskData: (taskId: string, data: any, datapipeId?: string, addTimestampWhenSending?: boolean) => Promise<void>;
 
     resetTaskCompletion: () => Promise<void>;
     stopExperiment: () => Promise<void>;
@@ -147,6 +149,32 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         }
     }, []); // No dependencies needed, tracker gets its own state
 
+    const getTaskFilename = useCallback((taskId: string): string | undefined => {
+        // Note this is a 'getter' - I could probably pass taskDef in but just relying on taskId is more portable.
+        if (!state || !displayState) {
+            console.warn("Cannot get filename: state is not ready.");
+            return undefined;
+        }
+
+        const { participantId } = state;
+        const { experimentDay } = displayState;
+
+        const taskDefinition = definition.tasks.find(t => t.id === taskId);
+        if (!taskDefinition) {
+            console.error(`Cannot get filename: Task definition for ${taskId} not found.`);
+            return undefined;
+        } else if (!participantId) {
+            console.error(`Cannot get filename: No participant ID. Task ID: ${taskId}`);
+            return undefined;
+        }
+
+        // Only add day to filename if task due to show on more than one day.
+        const numberOfDaysToShow = taskDefinition.show_on_days ?? [];
+        const day = numberOfDaysToShow.length > 1 ? experimentDay : undefined;
+
+        return ExperimentTracker.constructFilename(taskId, participantId, day);
+
+    }, [state, displayState, definition]);
 
     const completeTask = useCallback(async (taskId: string) => {
         //Optimistic State Updater
@@ -183,7 +211,6 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
     const submitTaskData = useCallback(async (
         taskId: string,
         data: any,
-        filename: string,
         datapipeID?: string,
         addTimestampWhenSending?:boolean
     ) => {
@@ -198,7 +225,16 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             setActionError(err);
             throw new Error(err);
         }
+
+        const filename = getTaskFilename(taskId); // <-- Get filename internally
         const { participantId } = state;
+
+        if (!filename) {
+            const err = `Failed to construct filename for task ${taskId}.`;
+            console.error(err);
+            setActionError(err);
+            throw new Error(err);
+        }
 
         try {
             await DataService.saveData(data, filename, datapipeID, participantId, addTimestampWhenSending);
@@ -214,7 +250,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             setActionError(`Failed to submit data\n${e}`);
             throw e; // Re-throw so useSurvey's 'handleSurveySubmit' can catch it
         }
-    }, [state, displayState, completeTask]);
+    }, [state, displayState, getTaskFilename, completeTask]);
 
     const resetTaskCompletion = useCallback(async () => {
         setIsActionLoading(true);
@@ -281,6 +317,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         refreshState: refresh,
         refreshing,
         startExperiment,
+        getTaskFilename,
         completeTask,
         submitTaskData,
         resetTaskCompletion,
