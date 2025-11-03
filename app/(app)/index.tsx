@@ -59,7 +59,6 @@ export default function Index() {
                 }}
                 iconColor={'white'}
             />
-            <Debug/>
         </StandardView>
     );
 }

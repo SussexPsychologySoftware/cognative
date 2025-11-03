@@ -9,6 +9,9 @@ import { StatusBar } from 'expo-status-bar';
 import {router, Stack} from 'expo-router';
 import {colours} from "@/styles/appStyles";
 import {Ionicons} from "@expo/vector-icons";
+import Debug from "@/components/debug/Debug";
+import React from "react";
+import {experimentDefinition} from "@/config/experimentDefinition";
 
 export const StandardView = ({
                                  children,
@@ -21,6 +24,7 @@ export const StandardView = ({
                                  scrollViewStyle,
                                  refreshState,
                                  refreshing,
+                                 debug
                               }:
                               {
                                   children?: any,
@@ -33,6 +37,7 @@ export const StandardView = ({
                                   scrollViewStyle?: object,
                                   refreshState?: () => Promise<void>,
                                   refreshing?: boolean,
+                                  debug?: boolean
                               }) => {
 
     return (
@@ -74,6 +79,7 @@ export const StandardView = ({
                     }
                 >
                     {children}
+                    {experimentDefinition.debug && debug !== false && <Debug/> }
                 </ScrollView>
             </KeyboardAvoidingView>
         </SafeAreaView>

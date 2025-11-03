@@ -10,6 +10,7 @@ import {SurveyTaskDefinition} from "@/types/experimentConfig";
 import {useCallback, useEffect} from "react";
 import ExperimentInfo from "@/components/debug/ExperimentInfo";
 import {useProcessTaskDefinition} from "@/hooks/useProcessTaskDefinition";
+import {experimentDefinition} from "@/config/experimentDefinition";
 
 export default function SurveyScreen() {
     // This is a typical screen setup (view layer),
@@ -114,14 +115,22 @@ export default function SurveyScreen() {
                     invalidQuestions={invalidQuestions}
                 />
 
-                {/*<ExperimentInfo object={responses}/>*/}
-
                 <SubmitButton
                     onPress={() => {resetSurvey()}}
                     text={"Reset Survey"}
                     disabledText={"Resetting..."}
                     disabled={false}
                 />
+                
+                { experimentDefinition.debug &&
+                    <ExperimentInfo
+                        object={responses}
+                        showExperimentDefinition={false}
+                        showExperimentState={false}
+                        showDisplayState={false}
+                        showQueue={false}
+                    />
+                }
             </View>
         </StandardView>
     );
