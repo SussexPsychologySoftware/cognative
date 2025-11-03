@@ -72,11 +72,11 @@ const styles = StyleSheet.create({
         // textDecorationLine: 'underline'
     },
     text: {
-        fontStyle: "italic",
+        // fontStyle: "italic",
         // borderWidth: 1,
     },
     paragraph: {
-        marginBottom: 10
+        marginBottom: 11
     },
     lastParagraph: {
         marginBottom: 0
