@@ -48,9 +48,10 @@ export default function SurveyScreen() { // Renamed component
     // TODO: this is feeling messy - the problem is that useSurvey and submitTaskData both take in surveyFilename
         // and I know tasks should have a standard naming convention, survey or not, so should it be handled here relly?
         // useSurvey needs it in order to restore, but I should just lock in that any restoration requires the standard variables.
+        // Should have participant id too
     const numberOfDaysToShow = taskDefinition?.show_on_days ?? []
     const surveyFilename = displayState
-        ? ExperimentTracker.constructFilename(taskId, state?.participantId??'noID', numberOfDaysToShow.length > 0 ? displayState.experimentDay : undefined)
+        ? ExperimentTracker.constructFilename(taskId, state?.participantId??'noID', numberOfDaysToShow.length > 1 ? displayState.experimentDay : undefined)
         : undefined;
 
     const onSubmit = useCallback(async (responses: object, surveyFilename?: string) => {
