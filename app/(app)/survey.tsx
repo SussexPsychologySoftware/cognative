@@ -14,8 +14,9 @@ import ExperimentInfo from "@/components/debug/ExperimentInfo";
 export default function SurveyScreen() { // Renamed component
     const { taskId } = useLocalSearchParams<{ taskId: string }>();
     const { submitTaskData, definition, displayState, getTaskFilename } = useExperiment();
-    const [storedVolume, setStoredVolume] = useState<number | null>(null);
 
+    // LOAD VOLUME ------- TODO: Needs to grab dynamically
+    const [storedVolume, setStoredVolume] = useState<number | null>(null);
     useEffect(() => {
         const loadVolume = async () => {
             try {
@@ -35,19 +36,22 @@ export default function SurveyScreen() { // Renamed component
         void loadVolume();
     }, []); // Empty array runs this once on mount
 
-    // Get task definition and questions dynamically
+    // LOAD TASK AND SURVEY INFO -------
     const taskDefinition = definition.tasks.find(t => t.id === taskId);
     const questions = (taskDefinition && taskDefinition.type === 'survey')
         ? (taskDefinition as SurveyTaskDefinition).questions
         : undefined;
+    const surveyTitle = taskDefinition?.name || "Survey";
+    // Display state used for submission
+    const taskDisplayState = displayState
+        ? displayState.tasks.find(t => t.definition.id === taskId)
+        : undefined;
 
-    const surveyTitle = taskDefinition?.name || "Survey"; // Get name for the title
+
+    // SUBMISSION -------
     const surveyFilename = getTaskFilename(taskId);
-
     const onSubmit = useCallback(async (responses: object) => {
-        // --- CHECK FOR taskDefinition ---
         if (taskDefinition) {
-            // --- PASS THE ENTIRE taskDefinition OBJECT ---
             await submitTaskData(taskDefinition, responses);
 
             if(taskDefinition?.route_on_submit){
@@ -58,9 +62,9 @@ export default function SurveyScreen() { // Renamed component
                 router.replace('/');
             }
         } else {
-            console.error("Unable to save responses: ", {taskId, taskDefinition});
+            console.error("Unable to save responses: ", {taskDefinition});
         }
-    }, [taskId, submitTaskData, taskDefinition]);
+    }, [submitTaskData, taskDefinition]);
 
     const {
         responses,
@@ -74,11 +78,6 @@ export default function SurveyScreen() { // Renamed component
         isLoading // Get the loading state from the hook
     } = useSurvey(questions, onSubmit, surveyFilename);
 
-    // Get task display state dynamically
-    const taskDisplayState = displayState
-        ? displayState.tasks.find(t => t.definition.id === taskId)
-        : undefined;
-
     useEffect(() => {
         const autoSubmitOnFirstCompletion = async () => {
             if (!isSubmitting && !taskDisplayState?.completed && taskDefinition?.autosumbit_on_complete && progress === 100) {
@@ -90,7 +89,7 @@ export default function SurveyScreen() { // Renamed component
         void autoSubmitOnFirstCompletion();
     }, [isSubmitting, handleSurveySubmit, progress, taskDefinition?.autosumbit_on_complete, taskDisplayState?.completed])
 
-
+    // RENDER INCORRECT DATA STATES -------
     if (!questions) {
         return (
             <StandardView>
@@ -109,6 +108,7 @@ export default function SurveyScreen() { // Renamed component
         )
     }
 
+    // RENDER COMPONENT -------
     return (
         <StandardView
             headerShown={true}
@@ -132,10 +132,12 @@ export default function SurveyScreen() { // Renamed component
                     volume={storedVolume}
                 />
 
-                {/* Debug: Show current responses */}
-                {/*<Text style={globalStyles.whiteText}>*/}
-                {/*    {JSON.stringify(responses, null, 2)}*/}
-                {/*</Text>*/}
+                 {/*Debug: Show current responses*/}
+                <Text style={globalStyles.whiteText}>
+                    {JSON.stringify(responses, null, 2)}
+                </Text>
+
+                <ExperimentInfo/>
 
                 <SubmitButton
                     onPress={() => {resetSurvey()}}
