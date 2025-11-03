@@ -23,10 +23,18 @@ export interface DisplayCondition {
     value: SurveyDataType
 }
 
+interface OverwriteParametersOptions {
+    parameter: string, // a param/key from that input type's interface
+    task_id: string,
+    day?: number,
+    response_key: string // likely just question_id you want to retrieve response from
+}
+
 export interface SurveyComponentBase {
     key: string; // The unique identifier
     type: SurveyInputType | SurveyDisplayType; // The discriminator
     conditions?: DisplayCondition[];
+    overwrite_parameter_from_storage?: OverwriteParametersOptions[]
 }
 
 // -*#*- SURVEY QUESTIONS -*#*-
