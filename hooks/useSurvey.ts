@@ -47,7 +47,7 @@ async function restoreResponses(restoreKey: string){
 }
 
 export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (data: object) => void, filename?: string) {
-    const [responses, setResponses] = useState(initializeResponses(questions || []));
+    const [responses, setResponses] = useState<Record<string, any>>({}); // We initialise when questions are available if they are being loaded
     const [isLoading, setIsLoading] = useState(!!filename);
     const [warning, setWarning] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -55,33 +55,68 @@ export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (
 
     // Restore responses on mount if filename is provided
     useEffect(() => {
-        if (filename) {
-            restoreResponses(filename).then(data => {
-                if (data && questions) {
-                    // Create a mutable copy of the restored data
-                    const processedData = { ...data };
+        if (questions && questions.length > 0) {
+            const initialResponses = initializeResponses(questions);
+            if (filename) {
+                restoreResponses(filename).then(restoredData => {
+                    if (restoredData) {
+                        const processedData = { ...initialResponses }; // Start with the full shape
 
-                    // Stop autoplay for audio - don't restore if 'currently playing'/ true
-                    for (const question of questions) {
-                        if (question.type === 'audio') {
-                            const key = question.key || question.question;
-                            // Reset to default if restored state is 'true' (playing),
-                            if (processedData[key] === true) {
-                                processedData[key] = question.default ?? false;
+                        // TODO: Not sure this is actually really necessary? But robust incase of setup issues...
+                        // Merge restoredData on top of initial response incase field has been added
+                        for (const key in restoredData) {
+                            if (Object.prototype.hasOwnProperty.call(restoredData, key)) {
+                                // Find the question definition for this response key
+                                const question = questions.find(q => {
+                                    if (!isSurveyInput(q)) return false;
+                                    return q.key === key || q.question === key;
+                                }) as SurveyQuestion | undefined;
+
+                                // Only process this key if a matching question still exists
+                                if (question) {
+                                    // Check if this key corresponds to a likertGrid
+                                    if (question.type === 'likertGrid' &&
+                                        processedData[key] && typeof processedData[key] === 'object' &&
+                                        restoredData[key] && typeof restoredData[key] === 'object') {
+                                        processedData[key] = {...processedData[key], ...restoredData[key]};
+                                    } else {
+                                        // Not a likert grid (or something is null), just do a normal overwrite.
+                                        processedData[key] = restoredData[key];
+                                    }
+                                } //If `question` is undefined (field was removed), we do nothing. - The orphaned data from restoredData is NOT added to processedData.
                             }
                         }
-                    }
 
-                    // Set the fully processed data as the response state
-                    setResponses(processedData);
-                }
-                setIsLoading(false);
-            }).catch(error => {
-                console.error('Error restoring responses:', error);
-                setIsLoading(false);
-            });
-        } else {
-            setIsLoading(false); // Not loading if filename doesn't exist
+                        // Stop autoplay for audio - don't restore if 'currently playing'/ true
+                        for (const question of questions) {
+                            if (question.type === 'audio') {
+                                const key = question.key || question.question;
+                                // Reset to default if restored state is 'true' (playing),
+                                if (processedData[key] === true) {
+                                    processedData[key] = question.default ?? false;
+                                }
+                            }
+                        }
+
+                        // Set the fully processed data as the response state
+                        setResponses(processedData);
+                    } else { // If no restored data, just set the initial shape
+                        setResponses(initialResponses);
+                    }
+                    setIsLoading(false);
+                }).catch(error => {
+                    console.error('Error restoring responses:', error);
+                    setIsLoading(false);
+                });
+            } else {
+                setIsLoading(false); // Not loading if filename doesn't exist
+            }
+        } else if (!questions) { // Questions are not yet available (e.g., still loading)
+            setResponses({}); // Keep responses empty
+            setIsLoading(true); // Stay loading
+        } else { // Questions are available but empty []
+            setResponses({});
+            setIsLoading(false);
         }
     }, [filename, questions]);
 
