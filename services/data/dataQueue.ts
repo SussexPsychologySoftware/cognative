@@ -85,7 +85,7 @@ class DataQueue {
             if(queue.length === 0) return 'No items to sync';
 
             let responseMessage = 'All items successfully sent to server';
-            for (let i = queue.length - 1; i >= 0; i--) {
+            for (let i = queue.length - 1; i >= 0; i--) { // loop backwards to get oldest first
                 const item = queue[i];
                 try {
                     // console.log({item});
@@ -94,9 +94,17 @@ class DataQueue {
                     if (response.status === 409 || (response.json && response.json.error === 'OSF_FILE_EXISTS')) {
                         console.warn(`Skipping duplicate file: ${item.name}, response: ${JSON.stringify(response)}`);
                     } else if (!response.ok) {
-                        responseMessage = `Send to server failed for ${item.name}\n${JSON.stringify(response)}`;
-                        console.error(JSON.stringify(response))
-                        break;
+                        // Check if network error or a real server error
+                        if (response.status === 0 && response.error === 'Network request failed') {
+                            // This is an expected network failure.
+                            responseMessage = 'Network unavailable. Pausing sync.';
+                            break; // Silently stop the loop
+                        } else {
+                            // This is a REAL server error (4xx, 5xx)
+                            responseMessage = `Send to server failed for ${item.name}\n\nServer Response:\n${JSON.stringify(response)}`;
+                            console.error(responseMessage); // log problematic error
+                            break;
+                        }
                     }
                     queue.splice(i, 1);
                 } catch (e) {

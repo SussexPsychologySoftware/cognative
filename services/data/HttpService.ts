@@ -24,22 +24,17 @@ export class HttpService {
                 return { ok: res.ok, status: res.status, text }; // fallback if HTML error
             }
         } catch (err) {
-            console.error(`--- HTTP SERVICE FETCH FAILED ---`);
-            console.error(`Filename: ${filename}, DatapipeID: ${datapipeId}`);
+            // Advanced error logging: removed to allow more precise logging at the queue level
+            // console.error(`--- HTTP SERVICE FETCH FAILED ---`);
+            // console.error(`Filename: ${filename}, DatapipeID: ${datapipeId}`);
+            //// use JSON.stringify with Object.getOwnPropertyNames to capture non-enumerable properties
+            // console.error('Full Error Object:', JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
+            // if (err instanceof Error && err.stack) console.error('Error Stack:', err.stack);
 
-            // Log the full error object to see all properties
-            // We use JSON.stringify with Object.getOwnPropertyNames to capture non-enumerable properties
-            console.error('Full Error Object:', JSON.stringify(err, Object.getOwnPropertyNames(err), 2));
-
-            // Also log the error stack if it exists
-            if (err instanceof Error && err.stack) {
-                console.error('Error Stack:', err.stack);
-            }
-
-            // Return a more detailed error object
+            // Return a detailed error object for the caller to handle
             return {
                 ok: false,
-                status: 0,
+                status: 0, // 0 status indicates a fetch-level failure
                 error: err instanceof Error ? err.message : String(err),
                 // Include the full error for the queue to log
                 fullError: err
