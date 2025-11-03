@@ -45,8 +45,11 @@ export default function SurveyScreen() { // Renamed component
     const surveyFilename = getTaskFilename(taskId);
 
     const onSubmit = useCallback(async (responses: object) => {
-        if (taskId && surveyFilename) {
-            await submitTaskData(taskId, responses, taskDefinition?.datapipe_id, taskDefinition?.allow_edit);
+        // --- CHECK FOR taskDefinition ---
+        if (taskDefinition) {
+            // --- PASS THE ENTIRE taskDefinition OBJECT ---
+            await submitTaskData(taskDefinition, responses);
+
             if(taskDefinition?.route_on_submit){
                 router.replace(taskDefinition.route_on_submit as RelativePathString);
             } else if (router.canGoBack()) {
@@ -55,9 +58,9 @@ export default function SurveyScreen() { // Renamed component
                 router.replace('/');
             }
         } else {
-            console.error("Unable to save responses: ", {taskId, surveyFilename, taskDefinition});
+            console.error("Unable to save responses: ", {taskId, taskDefinition});
         }
-    }, [taskId, surveyFilename, submitTaskData, taskDefinition]);
+    }, [taskId, submitTaskData, taskDefinition]);
 
     const {
         responses,

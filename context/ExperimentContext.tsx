@@ -1,5 +1,5 @@
 import {createContext, ReactNode, useCallback, useContext, useEffect, useState} from 'react';
-import { ExperimentDefinition } from '@/types/experimentConfig';
+import {ExperimentDefinition, TaskDefinition} from '@/types/experimentConfig';
 import {ExperimentDisplayState, ExperimentState, NullableStringRecord} from '@/types/trackExperimentState';
 import { experimentDefinition } from '@/config/experimentDefinition';
 import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
@@ -9,6 +9,7 @@ import {Alert} from "react-native";
 import { useAutoRefresh } from '@/hooks/useAutoRefresh'
 import {ConditionAssignment} from "@/services/ConditionAssignment";
 import {NotificationService} from "@/services/NotificationService";
+
 // Define context type
 interface ExperimentContextType {
     // Experiment info
@@ -26,7 +27,7 @@ interface ExperimentContextType {
 
     getTaskFilename: (taskId: string) => string | undefined;
     completeTask: (taskId: string) => Promise<void>;
-    submitTaskData: (taskId: string, data: any, datapipeId?: string, addTimestampWhenSending?: boolean) => Promise<void>;
+    submitTaskData: (taskDefinition: TaskDefinition, data: any) => Promise<void>;
 
     resetTaskCompletion: () => Promise<void>;
     stopExperiment: () => Promise<void>;
@@ -209,10 +210,8 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
     }, []);
 
     const submitTaskData = useCallback(async (
-        taskId: string,
+        taskDefinition: TaskDefinition,
         data: any,
-        datapipeID?: string,
-        addTimestampWhenSending?:boolean
     ) => {
         // Direct State-Reading Action for calling API
         // Note: Error state only set on failure - but useSurvey has own isSubmitting, isActionLoading not set
@@ -226,7 +225,8 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             throw new Error(err);
         }
 
-        const filename = getTaskFilename(taskId); // <-- Get filename internally
+        const { id: taskId, datapipe_id, allow_edit } = taskDefinition;
+        const filename = getTaskFilename(taskId);
         const { participantId } = state;
 
         if (!filename) {
@@ -237,7 +237,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         }
 
         try {
-            await DataService.saveData(data, filename, datapipeID, participantId, addTimestampWhenSending);
+            await DataService.saveData(data, filename, datapipe_id, participantId, allow_edit);
             await completeTask(taskId);
 
             // Fire and forget the notification canceller
