@@ -149,7 +149,7 @@ export default function SurveyExample() {
     const onSubmit = async (responses: object, surveyFilename?: string) => {
         if (taskId) {
             // Submit task data, taskId to record completion, filename for restoration, datapipeid for sending, and allow_edit to timestamp unique filename on server.
-            await submitTaskData(taskId, responses, surveyFilename, taskDefinition?.datapipe_id, taskDefinition?.allow_edit);
+            await submitTaskData(taskId, responses, surveyFilename??'', taskDefinition?.datapipe_id, taskDefinition?.allow_edit);
         }
         if (router.canGoBack()) {
             router.back(); // Go back to the to-do list
