@@ -10,6 +10,14 @@ export class HttpService {
         return await this.sendRequest('data', requestBody);
     }
 
+    static async requestConditionFromDatapipe(experimentId: string): Promise<number> {
+        const {json} = await HttpService.sendRequest('condition', {experimentID: experimentId})
+        if (!json || json.condition === undefined || json.condition === null) {
+            throw new Error('No condition received from server');
+        }
+        return Number(json.condition)
+    }
+
     static async sendRequest(endpoint: string = 'data', body: object) {
         try {
             const res = await fetch(`https://pipe.jspsych.org/api/${endpoint}/`, {
