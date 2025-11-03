@@ -31,6 +31,8 @@ function initializeResponses(questions: SurveyComponent[]): Record<string, any> 
 
         // Separately add volume
         if (question.type === 'audio' && question.volumeControls) {
+            // TODO: this is a little messy...maybe use a standard return of:
+            //  {runtime: '00.00.00', currentlyPlaying: true, finished: false, volume: 0.5}
             responses[key + '.volume'] = question.volume ?? .5; // Default to provided volume or half way
         }
     }
