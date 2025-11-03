@@ -5,7 +5,7 @@ import { useExperiment } from "@/context/ExperimentContext";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import {globalStyles} from "@/styles/appStyles";
 import NotificationsInput from "@/components/longitudinal/NotificationsInput";
-import ResetButtons from "@/components/debug/ResetButtons";
+import DebugButtons from "@/components/debug/DebugButtons";
 import {NotificationDefinition, TaskNotification} from "@/types/experimentConfig";
 import {NotificationService} from "@/services/NotificationService";
 import Debug from "@/components/debug/Debug";

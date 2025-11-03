@@ -1,5 +1,5 @@
 import {Text} from 'react-native';
-import ResetButtons from "@/components/debug/ResetButtons";
+import DebugButtons from "@/components/debug/DebugButtons";
 import PageList from "@/components/debug/PageList";
 import {useExperiment} from "@/context/ExperimentContext";
 import {globalStyles} from "@/styles/appStyles";
