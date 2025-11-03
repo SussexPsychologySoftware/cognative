@@ -150,7 +150,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         }
     }, []); // No dependencies needed, tracker gets its own state
 
-    const getTaskFilename = useCallback((taskId: string): string | undefined => {
+    const getTaskFilename = useCallback((taskId: string, day?: number): string | undefined => {
         // Note this is a 'getter' - I could probably pass taskDef in but just relying on taskId is more portable.
         if (!state || !displayState) {
             console.warn("Cannot get filename: state is not ready.");
@@ -158,8 +158,6 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         }
 
         const { participantId } = state;
-        const { experimentDay } = displayState;
-
         const taskDefinition = definition.tasks.find(t => t.id === taskId);
         if (!taskDefinition) {
             console.error(`Cannot get filename: Task definition for ${taskId} not found.`);
@@ -169,9 +167,14 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             return undefined;
         }
 
+        // Note day should be specified if looking up data from previous days.
         // Only add day to filename if task due to show on more than one day.
-        const numberOfDaysToShow = taskDefinition.show_on_days ?? [];
-        const day = numberOfDaysToShow.length > 1 ? experimentDay : undefined;
+        const { experimentDay } = displayState;
+        if(day && experimentDay > day) console.warn(`Construct filename: Note day parameter ${day} exceeds current day ${experimentDay}`)
+        if(!day) {
+            const numberOfDaysToShow = taskDefinition.show_on_days ?? [];
+            day = numberOfDaysToShow.length > 1 ? experimentDay : undefined;
+        }
 
         return ExperimentTracker.constructFilename(taskId, participantId, day);
 
