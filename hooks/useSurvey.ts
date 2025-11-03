@@ -3,6 +3,8 @@ import {Alert} from "react-native";
 import {SurveyDataType, SurveyComponent, SurveyQuestion, displayOnlyTypes} from '@/types/surveyQuestions'
 import {DataService} from "@/services/data/DataService";
 
+// useSurvey is a form manager which turns questions into responses, checks them, and triggers a save
+
 // Initialize responses from survey definition
 // Type Predicate (guard) for survey inputs
 function isSurveyInput(question: SurveyComponent): question is SurveyQuestion {

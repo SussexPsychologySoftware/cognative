@@ -213,7 +213,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         taskDefinition: TaskDefinition,
         data: any,
     ) => {
-        // Direct State-Reading Action for calling API
+        // Direct State-Reading Action for calling API - Saves data, records task completion, cancels notifications
         // Note: Error state only set on failure - but useSurvey has own isSubmitting, isActionLoading not set
         // TODO: should use isActionLoading instead?
         setActionError(null);

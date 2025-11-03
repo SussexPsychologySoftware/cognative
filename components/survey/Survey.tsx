@@ -167,7 +167,6 @@ export default function Survey({
                         />
                         break;
                     case 'audio':
-                        console.log(responses[key])
                         const isFinished = responses[key] === 'finished';
                         const isPlaying = responses[key] === true;
                         component = <AudioPlayer
@@ -255,11 +254,11 @@ export default function Survey({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        gap: 25, // Sometimes looks kinda shit tho
+        gap: 25, // TODO: Sometimes looks kinda shit tho
     },
     questionContainer: {
         gap: 10,
-        paddingTop: 15, // Sometimes looks kinda shit tho
+        paddingTop: 15, // TODO: Sometimes looks kinda shit tho
         // Put here to keep consisent when invalid or not (questionContainerSeparator colour below)
         borderTopWidth: 2,
         borderWidth: 2,

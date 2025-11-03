@@ -23,7 +23,7 @@ export class NotificationService {
 
     static async requestPermissions(): Promise<boolean> {
         const notificationPermissions = await Notifications.getPermissionsAsync();
-        console.log('permissions', notificationPermissions);
+        // console.log('permissions', notificationPermissions);
         if (this.checkPermissionsGranted(notificationPermissions)) {
             await this.initialize();
             return true;

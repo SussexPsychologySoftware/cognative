@@ -11,7 +11,9 @@ import {useCallback, useEffect, useState} from "react";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import ExperimentInfo from "@/components/debug/ExperimentInfo";
 
-export default function SurveyScreen() { // Renamed component
+export default function SurveyScreen() {
+    // This is a typical screen setup (view layer),
+        // Separation of concerns: orchestrates getting data from useExperiment, passing to useSurvey, when to submit, what to do after
     const { taskId } = useLocalSearchParams<{ taskId: string }>();
     const { submitTaskData, definition, displayState, getTaskFilename } = useExperiment();
 
@@ -54,6 +56,7 @@ export default function SurveyScreen() { // Renamed component
         if (taskDefinition) {
             await submitTaskData(taskDefinition, responses);
 
+            // Handle routing - note this is a screen component in the view layer, submitTaskData is data layer and shouldn't handle that
             if(taskDefinition?.route_on_submit){
                 router.replace(taskDefinition.route_on_submit as RelativePathString);
             } else if (router.canGoBack()) {
