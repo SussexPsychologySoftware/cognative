@@ -15,6 +15,8 @@ export default function SurveyScreen() {
     // This is a typical screen setup (view layer),
         // Separation of concerns: orchestrates getting data from useExperiment, passing to useSurvey, when to submit, what to do after
     const { taskId } = useLocalSearchParams<{ taskId: string }>();
+    // TODO: (small) concern user could be on task when day ticks over and survey will be recorded for that next day...
+    //    FIX: pipe experimentDay as local search param, send to submitTaskData -> getTaskFilename
     const { submitTaskData, displayState, getTaskFilename } = useExperiment();
 
     // LOAD TASK AND SURVEY INFO -------
