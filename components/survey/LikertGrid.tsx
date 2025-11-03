@@ -29,7 +29,6 @@ export function LikertQuestionRow(
     }) {
     return (
         <View style={[
-            styles.likertRow,
             styles.row,
             oddRow ? styles.oddRow : styles.evenRow,
             isInvalid && globalStyles.invalidInput
@@ -127,8 +126,8 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         flexDirection: 'row',
         columnGap: 3,
-    },
-    likertRow: {
+        borderWidth: 2, // so when invalid doesn't change layout
+        borderColor: 'transparent',
         // padding: 5,
         paddingVertical: 10,
         // borderRadius: 5,
