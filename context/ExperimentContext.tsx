@@ -25,7 +25,7 @@ interface ExperimentContextType {
     // Functions to change experiment state
     startExperiment: (participantId?: string, condition?: string) => Promise<void>;
 
-    getTaskFilename: (taskId: string) => string | undefined;
+    getTaskFilename: (taskId: string, day?: number) => string | undefined;
     completeTask: (taskId: string) => Promise<void>;
     submitTaskData: (taskDefinition: TaskDefinition, data: any) => Promise<void>;
 
