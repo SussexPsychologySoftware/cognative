@@ -112,7 +112,14 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             } else {
                 newCondition = condition
             }
-            const newState = await ExperimentTracker.startExperiment(Array.isArray(newCondition) ? newCondition[0] : newCondition, Array.isArray(newCondition) ? newCondition : undefined, participantId);
+            let newState: ExperimentState;
+            if (Array.isArray(newCondition)) {
+                // It's a repeated measures experiment
+                newState = await ExperimentTracker.startExperiment(newCondition[0],newCondition,participantId);
+            } else {
+                // It's an independent measures experiment
+                newState = await ExperimentTracker.startExperiment(newCondition, undefined,participantId);
+            }
             const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
             setState(newState);
             setDisplayState(newDisplayState);
