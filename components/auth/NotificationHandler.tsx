@@ -12,6 +12,7 @@ export function NotificationHandler() {
 
     useEffect(() => {
         // Wait until both the notification and the displayState are ready
+        // TODO: note have had it where not allowed, clicked, finished another, and was auto routed there from stack
         if (!lastNotificationResponse || !displayState) {
             return;
         }

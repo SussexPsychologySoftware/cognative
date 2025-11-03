@@ -41,10 +41,8 @@ export default function SurveyScreen() {
             // Handle routing - note this is a screen component in the view layer, submitTaskData is data layer and shouldn't handle that
             if(taskDefinition?.route_on_submit){
                 router.replace(taskDefinition.route_on_submit as RelativePathString);
-            } else if (router.canGoBack()) {
-                router.back();
-            } else {
-                router.replace('/');
+            } else { // Return to home page - todolist for now
+                router.replace('/'); //keep router.canGoBack() -> router.back() in mind
             }
         } else {
             console.error("Unable to save responses: ", {taskDefinition});
