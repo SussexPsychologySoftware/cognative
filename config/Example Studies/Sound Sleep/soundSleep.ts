@@ -432,9 +432,6 @@ const audioTaskTemplate: TaskDefinition = { // must be defined below phase2Days
     datapipe_id: 'dOS0nQ93xCSV',
     show_for_conditions: [],
     allow_edit: false,
-    notification: {
-        prompt: 'Notification to listen to audio:',
-    },
     autosumbit_on_complete: true
 }
 
@@ -483,7 +480,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             show_for_conditions: [], // all
             allow_edit: true,
             notification: {
-                prompt: 'Morning sleep diary:',
+                prompt: 'Morning sleep diary reminder:',
             }
         },
         {
@@ -519,7 +516,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             show_for_conditions: [], //all
             allow_edit: true,
             notification: {
-                prompt: 'Evening sleep diary:',
+                prompt: 'Evening sleep diary reminder:',
             },
         },
         {
