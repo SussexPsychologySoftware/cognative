@@ -7,7 +7,8 @@ const STORAGE_KEY = 'dataQueue';
 interface QueueItem {
     data: string,
     name: string,
-    datapipeId: string
+    datapipeId: string,
+    sendAfter?: string
 }
 
 class DataQueue {
@@ -46,14 +47,20 @@ class DataQueue {
         await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(queue));
     }
 
-    async addToQueue(data: string, name: string, datapipeId: string): Promise<void> {
+    async addToQueue(data: string, name: string, datapipeId: string, sendAfter?: string): Promise<void> {
+        const queue: QueueItem[] = await this.getQueue();
         const queueItem: QueueItem = {
             name,
             data,
-            datapipeId
+            datapipeId,
+            sendAfter
         };
-        const queue: QueueItem[] = await this.getQueue();
-        queue.push(queueItem);
+        const existingIndex = queue.findIndex(item => item.name === name);
+        if (existingIndex !== -1) { // item exists, replace
+            queue[existingIndex] = queueItem;
+        } else { // if not, push to end of queue
+            queue.push(queueItem);
+        }
         await this.setQueue(queue);
         // Try to process immediately - might be slight redundant but maybe might as well??
         void this.processQueue();
@@ -88,6 +95,13 @@ class DataQueue {
             for (let i = queue.length - 1; i >= 0; i--) { // loop backwards to get oldest first
                 const item = queue[i];
                 try {
+                    if(item.sendAfter) {
+                        const now = new Date();
+                        const sendAfterTime = new Date(item.sendAfter)
+                        if (now < sendAfterTime) {
+                            continue; // Skip if not time yet
+                        }
+                    }
                     // console.log({item});
                     // const uniqueName = `${item.name}_${Date.now()}`; // Timestamp to ensure unique if wanted.
                     const response = await HttpService.sendDataToDataPipe(item.data, item.name, item.datapipeId)

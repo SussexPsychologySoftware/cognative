@@ -235,7 +235,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             throw new Error(err);
         }
 
-        const { id: taskId, datapipe_id, allow_edit } = taskDefinition;
+        const { id: taskId, datapipe_id, allow_edit } = taskDefinition; // Messy on taskId
         const filename = getTaskFilename(taskId);
         const { participantId } = state;
 
@@ -247,7 +247,18 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         }
 
         try {
-            await DataService.saveData(data, filename, datapipe_id, participantId, allow_edit);
+            let sendAfterTime: string|undefined = undefined;
+            if (allow_edit) {
+                const sendTime = new Date();
+                // Set time to the cutoff hour today
+                sendTime.setHours(definition.cutoff_hour, 0, 0, 0);
+                if (new Date() >= sendTime) { // if past today's cutoff, schedule for tomorrow
+                    sendTime.setDate(sendTime.getDate() + 1);
+                }
+                // sendTime is now the next upcoming cutoff time
+                sendAfterTime = sendTime.toISOString();
+            }
+            await DataService.saveData(data, filename, datapipe_id, participantId, sendAfterTime);
             await completeTask(taskId);
 
             // Fire and forget the notification canceller

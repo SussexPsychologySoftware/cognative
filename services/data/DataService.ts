@@ -28,7 +28,8 @@ export class DataService {
         return dataString ? this.prepDataString(dataString) : null;
     }
 
-    static async saveData(data: Record<string, any>, name: string, datapipeId?: string, participantId?: string, addTimestamp?: boolean) {
+    // TODO: change signature to make participant id required and earlier
+    static async saveData(data: Record<string, any>, name: string, datapipeId?: string, participantId?: string, sendAfter?: string) {
         // Note this function is intentionally dumb and doesn't know what a taskDef or displayState etc is, just strings and records.
         // TODO: add metadata object and just pass to data, add condition, day, participantID, taskId, etc to all data if required
         // TODO: participantID should be required here - perhaps a taskID should as well.
@@ -38,11 +39,9 @@ export class DataService {
         const dataString = await this.setData(name, data)
 
         // If datapipeId then send to server
-        const queueFilename = addTimestamp ? name+data.timestamp : name
-        // console.log({data, name, queueFilename});
         if (datapipeId) {
             try {
-                await dataQueue.addToQueue(dataString, queueFilename, datapipeId);
+                await dataQueue.addToQueue(dataString, name, datapipeId, sendAfter);
             } catch (error) {
                 console.error('Error adding to queue: ', error);
             }
