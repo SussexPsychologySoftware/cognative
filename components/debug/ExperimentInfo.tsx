@@ -27,12 +27,14 @@ function InfoList({object, title, onPress}: {object: any, title: string, onPress
 
 export default function ExperimentInfo({
                                            object,
+                                           objectTitle,
                                            showExperimentState=true,
                                            showDisplayState=true,
                                            showExperimentDefinition=true,
                                            showQueue=true}:
                                        {
                                            object?: object,
+                                           objectTitle?: string,
                                            showExperimentState?: boolean,
                                            showDisplayState?: boolean,
                                            showExperimentDefinition?: boolean,
@@ -57,7 +59,7 @@ export default function ExperimentInfo({
     return (
         <View style={globalStyles.debugContainer}>
             <Text style={[globalStyles.debugText, globalStyles.debugTitle]}>Experiment Info: </Text>
-            { object && <InfoList object={object} title='Custom Object'/> }
+            { object && <InfoList object={object} title={objectTitle??'Custom Object'}/> }
             { showExperimentState && <InfoList object={state} title='Experiment State'/> }
             { showDisplayState && <InfoList object={displayState} title='Display State'/> }
             { showExperimentDefinition && <InfoList object={definition} title='Experiment Definition'/> }
