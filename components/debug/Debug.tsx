@@ -5,7 +5,7 @@ import {View} from "react-native";
 
 export default function Debug({object}:{object?: object}) {
     return (
-        <View>
+        <View style={{marginTop: 50}}>
             <DebugButtons/>
             <PageList/>
             <ExperimentInfo
