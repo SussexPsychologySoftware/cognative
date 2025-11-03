@@ -337,7 +337,7 @@ const setVolumeTask: SurveyComponent[] = [
         containerStyle: {marginTop: 0, paddingTop:0}
     },
     {
-        key: 'setVolumeQ',
+        key: 'setVolumeQuestion',
         type: 'audio',
         question: '',
         file: require('@/assets/sounds/monaural.mp3'),
@@ -363,8 +363,8 @@ const audioSurveyBase: Omit<AudioQuestion, 'key' | 'file'> = {
     default: false, // autoplay
     overwrite_parameter_from_storage: [{
         parameter: 'volume',
-        storage_key: 'setVolume',
-        response_key: 'setVolumeQ.volume'
+        task_id: 'setVolume',
+        response_key: 'setVolumeQuestion.volume'
     }]
 };
 
