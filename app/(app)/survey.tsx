@@ -114,13 +114,7 @@ export default function SurveyScreen() {
                     invalidQuestions={invalidQuestions}
                 />
 
-                 {/*Debug: Show current responses*/}
-                <Text style={globalStyles.whiteText}>
-                    {JSON.stringify(responses, null, 2)}
-                    {/*{JSON.stringify(questions, null, 2)}*/}
-                </Text>
-
-                <ExperimentInfo/>
+                {/*<ExperimentInfo object={responses}/>*/}
 
                 <SubmitButton
                     onPress={() => {resetSurvey()}}
