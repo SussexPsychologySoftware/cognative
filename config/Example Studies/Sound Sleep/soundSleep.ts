@@ -287,6 +287,13 @@ const expectanciesQuestionnaire: SurveyComponent[] = [
         title: 'Set 2',
         text: 'For this set, close your eyes for a few moments, and try to identify what you really feel about the ' +
             'intervention and its likely success. Then answer the following questions:',
+        containerStyle: {
+            borderTopWidth: 3,
+            marginTop: 10,
+            paddingTop: 10,
+            borderBottomWidth: 3,
+            paddingBottom: 15
+        }
     },
     {
         key: 'CEQ_5',
@@ -314,14 +321,16 @@ const expectanciesQuestionnaire: SurveyComponent[] = [
 
 const audioTaskBinaural: SurveyComponent[] = [
     {
+        key: 'instructions',
+        type: 'paragraph',
+        text: ['Connect your headphones and press play when you are ready to begin playing your nightly sleep audio.',
+            'Please do not exceed 50% volume on your device. Please make sure your phone is plugged in or has enough battery to last the night.'],
+    },
+    {
         key: 'audioBinaural',
         type: 'audio',
         question: '',
         file: require('@/assets/sounds/binaural.mp3'),
-        instructions: ['Connect your headphones and press play when you are ready to begin playing your nightly sleep audio.',
-        'Please do not exceed 50% volume on your device. Please make sure your phone is plugged in or has enough battery to last the night.'],
-        containerStyle: {},
-        textStyle: {},
         required: true,
         default: false, // autoplay
     }
@@ -329,14 +338,16 @@ const audioTaskBinaural: SurveyComponent[] = [
 
 const audioTaskControl: SurveyComponent[] = [
     {
+        key: 'instructions',
+        type: 'paragraph',
+        text: ['Connect your headphones and press play when you are ready to begin playing your nightly sleep audio.',
+            'Please do not exceed 50% volume on your device. Please make sure your phone is plugged in or has enough battery to last the night.'],
+    },
+    {
         key: 'audioControl',
         type: 'audio',
         question: '',
         file: require('@/assets/sounds/control.mp3'),
-        instructions: ['Connect your headphones and press play when you are ready to begin playing your nightly sleep audio.',
-            'Please do not exceed 50% volume on your device. Please make sure your phone is plugged in or has enough battery to last the night.'],
-        containerStyle: {},
-        textStyle: {},
         required: true,
         default: false, // autoplay
     }
@@ -344,14 +355,17 @@ const audioTaskControl: SurveyComponent[] = [
 
 const audioTaskMonaural: SurveyComponent[] = [
     {
+        key: 'instructions',
+        type: 'paragraph',
+        text: ['Connect your headphones and press play when you are ready to begin playing your nightly sleep audio.',
+            'Please do not exceed 50% volume on your device. Please make sure your phone is plugged in or has enough battery to last the night.'],
+
+    },
+    {
         key: 'audioMonaural',
         type: 'audio',
         question: '',
         file: require('@/assets/sounds/monaural.mp3'),
-        instructions: ['Connect your headphones and press play when you are ready to begin playing your nightly sleep audio.',
-            'Please do not exceed 50% volume on your device. Please make sure your phone is plugged in or has enough battery to last the night.'],
-        containerStyle: {},
-        textStyle: {},
         required: true,
         default: false, // autoplay
     }
