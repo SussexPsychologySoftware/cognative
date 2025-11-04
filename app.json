@@ -34,7 +34,8 @@
       "softwareKeyboardLayoutMode": "pan",
       "permissions": [
         "android.permission.WAKE_LOCK",
-        "android.permission.MODIFY_AUDIO_SETTINGS"
+        "android.permission.MODIFY_AUDIO_SETTINGS",
+        "android.permission.RECORD_AUDIO"
       ],
       "package": "com.maxlovell.cognative"
     },
@@ -75,7 +76,10 @@
       "baseUrl": "/cognative"
     },
     "extra": {
-      "router": {}
+      "router": {},
+      "eas": {
+        "projectId": "cad52bbe-fe46-4866-bc69-005ad2b0780b"
+      }
     }
   }
 }
