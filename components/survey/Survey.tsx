@@ -17,6 +17,7 @@ import Paragraph from "@/components/inputParts/Paragraph";
 import Audio from  "@/components/media/Audio";
 import {DataService} from "@/services/data/DataService";
 import {RelativePathString, router} from "expo-router";
+import AudioPlayer from "@/components/media/AudioPlayer";
 
 interface SurveyProps {
     questions: SurveyComponent[];
@@ -169,16 +170,7 @@ export default function Survey({
                         console.log(responses[key])
                         const isFinished = responses[key] === 'finished';
                         const isPlaying = responses[key] === true;
-                        component = <>
-                            <Paragraph
-                                text={question.instructions??''}
-                                containerStyle={{
-                                    borderColor: 0,
-                                    marginTop: 0,
-                                    paddingTop: 0
-                            }}
-                            />
-                            <Audio
+                        component = <AudioPlayer
                                 audioSource={question.file}
                                 disabled={isFinished}
                                 isPlaying={isPlaying}
@@ -194,7 +186,6 @@ export default function Survey({
                                 resetOnPause={question.resetOnPause}
                                 volume={question.volume ?? volume ?? 1}
                             />
-                        </>
                         break;
                     case 'paragraph':
                         component = <Paragraph
@@ -259,11 +250,11 @@ export default function Survey({
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        gap: 25,
+        gap: 25, // Sometimes looks kinda shit tho
     },
     questionContainer: {
         gap: 10,
-        paddingTop: 15,
+        paddingTop: 15, // Sometimes looks kinda shit tho
         // Put here to keep consisent when invalid or not (questionContainerSeparator colour below)
         borderTopWidth: 2,
         borderWidth: 2,
