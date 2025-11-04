@@ -1,12 +1,10 @@
 import {ExperimentDefinition, TaskDefinition} from "@/types/experimentConfig";
 import {
     AudioQuestion,
-    DisplayCondition,
     ParagraphDisplay,
-    SurveyComponent,
-    SurveyDataType
+    SurveyComponent
 } from "@/types/surveyQuestions";
-import {ExperimentState} from "@/types/trackExperimentState";
+import {daysBetween, phase2Days} from "@/utils/configHelpers";
 
 const ethnicitiesList = {
     'Asian or Asian British': [
@@ -396,11 +394,7 @@ const audioSurveyBinaural: SurveyComponent[] = [
 ];
 
 
-// -=*#*=- DAY HELPERS -=*#*=-
-
-function daysBetween(from: number, to: number) {
-    return Array.from({ length: to - from + 1 }, (_, i) => i + from);
-}
+// -=*#*=- CONFIG -=*#*=-
 
 const phaseMap: Record<string, number[]> = {
     'baseline': [0, 1],
@@ -410,17 +404,6 @@ const phaseMap: Record<string, number[]> = {
     'post-test': [14]
 };
 
-function phase2Days(phases: string[], daysOfPhase?: number[]|number){
-    // Get the day numbers from each phase
-    return phases.flatMap(phase => {
-        const phaseDays = phaseMap[phase] || []
-        if(daysOfPhase===undefined) return phaseDays;
-        if(Array.isArray(daysOfPhase)) return daysOfPhase.flatMap(day => phaseDays.at(day) ?? [])
-        return phaseDays.at(daysOfPhase) ?? []
-    });
-}
-
-
 // TODO: task templates are a good idea... maybe it's own interface? would work well in a UI
 const audioTaskTemplate: TaskDefinition = { // must be defined below phase2Days
     id: '',
@@ -428,7 +411,7 @@ const audioTaskTemplate: TaskDefinition = { // must be defined below phase2Days
     name: 'Sleep Audio',
     prompt: 'Listen to daily audio:',
     questions: [],
-    show_on_days: phase2Days(['block_1','block_2','block_3']),
+    show_on_days: phase2Days(['block_1','block_2','block_3'],phaseMap),
     datapipe_id: 'dOS0nQ93xCSV',
     show_for_conditions: [],
     allow_edit: false,
@@ -445,7 +428,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
         conditions: ['control', 'monaural', 'binaural'],
         repeatedMeasures: true,
         datapipe_id: 'dOS0nQ93xCSV',
-        increase_on_days: phase2Days(['block_2','block_3'],0) //Increase on first day of block 2 and 3
+        increase_on_days: phase2Days(['block_2','block_3'],phaseMap,0) //Increase on first day of block 2 and 3
     },
     tasks: [
         {
@@ -490,7 +473,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             name: 'Questionnaire',
             prompt: 'Complete this survey:',
             questions: blockQuestionnaire,
-            show_on_days: phase2Days(['baseline','block_1','block_2','block_3','post-test'],0),
+            show_on_days: phase2Days(['baseline','block_1','block_2','block_3','post-test'],phaseMap,0),
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: [], //all
             allow_edit: true,
@@ -501,7 +484,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             name: 'Expectancies',
             prompt: 'Complete this survey regarding your last session:',
             questions: expectanciesQuestionnaire,
-            show_on_days: phase2Days(['block_1','block_2','block_3'],1),
+            show_on_days: phase2Days(['block_1','block_2','block_3'],phaseMap,1),
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: [], //all
             allow_edit: true,
