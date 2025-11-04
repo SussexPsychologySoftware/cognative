@@ -1,44 +1,71 @@
-import {StyleSheet, View} from "react-native";
+import {StyleSheet, View, Text, Alert} from "react-native";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import {useExperiment} from "@/context/ExperimentContext";
 import {dataQueue} from "@/services/data/dataQueue";
+import {globalStyles} from "@/styles/appStyles";
+import {useState} from "react";
 
 export default function ResetButtons(){
-    const { confirmAndStopExperiment, isActionLoading, resetTaskCompletion } = useExperiment();
+    const {  isActionLoading, confirmAndStopExperiment, resetTaskCompletion } = useExperiment();
 
+    const [queueProcessing, setQueueProcessing] = useState<boolean>(false);
+    // NOTE:
     return (
-        <View style={styles.container}>
-            <SubmitButton
-                text={isActionLoading ? "Clearing..." : "Clear queue"}
-                onPress={async()=>{await dataQueue.clearQueue()}}
-                style={{
-                    alignSelf: "flex-start",
-                }}
-            />
-            <SubmitButton
-                text={isActionLoading ? "Resetting..." : "Reset task completion"}
-                onPress={resetTaskCompletion}
-                style={{
-                    alignSelf: "flex-start",
-                }}
-            />
-            <SubmitButton
-                text={isActionLoading ? "Resetting..." : "Clear participant data"}
-                onPress={confirmAndStopExperiment}
-                style={{
-                    backgroundColor: "red",
-                    alignSelf: "flex-start",
-                }}
-            />
+        <View style={globalStyles.debugContainer}>
+            <Text style={[globalStyles.debugText, globalStyles.debugTitle]}>Debug Buttons:</Text>
+            <View style={styles.buttonRow}>
+                <Text style={globalStyles.debugText}>Queue:</Text>
+                <SubmitButton
+                    text={queueProcessing ? "Syncing..." : "Sync"}
+                    onPress={async()=>{
+                        setQueueProcessing(true);
+                        const successMessage = await dataQueue.processQueue()
+                        Alert.alert(successMessage)
+                        setQueueProcessing(false);
+                    }}
+                    style={styles.debugButton}
+                    textStyle={styles.debugButtonText}
+                />
+                <SubmitButton
+                    text={isActionLoading ? "Clearing..." : "Clear"}
+                    onPress={async()=>{
+                        setQueueProcessing(true);
+                        await dataQueue.clearQueue()
+                        setQueueProcessing(false);
+                    }}
+                    style={styles.debugButton}
+                    textStyle={styles.debugButtonText}
+                />
+            </View>
+            <View style={styles.buttonRow}>
+                <Text style={globalStyles.debugText}>Reset:</Text>
+                <SubmitButton
+                    text={isActionLoading ? "Resetting..." : "Task completion"}
+                    onPress={resetTaskCompletion}
+                    style={styles.debugButton}
+                    textStyle={styles.debugButtonText}
+                />
+                <SubmitButton
+                    text={isActionLoading ? "Resetting..." : "Participant"}
+                    onPress={confirmAndStopExperiment}
+                    style={[styles.debugButton, {backgroundColor: 'rgba(255,0,0,.5)'}]}
+                    textStyle={styles.debugButtonText}
+                />
+            </View>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
-    container: {
-        gap: 10,
-        marginVertical: 10,
-        alignSelf: 'flex-start',
-        alignItems: 'flex-start',
+    buttonRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 5
     },
+    debugButton: {
+        backgroundColor: 'grey',
+    },
+    debugButtonText: {
+        color: 'lightgrey'
+    }
 });
