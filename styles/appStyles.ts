@@ -21,6 +21,7 @@ export const sizes = {
 
 // Global styles
 export const globalStyles = StyleSheet.create({
+    // CONTAINERS -------
     scrollViewContainer:{
         paddingHorizontal: 15,
         paddingVertical: 20,
@@ -84,13 +85,14 @@ export const globalStyles = StyleSheet.create({
         paddingVertical: 10,
     },
 
-
+    // LAYOUT -----
     center: {
         textAlign: 'center',
         justifyContent: 'center',
         alignItems: 'center',
     },
-    // Inputs, UI
+
+    // INPUTS ----
     input: {
         color: colours.text,
         borderWidth: 1,
@@ -110,5 +112,20 @@ export const globalStyles = StyleSheet.create({
         borderColor: '#ff0000',
         borderWidth: 2,
         // backgroundColor: '#ffeeee',
-    }
+    },
+
+    // DEBUG -------
+    debugContainer: {
+        gap: 5,
+        paddingVertical: 8,
+        borderTopWidth: 1,
+        borderTopColor: 'grey',
+    },
+    debugTitle: {
+        marginBottom: 8,
+    },
+    debugText: {
+        color: 'grey',
+        fontSize: 14,
+    },
 });
