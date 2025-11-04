@@ -37,7 +37,11 @@ export default function Paragraph({ text, title, containerStyle, textStyle, titl
                     <ParagraphText
                         key={`paragraph-${index}`}
                         text={p}
-                        textStyle={[{marginBottom: 10}, textStyle]}
+                        textStyle={[
+                            styles.paragraph,
+                            index === text.length-1 && styles.lastParagraph,
+                            textStyle
+                        ]}
                     />
                 )) :
                     <ParagraphText
@@ -55,12 +59,13 @@ const styles = StyleSheet.create({
         borderColor: colours.primary,//
         // borderColor: 'rgba(255, 255, 255, .5)',
 
-        borderTopWidth: 3,
-        marginTop: 10,
-        paddingTop: 10,
-
-        borderBottomWidth: 3,
-        paddingBottom: 15
+        // SOME GOOD STYLING TO CONSIDER:
+        // borderTopWidth: 3,
+        // marginTop: 10,
+        // paddingTop: 10,
+        //
+        // borderBottomWidth: 3,
+        // paddingBottom: 15
     },
     title: {
         paddingTop: 0,
@@ -69,5 +74,11 @@ const styles = StyleSheet.create({
     text: {
         fontStyle: "italic",
         // borderWidth: 1,
+    },
+    paragraph: {
+        marginBottom: 10
+    },
+    lastParagraph: {
+        marginBottom: 0
     }
 });
