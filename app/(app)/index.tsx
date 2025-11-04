@@ -1,12 +1,10 @@
 import {Text} from "react-native";
-import React, {useState} from "react";
 import {StandardView} from "@/components/layout/StandardView";
 import ToDoList from "@/components/longitudinal/ToDoList";
 import { useExperiment } from "@/context/ExperimentContext";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import {globalStyles} from "@/styles/appStyles";
 import {router} from "expo-router";
-import Debug from "@/components/debug/Debug";
 
 export default function Index() {
     const { displayState, isLoading, definition } = useExperiment();

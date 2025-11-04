@@ -1,5 +1,5 @@
-import {Text, View, StyleSheet, Alert} from "react-native"; // 👈 Import Alert
-import React, { useState, useEffect } from "react"; // 👈 Import hooks
+import {Text, View, StyleSheet, Alert} from "react-native";
+import React, { useState, useEffect } from "react";
 import {StandardView} from "@/components/layout/StandardView";
 import { useExperiment } from "@/context/ExperimentContext";
 import SubmitButton from "@/components/inputs/SubmitButton";

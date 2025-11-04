@@ -4,9 +4,7 @@ import {RelativePathString, router} from "expo-router";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import {TaskDisplayStatus} from "@/types/trackExperimentState";
 
-// TODO: add back in debounce
 function Activity({ task, params }: { task: TaskDisplayStatus, params: Record<string, any> }){
-    // console.log({task, params});
     return (
         <View style={[
             styles.activity,

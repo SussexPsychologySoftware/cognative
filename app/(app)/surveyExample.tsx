@@ -10,7 +10,7 @@ import Picture from "@/components/media/Picture";
 import {RelativePathString, router, useLocalSearchParams} from 'expo-router';
 import {useExperiment} from "@/context/ExperimentContext";
 import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
-import {useCallback} from "react"; // 1. Import hook
+import {useCallback} from "react";
 
 
 export default function SurveyExample() {

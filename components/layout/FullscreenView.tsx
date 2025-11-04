@@ -1,7 +1,7 @@
 import {useEffect} from "react";
 import {Stack} from "expo-router";
 import * as NavigationBar from 'expo-navigation-bar';
-import {Platform, StyleSheet, View} from "react-native";
+import {Platform, StyleSheet} from "react-native";
 import {StatusBar} from "expo-status-bar";
 import {SafeAreaView} from "react-native-safe-area-context";
 

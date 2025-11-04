@@ -1,5 +1,4 @@
-import {View, Pressable, Text, StyleSheet, DimensionValue} from 'react-native';
-import { globalStyles } from "@/styles/appStyles";
+import {View, Pressable, StyleSheet, DimensionValue} from 'react-native';
 import Radio from "@/components/inputParts/Radio";
 import Labels from "@/components/inputParts/Labels";
 

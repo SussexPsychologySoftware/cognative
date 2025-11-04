@@ -14,9 +14,6 @@ import Select from "@/components/inputs/Select";
 import LikertSingle from "@/components/inputs/LikertSingle";
 import TimeInput from "@/components/inputs/TimeInput";
 import Paragraph from "@/components/inputParts/Paragraph";
-import Audio from  "@/components/media/Audio";
-import {DataService} from "@/services/data/DataService";
-import {RelativePathString, router} from "expo-router";
 import AudioPlayer from "@/components/media/AudioPlayer";
 
 interface SurveyProps {

@@ -6,9 +6,7 @@ import {
 } from 'react-native';
 import { SafeAreaView} from "react-native-safe-area-context";
 import { StatusBar } from 'expo-status-bar';
-import {router, Stack} from 'expo-router';
 import {colours} from "@/styles/appStyles";
-import {Ionicons} from "@expo/vector-icons";
 import Debug from "@/components/debug/Debug";
 import React from "react";
 import {experimentDefinition} from "@/config/experimentDefinition";

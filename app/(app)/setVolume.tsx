@@ -1,7 +1,6 @@
 import {Text, StyleSheet, Alert} from 'react-native';
 import AudioPlayer from "@/components/media/AudioPlayer";
-import { useEffect, useState } from "react";
-import { ExperimentTracker } from '@/services/longitudinal/ExperimentTracker';
+import { useState } from "react";
 import { globalStyles } from "@/styles/appStyles";
 import {StatusBar} from "expo-status-bar";
 import {router, useLocalSearchParams} from "expo-router";

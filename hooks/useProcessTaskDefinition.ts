@@ -1,4 +1,3 @@
-// hooks/useProcessTaskDefinition.ts
 import {useEffect, useState} from "react";
 import {useExperiment} from "@/context/ExperimentContext";
 import {SurveyTaskDefinition, TaskDefinition} from "@/types/experimentConfig";

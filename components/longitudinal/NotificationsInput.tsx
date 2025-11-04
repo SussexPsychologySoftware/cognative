@@ -1,6 +1,5 @@
 import {StyleSheet, View, Text} from "react-native";
 import TimePicker from "@/components/inputs/TimePicker";
-// Removed useState, it's not needed here
 import {globalStyles} from "@/styles/appStyles";
 import {NullableStringRecord} from "@/types/trackExperimentState";
 import {TaskNotification} from "@/types/experimentConfig";

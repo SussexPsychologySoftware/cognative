@@ -1,4 +1,3 @@
-// hooks/useEnforceVolume.ts
 import { useEffect, useState, useRef } from "react";
 import { Alert, Platform } from "react-native";
 import VolumeManager from "react-native-volume-manager"; // NOTE: doesn't work on expo go

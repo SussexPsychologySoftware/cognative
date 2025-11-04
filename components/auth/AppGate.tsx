@@ -1,4 +1,3 @@
-// components/auth/AppGate.tsx
 import React, { useEffect } from 'react';
 import { router, useSegments } from 'expo-router';
 import { useExperiment } from '@/context/ExperimentContext';

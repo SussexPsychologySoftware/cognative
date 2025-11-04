@@ -1,7 +1,7 @@
 import {StyleSheet, View, Text} from "react-native";
 import {globalStyles} from "@/styles/appStyles";
 import {experimentDefinition} from "@/config/experimentDefinition";
-import {Link, RelativePathString, Href} from "expo-router";
+import {Link, Href} from "expo-router";
 
 interface Page {
     pathname: string;

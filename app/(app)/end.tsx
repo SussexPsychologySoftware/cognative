@@ -1,10 +1,7 @@
 import {Text} from 'react-native';
-import DebugButtons from "@/components/debug/DebugButtons";
-import PageList from "@/components/debug/PageList";
 import {useExperiment} from "@/context/ExperimentContext";
 import {globalStyles} from "@/styles/appStyles";
 import {StandardView} from "@/components/layout/StandardView";
-import Debug from "@/components/debug/Debug";
 
 export default function EndScreen() {
     const { state } = useExperiment();

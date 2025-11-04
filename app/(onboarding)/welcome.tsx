@@ -1,4 +1,3 @@
-// app/(onboarding)/welcome.tsx
 import React, {useState} from 'react';
 import {Text, StyleSheet, TextInput} from 'react-native';
 import { StandardView } from '@/components/layout/StandardView';

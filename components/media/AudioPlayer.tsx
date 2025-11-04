@@ -1,5 +1,3 @@
-// In a new file, e.g., components/AudioPlayer.tsx
-import { useState } from "react";
 import { View, StyleSheet } from "react-native";
 import Audio from "@/components/media/Audio"; // Adjust path
 import Range from "@/components/inputs/Range"; // Adjust path

@@ -1,5 +1,4 @@
 import * as Notifications from 'expo-notifications';
-// import * as TaskManager from 'expo-task-manager';
 import {NotificationPermissionsStatus} from 'expo-notifications';
 import {Linking, Alert, Platform} from 'react-native';
 import { ExperimentTracker } from '@/services/longitudinal/ExperimentTracker';
