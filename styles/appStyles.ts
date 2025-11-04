@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native';
 // Simple color and size constants
 export const colours = {
     primary: '#007AFF',
-    secondary: 'lightblue',
+    secondary: '#FF6B00', //consider: #FF9500, #FF7F50, #FFA500
     background: '#25292e',
     text: 'white',
     textLight: '#666666',
