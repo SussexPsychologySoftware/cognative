@@ -123,7 +123,7 @@ const ExampleSurveyQuestions: SurveyQuestion[] = [
 
 export const experimentDefinition: ExperimentDefinition = {
     name: 'Experiment',
-    total_days: 14,
+    total_days: 14, 
     cutoff_hour: 4,
     conditions: {
         conditions: ['control', 'monaural', 'binaural'],
