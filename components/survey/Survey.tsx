@@ -1,5 +1,5 @@
 import {StyleSheet, View, Text, TextInput} from 'react-native';
-import {globalStyles} from "@/styles/appStyles";
+import {globalStyles, colours} from "@/styles/appStyles";
 import NumericInput from "@/components/inputs/NumericInput";
 import React from "react";
 import {displayOnlyTypes, SurveyComponent, SurveyQuestion} from '@/types/surveyQuestions';
@@ -218,9 +218,15 @@ export default function Survey({
                         isInvalid && globalStyles.invalidInput,
                     ]}>
                         {isInput && (question as SurveyQuestion).question && (
-                            <Text style={globalStyles.question}>
-                                {(question as SurveyQuestion).question}
-                            </Text>
+                            <>
+                                <Text style={globalStyles.question}>
+                                    {(question as SurveyQuestion).question}
+                                    {"required" in question && question.required &&
+                                        <Text style={[globalStyles.question, {color: colours.secondary}]}>*</Text>
+                                    }
+                                </Text>
+
+                            </>
                         )}
                         {component}
                     </View>
