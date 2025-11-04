@@ -7,9 +7,10 @@ import {useSurvey} from "@/hooks/useSurvey";
 import {SurveyComponent} from '@/types/surveyQuestions'
 import Survey from "@/components/survey/Survey";
 import Picture from "@/components/media/Picture";
-import {router, useLocalSearchParams} from 'expo-router';
+import {RelativePathString, router, useLocalSearchParams} from 'expo-router';
 import {useExperiment} from "@/context/ExperimentContext";
-import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker"; // 1. Import hook
+import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
+import {useCallback} from "react"; // 1. Import hook
 
 
 export default function SurveyExample() {
@@ -20,7 +21,7 @@ export default function SurveyExample() {
 
     const taskDefinition = definition.tasks.find(t => t.id === taskId);
     const surveyFilename = displayState
-        ? ExperimentTracker.constructFilename(taskId, state?.participantId, displayState.experimentDay)
+        ? ExperimentTracker.constructFilename(taskId, state?.participantId??'', displayState.experimentDay)
         : undefined;
 
     // Define survey questions with keys
@@ -146,17 +147,20 @@ export default function SurveyExample() {
     ];
 
     // TODO: return optional response key FROM useSurvey! already passing it in so.
-    const onSubmit = async (responses: object, surveyFilename?: string) => {
-        if (taskId) {
-            // Submit task data, taskId to record completion, filename for restoration, datapipeid for sending, and allow_edit to timestamp unique filename on server.
-            await submitTaskData(taskId, responses, surveyFilename??'', taskDefinition?.datapipe_id, taskDefinition?.allow_edit);
-        }
-        if (router.canGoBack()) {
-            router.back(); // Go back to the to-do list
+    const onSubmit = useCallback(async (responses: object) => {
+        if (taskDefinition) {
+            await submitTaskData(taskDefinition, responses);
+
+            // Handle routing - note this is a screen component in the view layer, submitTaskData is data layer and shouldn't handle that
+            if(taskDefinition?.route_on_submit){
+                router.replace(taskDefinition.route_on_submit as RelativePathString);
+            } else { // Return to home page - todolist for now
+                router.replace('/'); //keep router.canGoBack() -> router.back() in mind
+            }
         } else {
-            router.replace('/');
+            console.error("Unable to save responses: ", {taskDefinition});
         }
-    }
+    }, [submitTaskData, taskDefinition]);
 
     const {
         responses, // Contains responses as {fieldKey: "response"} made from task definition
