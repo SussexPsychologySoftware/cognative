@@ -67,7 +67,7 @@ const styles = StyleSheet.create({
     labelContainer: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
+        // justifyContent: 'flex-end',
         height: '100%'
     },
     labelText: {
