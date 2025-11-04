@@ -10,10 +10,10 @@ export default function AppLayout() {
 
     return (
         <Stack>
-            <Stack.Screen name="index" options={{ title: 'Home' }} />
+            <Stack.Screen name="index" options={{ title: 'Home', headerShown: false }} />
             <Stack.Screen name="survey" options={{ title: 'Survey' }} />
             <Stack.Screen name="settings" options={{ title: 'Settings' }} />
-            <Stack.Screen name="end" />
+            <Stack.Screen name="end" options={{ headerShown: false }}/>
         </Stack>
     );
 }
