@@ -46,19 +46,6 @@ export const StandardView = ({
             // Deal with padding manually as component a little broken
             edges={headerShown ? ['left', 'right'] : ['top', 'left', 'right']}
         >
-            <Stack.Screen
-                options={{
-                    headerShown: headerShown,
-                    // headerLeft: () => (
-                    //     <Ionicons
-                    //         name={Platform.OS === "ios" ? "chevron-back" : "arrow-back-sharp"}
-                    //         size={25}
-                    //         color="white"
-                    //         onPress={() => router.replace('/')}
-                    //     />
-                    // ),
-                }}
-            />
             <StatusBar style={statusBarStyle}/>
             <KeyboardAvoidingView
                 behavior={keyboardBehavior}
