@@ -68,6 +68,7 @@ export default function Survey({
                             placeholderTextColor={'grey'}
                             style={globalStyles.input}
                             onChangeText={newValue => updateResponses(key, newValue)}
+                            maxLength={question.maxLength}
                         />
                         break;
                     case 'number':
@@ -75,6 +76,7 @@ export default function Survey({
                             value={responses[key]}
                             placeholder={question.placeholder}
                             onChange={newValue => updateResponses(key, newValue)}
+                            maxLength={question.maxLength}
                         />;
                         break;
                     case 'multiline':
@@ -82,6 +84,7 @@ export default function Survey({
                             value={responses[key]}
                             placeholder={question.placeholder}
                             onChange={(newValue: string) => updateResponses(key, newValue)}
+                            maxLength={question.maxLength}
                         />;
                         break;
                     case 'radio':

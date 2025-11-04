@@ -50,6 +50,7 @@ export interface SurveyInputBase extends SurveyComponentBase {
 export interface TextQuestion extends SurveyInputBase {
     type: 'number' | 'text' | 'multiline';
     placeholder?: string;
+    maxLength?: number;
 }
 
 export interface TimeQuestion extends SurveyInputBase {

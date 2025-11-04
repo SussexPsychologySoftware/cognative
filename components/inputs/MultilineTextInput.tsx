@@ -1,7 +1,7 @@
 import {InputAccessoryView, Keyboard, Platform, Pressable, TextInput, View, Text} from "react-native";
 import {globalStyles} from "@/styles/appStyles";
 
-export default function MultilineTextInput({ value, placeholder, onChange }: { value: string, placeholder?: string, onChange: (number: string) => void}){
+export default function MultilineTextInput({ value, placeholder, onChange, maxLength }: { value: string, placeholder?: string, onChange: (number: string) => void, maxLength?: number}){
     // controlled component, no internal state
     const inputAccessoryViewID = 'uniqueID'; // required for adding the done button back in
 
@@ -20,6 +20,7 @@ export default function MultilineTextInput({ value, placeholder, onChange }: { v
                 onChangeText={text => handleInput(text)}
                 // returnKeyType='done' // This changes the 'enter' key, and no done button present by default
                 inputAccessoryViewID={inputAccessoryViewID}
+                maxLength={maxLength}
             />
             { // Include custom done button in top bar on iOS
                 Platform.OS === 'ios' &&
