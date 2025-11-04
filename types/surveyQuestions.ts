@@ -95,6 +95,7 @@ export interface Audio extends SurveyInputBase {
     file: number;
     resetOnPause?: boolean;
     volume?: number;
+    volumeControls?: boolean;
 }
 
 // -*#*- SURVEY DISPLAY ONLY -*#*-

@@ -27,6 +27,11 @@ function initializeResponses(questions: SurveyComponent[]): Record<string, any> 
         } else {
             responses[key] = question.default ?? null;
         }
+
+        // Separately add volume
+        if (question.type === 'audio' && question.volumeControls) {
+            responses[key + '.volume'] = question.volume ?? .5; // Default to provided volume or half way
+        }
     }
 
     return responses;

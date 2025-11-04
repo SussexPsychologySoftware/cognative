@@ -184,7 +184,12 @@ export default function Survey({
                                     }
                                 }}
                                 resetOnPause={question.resetOnPause}
-                                volume={question.volume ?? volume ?? 1}
+                                volume={question.volumeControls ? responses[key+'.volume'] :
+                                    question.volume ?? volume ?? 1}
+                                onVolumeChange={question.volumeControls ?
+                                    (newVolume) => updateResponses(key+'.volume', newVolume) :
+                                    undefined
+                                }
                             />
                         break;
                     case 'paragraph':
