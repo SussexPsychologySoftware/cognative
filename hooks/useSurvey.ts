@@ -240,7 +240,7 @@ export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (
                 console.log('Participant ID is:', state?.participantId);
             }
 
-            Alert.alert('Submitted', JSON.stringify(responses, null, 2));
+            // Alert.alert('Submitted', JSON.stringify(responses, null, 2));
             return true;
         } catch (error) {
             console.error('Error submitting survey:', error);
