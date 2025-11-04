@@ -361,6 +361,24 @@ function daysBetween(from: number, to: number) {
     return Array.from({ length: to - from + 1 }, (_, i) => i + from);
 }
 
+const phaseMap: Record<string, number[]> = {
+    'baseline': [0, 1],
+    'block_1': [2, 3, 4, 5],
+    'block_2': [6, 7, 8, 9],
+    'block_3': [10, 11, 12, 13],
+    'post-test': [14]
+};
+
+function phase2Days(phases: string[], daysOfPhase?: number[]|number){
+    // Get the day numbers from each phase
+    return phases.flatMap(phase => {
+        const phaseDays = phaseMap[phase] || []
+        if(daysOfPhase===undefined) return phaseDays;
+        if(Array.isArray(daysOfPhase)) return daysOfPhase.flatMap(day => phaseDays.at(day) ?? [])
+        return phaseDays.at(daysOfPhase) ?? []
+    });
+}
+
 export const soundSleepDefinition: ExperimentDefinition = {
     name: 'Sound Sleep',
     total_days: 14,
