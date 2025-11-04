@@ -338,7 +338,7 @@ const setVolumeTask: SurveyComponent[] = [
         key: 'setVolumeQuestion',
         type: 'audio',
         question: '',
-        file: require('@/assets/sounds/monaural.mp3'),
+        file: require('../../../assets/sounds/monaural.mp3'),
         default: false, // autoplay
         volume: .5,
         volumeControls: true
@@ -371,7 +371,7 @@ const audioSurveyControl: SurveyComponent[] = [
     {
         ...audioSurveyBase,
         key: 'audioControl',
-        file: require('@/assets/sounds/control.mp3')
+        file: require('../../../assets/sounds/control.mp3')
     }
 ];
 
@@ -380,7 +380,7 @@ const audioSurveyMonaural: SurveyComponent[] = [
     {
         ...audioSurveyBase,
         key: 'audioMonaural',
-        file: require('@/assets/sounds/monaural.mp3')
+        file: require('../../../assets/sounds/monaural.mp3')
     }
 ];
 
@@ -389,7 +389,7 @@ const audioSurveyBinaural: SurveyComponent[] = [
     {
         ...audioSurveyBase,
         key: 'audioBinaural',
-        file: require('@/assets/sounds/binaural.mp3')
+        file: require('../../../assets/sounds/binaural.mp3')
     }
 ];
 
