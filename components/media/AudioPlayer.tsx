@@ -12,17 +12,20 @@ interface Props {
     volume?: number;
     onVolumeChange?: (newVolume: number) => void,
     onFinished?: () => void;
+    disabled?: boolean;
+    resetOnPause?: boolean;
 }
-export default function AudioPlayer({audioSource, onPress, isPlaying, volume=1, onVolumeChange, onFinished } : Props) {
+export default function AudioPlayer({audioSource, onPress, isPlaying, volume=1, onVolumeChange, onFinished, disabled, resetOnPause } : Props) {
     return (
         <View style={styles.container}>
-            {/* The Audio component just gets the props it needs */}
             <Audio
+                disabled={disabled}
                 audioSource={audioSource}
                 isPlaying={isPlaying}
                 onPress={onPress}
                 onFinished={onFinished}
                 volume={volume}
+                resetOnPause={resetOnPause}
             />
             { onVolumeChange &&
                 <Range
