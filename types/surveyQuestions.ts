@@ -93,11 +93,8 @@ export interface LikertSingleQuestion extends SurveyInputBase {
 export interface Audio extends SurveyInputBase {
     type: 'audio';
     file: number;
-    instructions?: string|string[];
     resetOnPause?: boolean;
     volume?: number;
-    containerStyle?: object;
-    textStyle?: object;
 }
 
 // -*#*- SURVEY DISPLAY ONLY -*#*-
