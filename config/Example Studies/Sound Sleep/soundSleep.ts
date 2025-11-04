@@ -387,7 +387,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
         conditions: ['control', 'monaural', 'binaural'],
         repeatedMeasures: true,
         datapipe_id: 'dOS0nQ93xCSV',
-        increase_on_days: [2,6,10] // baseline: 0,1; c1: 2,3,4,5; c2: 6,7,8,9; c3: 10,11,12,13; post-test 14
+        increase_on_days: phase2Days(['block_2','block_3'],0) //Increase on first day of block 2 and 3
     },
     tasks: [
         {
@@ -418,7 +418,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             name: 'Morning Sleep Diary',
             prompt: 'Just woke up?',
             questions: morningSleepDiary,
-            show_on_days: daysBetween(1,13),
+            show_on_days: daysBetween(1,14),
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: [], // all
             allow_edit: true,
@@ -433,6 +433,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             prompt: 'Complete this survey before your next session:',
             questions: expectanciesQuestionnaire,
             show_on_days: [0,3,7,11], //TODO: remove 0
+            show_on_days: phase2Days(['baseline','block_1','block_2','block_3','post-test'],0),
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: [], //all
             allow_edit: true,
@@ -444,6 +445,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             prompt: 'Complete this survey before your next session:',
             questions: blockQuestionnaire,
             show_on_days: [0,2,6,10,14],
+            show_on_days: phase2Days(['block_1','block_2','block_3'],1),
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: [], //all
             allow_edit: true,
@@ -454,7 +456,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             name: 'Evening Sleep Diary',
             prompt: 'Going to bed?',
             questions: eveningSleepDiary,
-            show_on_days: daysBetween(1,13),
+            show_on_days: daysBetween(0,13),
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: [], //all
             allow_edit: true,
@@ -468,7 +470,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             name: 'Sleep Audio',
             prompt: 'Listen to daily audio:',
             questions: audioTaskControl,
-            show_on_days: daysBetween(0,13), // TODO: remove 0
+            show_on_days: phase2Days(['block_1','block_2','block_3']),
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: ['control'],
             allow_edit: false,
@@ -483,7 +485,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             name: 'Sleep Audio',
             prompt: 'Listen to daily audio:',
             questions: audioTaskMonaural,
-            show_on_days: daysBetween(1,13), // TODO: remove 0
+            show_on_days: phase2Days(['block_1','block_2','block_3']),
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: ['monaural'],
             allow_edit: false,
@@ -498,7 +500,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             name: 'Sleep Audio',
             prompt: 'Listen to daily audio:',
             questions: audioTaskBinaural,
-            show_on_days: daysBetween(1,13), // TODO: remove 0
+            show_on_days: phase2Days(['block_1','block_2','block_3']),
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: ['binaural'],
             allow_edit: false,
