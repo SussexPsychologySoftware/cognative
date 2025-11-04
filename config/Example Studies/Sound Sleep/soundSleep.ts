@@ -382,7 +382,7 @@ function phase2Days(phases: string[], daysOfPhase?: number[]|number){
 export const soundSleepDefinition: ExperimentDefinition = {
     name: 'Sound Sleep',
     total_days: 14,
-    cutoff_hour: 4, // TODO: make cutoff time?
+    cutoff_hour: 4, // TODO: maybe use hours and mins, day_cutoff_time: '04:32'
     conditions: {
         conditions: ['control', 'monaural', 'binaural'],
         repeatedMeasures: true,
@@ -394,7 +394,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             id: 'demographics',
             type: 'survey',
             name: 'Demographics',
-            prompt: 'Please provide us with demographic information:',
+            prompt: 'Please provide us with your demographic information:',
             questions: demographics,
             show_on_days: [0],
             datapipe_id: 'dOS0nQ93xCSV',
@@ -407,7 +407,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             name: 'Set Volume',
             prompt: 'Set Audio Volume',
             path_to_screen: '/setVolume',
-            show_on_days: [0], // TODO: remove 0
+            show_on_days: [0],
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: [],
             allow_edit: false,
@@ -427,24 +427,22 @@ export const soundSleepDefinition: ExperimentDefinition = {
             }
         },
         {
-            id: 'expectancies',
+            id: 'blockQuestionnaire',
             type: 'survey',
-            name: 'Expectancies',
-            prompt: 'Complete this survey before your next session:',
-            questions: expectanciesQuestionnaire,
-            show_on_days: [0,3,7,11], //TODO: remove 0
+            name: 'Questionnaire',
+            prompt: 'Complete this survey:',
+            questions: blockQuestionnaire,
             show_on_days: phase2Days(['baseline','block_1','block_2','block_3','post-test'],0),
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: [], //all
             allow_edit: true,
         },
         {
-            id: 'blockQuestionnaire',
+            id: 'expectancies',
             type: 'survey',
-            name: 'Questionnaire',
-            prompt: 'Complete this survey before your next session:',
-            questions: blockQuestionnaire,
-            show_on_days: [0,2,6,10,14],
+            name: 'Expectancies',
+            prompt: 'Complete this survey regarding your last session:',
+            questions: expectanciesQuestionnaire,
             show_on_days: phase2Days(['block_1','block_2','block_3'],1),
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: [], //all
@@ -509,6 +507,5 @@ export const soundSleepDefinition: ExperimentDefinition = {
             },
             autosumbit_on_complete: true
         },
-
     ]
 }
