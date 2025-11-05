@@ -44,35 +44,40 @@ export interface SurveyInputBase extends SurveyComponentBase {
     type: SurveyInputType;
     question: string; // The prompt/label for the input
     required?: boolean;
-    default?: SurveyDataType;
+    default?: SurveyDataType; // TODO: handle the implementation of this across input types
 }
 
 export interface TextQuestion extends SurveyInputBase {
     type: 'number' | 'text' | 'multiline';
     placeholder?: string;
     maxLength?: number;
+    default?: string;
 }
 
 export interface TimeQuestion extends SurveyInputBase {
     type: 'time' | 'lengthOfTime';
     min?: string;
     max?: string;
+    default?: string;
 }
 
 export interface RadioQuestion extends SurveyInputBase {
     type: 'radio';
     options: string[];
+    default?: string
 }
 
 export interface SelectQuestion extends SurveyInputBase {
     type: 'select';
     options: Record<string, string[]>;
     multiple?: boolean;
+    default?: string;
 }
 
 export interface CheckboxQuestion extends SurveyInputBase {
     type: 'checkbox';
     label: string;
+    default: boolean;
 }
 
 export interface SliderQuestion extends SurveyInputBase {
@@ -83,6 +88,7 @@ export interface SliderQuestion extends SurveyInputBase {
     showValue?: boolean;
     labels?: string[];
     units?: string;
+    default?: number;
 }
 
 export interface LikertGridQuestion extends SurveyInputBase {
@@ -90,6 +96,7 @@ export interface LikertGridQuestion extends SurveyInputBase {
     name?: string; // TODO: not sure I've actually used this anywhere?
     options: string[];
     statements: string[];
+    defaults?: NullableStringRecord;
 }
 
 export interface LikertSingleQuestion extends SurveyInputBase {
@@ -97,6 +104,7 @@ export interface LikertSingleQuestion extends SurveyInputBase {
     options: string[];
     labels?: string[];
     oneWordPerLine?: boolean;
+    default?: string;
 }
 
 export interface AudioQuestion extends SurveyInputBase {
@@ -105,6 +113,7 @@ export interface AudioQuestion extends SurveyInputBase {
     resetOnPause?: boolean;
     volume?: number;
     volumeControls?: boolean;
+    default?: boolean
 }
 
 // -*#*- SURVEY DISPLAY ONLY -*#*-
