@@ -21,12 +21,13 @@ function createTimeFromDate(date: Date): string {
 }
 
 interface TimePickerProps {
-    value: string | null; // MODIFIED: Allow null values
-    onChange: (time: string | null) => void; // MODIFIED: Allow setting null
+    value: string | null; // Allow null values
+    onChange: (time: string | null) => void; // Allow setting null
     cancellable?: boolean;
+    defaultValue?: string; // Value to restore to if null is cancelled
 }
 
-export default function TimePicker({ value, onChange, cancellable=true }: TimePickerProps) {
+export default function TimePicker({ value, onChange, cancellable=true, defaultValue }: TimePickerProps) {
     // Nullable time picker component - scroll type and cross-platform similar.
     const [showPicker, setShowPicker] = useState(false);
 
@@ -42,7 +43,7 @@ export default function TimePicker({ value, onChange, cancellable=true }: TimePi
         setShowPicker(true);
         // If no value, set to now and emit
         if (!value) {
-            onChange(createTimeFromDate(new Date()));
+            onChange(defaultValue ?? createTimeFromDate(new Date()));
         }
     }
 
