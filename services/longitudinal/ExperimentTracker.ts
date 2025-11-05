@@ -22,11 +22,19 @@ export class ExperimentTracker {
             })
         );
 
+        const emptyNotificationTimes = Object.fromEntries(
+            experimentDefinition.tasks
+                .filter(task => task.notification)
+                .map((task, index)=> {
+                return [task.id, task.notification?.default_time ?? null];
+            })
+        );
+
         const baseState = {
             startDate: new Date().toISOString(),
             participantId,
             tasksLastCompletionDate: emptyTaskStates,
-            notificationTimes: {},
+            notificationTimes: emptyNotificationTimes, // Note an empty object works fine here too actually.
         };
 
         if (repeatedMeasuresConditionOrder) {
