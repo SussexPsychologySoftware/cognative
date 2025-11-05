@@ -31,6 +31,7 @@ export default function NotificationsInput({ notifications, times, onChange }: {
                                 onChange={(newTimeString) => {
                                     onChange(notification.taskId, newTimeString);
                                 }}
+                                defaultValue={notification.default_time}
                             />
                         </View>
                     )
