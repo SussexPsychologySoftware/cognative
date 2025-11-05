@@ -1,4 +1,4 @@
-import {Text} from "react-native";
+import {Text, StyleSheet} from "react-native";
 import {StandardView} from "@/components/layout/StandardView";
 import ToDoList from "@/components/longitudinal/ToDoList";
 import { useExperiment } from "@/context/ExperimentContext";
@@ -32,6 +32,13 @@ export default function Index() {
                         `Day ${displayState.experimentDay+1} / ${definition.total_days+1}`
                 }
             </Text>
+            {
+                displayState.allTasksCompleteToday &&
+                <Text style={[globalStyles.standardText, styles.allTasksCompleteToday]}>
+                    ✓ All activities completed for today
+                </Text>
+            }
+
             <ToDoList
                 taskStates={displayState.tasks} // Or pass in entire display state?
                 // data={{}} // Could pass experiment info through this?
@@ -61,4 +68,15 @@ export default function Index() {
     );
 }
 
-// const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+    allTasksCompleteToday: {
+        alignSelf: 'center',
+        marginTop: 20,
+        borderWidth: 1,
+        borderColor: 'green',
+        borderRadius: 5,
+        padding: 10,
+        color: 'green',
+        backgroundColor: 'rgba(0, 255, 0, 0.05)',
+    }
+});
