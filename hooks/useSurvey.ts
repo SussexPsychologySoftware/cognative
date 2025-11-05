@@ -95,6 +95,10 @@ export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (
                                 if (processedData[key] === true) {
                                     processedData[key] = question.default ?? false;
                                 }
+                                // TODO: fix sloppy handling of the volume parameter here and throughout...
+                                if(question.volumeControls){
+                                    processedData[key+'.volume'] = restoredData[key+'.volume'] ?? question.volume ?? .5;
+                                }
                             }
                         }
 
