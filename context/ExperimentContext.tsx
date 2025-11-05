@@ -271,7 +271,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             setActionError(`Failed to submit data\n${e}`);
             throw e; // Re-throw so useSurvey's 'handleSurveySubmit' can catch it
         }
-    }, [state, displayState, getTaskFilename, completeTask]);
+    }, [state, displayState, getTaskFilename, completeTask, definition.cutoff_hour]);
 
     const resetTaskCompletion = useCallback(async () => {
         setIsActionLoading(true);
