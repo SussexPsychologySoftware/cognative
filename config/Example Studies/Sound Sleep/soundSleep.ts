@@ -332,7 +332,7 @@ const setVolumeTask: SurveyComponent[] = [
             'Please put your headphones on and ensure they are connected to your phone via bluetooth.',
             "Set your device's volume using the buttons on the side of your phone to approximately 50% (around halfway), and then adjust the slider so that the audio clip is barely audible.",
             'This will be the maximum volume available later.'],
-        containerStyle: {marginTop: 0, paddingTop:0}
+        containerStyle: {marginTop: -25}
     },
     {
         key: 'setVolumeQuestion',
