@@ -7,9 +7,11 @@ import {globalStyles} from "@/styles/appStyles";
 import NotificationsInput from "@/components/longitudinal/NotificationsInput";
 import {NotificationDefinition, TaskNotification} from "@/types/experimentConfig";
 import {NotificationService} from "@/services/NotificationService";
+import {router, useLocalSearchParams} from "expo-router";
 
 export default function SettingsScreen() {
-    const { state, isLoading, definition, updateNotificationTimes, isActionLoading } = useExperiment();
+    const { taskId } = useLocalSearchParams<{ taskId: string }>();
+    const { state, isLoading, definition, updateNotificationTimes, isActionLoading, completeTask } = useExperiment();
     // Init local state to hold responses before save with times from main state
     const [localTimes, setLocalTimes] = useState(state?.notificationTimes || {});
 
@@ -34,6 +36,11 @@ export default function SettingsScreen() {
         try {
             await NotificationService.requestPermissions();
             await updateNotificationTimes(localTimes);
+            // If is task, mark as completed - allows forcing user to click 'save' on notifications
+            if(taskId) {
+                await completeTask(taskId)
+                router.replace("/")
+            }
             Alert.alert("Success", "Notification times saved.");
         } catch (error: any) {
             Alert.alert("Error", `Failed to save: ${error.message}`);
@@ -62,7 +69,7 @@ export default function SettingsScreen() {
                 { notifications &&
                     <>
                         <Text style={globalStyles.pageTitle}>Notification times</Text>
-                        <Text style={globalStyles.completeSurveyPrompt}>
+                        <Text style={globalStyles.standardText}>
                             Enter times you would like to receive reminders below - these can be changed at any time during the study.
                             Reminders are optional.
                         </Text>
@@ -72,6 +79,11 @@ export default function SettingsScreen() {
                             times={localTimes} // local state
                             onChange={handleTimeChange} // local updater
                         />
+                        { taskId &&
+                            <Text style={[globalStyles.standardText, {fontStyle: 'italic'}]}>
+                                Leave times blank or click the red X to opt-out of any reminders. You must click save to continue with the experiment.
+                            </Text>
+                        }
                         <SubmitButton
                             text={"Save"}
                             onPress={handleSave} // submit
