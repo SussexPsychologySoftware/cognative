@@ -440,7 +440,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             show_on_days: [0],
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: [], // all
-            allow_edit: false,
+            allow_edit: true,
         },
         {
             id: 'setVolume',
@@ -448,6 +448,17 @@ export const soundSleepDefinition: ExperimentDefinition = {
             name: 'Set Volume',
             prompt: 'Set Audio Volume',
             questions: setVolumeTask,
+            show_on_days: [0],
+            datapipe_id: 'dOS0nQ93xCSV',
+            show_for_conditions: [],
+            allow_edit: true,
+        },
+        {
+            id: 'notifications',
+            type: 'screen',
+            path_to_screen: '/settings',
+            name: 'Set notification times',
+            prompt: 'Setup reminders:',
             show_on_days: [0],
             datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: [],
@@ -465,6 +476,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             allow_edit: true,
             notification: {
                 prompt: 'Morning sleep diary reminder:',
+                default_time: '09:00'
             }
         },
         {
@@ -501,6 +513,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
             allow_edit: true,
             notification: {
                 prompt: 'Evening sleep diary reminder:',
+                default_time: '22:00'
             },
         },
         {
