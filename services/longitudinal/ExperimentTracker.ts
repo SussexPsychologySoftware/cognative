@@ -213,12 +213,12 @@ export class ExperimentTracker {
         const taskDisplayStatuses = this.calculateTaskDisplayStatuses(visibleTasks, state.tasksLastCompletionDate);
 
         return {
-            participantId: state.participantId??'',
+            participantId: state.participantId??'NO_ID',
             experimentDay,
             currentCondition,
             currentConditionIndex,
             isExperimentComplete: this.hasExperimentEnded(state),
-            allTasksCompleteToday: false,
+            allTasksCompleteToday: taskDisplayStatuses.every(t => t.completed),
             tasks: taskDisplayStatuses
         };
     }
@@ -251,7 +251,7 @@ export class ExperimentTracker {
     // ============ Date Utilities ===========
     static calculateDaysPassed(eventDate: string): number {
         if (!eventDate) return -1; // -1 should be treated as incorrect - known as a 'sentinel value'
-        const parsed = new Date(eventDate);
+        const parsed = new Date(eventDate); // UTC ISO → local time, i.e. same in UK as NZ
         const now = new Date();
 
         // Adjust both dates to previous day if before cutoff hour, then normalize to midnight
