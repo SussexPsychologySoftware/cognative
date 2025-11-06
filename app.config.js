@@ -6,9 +6,9 @@ const config = {
     expo: {
         name: "CogNative",
         slug: "cognative",
+        scheme: "cognative",
         version: "1.0.0",
         icon: "./assets/images/icon.png",
-        scheme: "cognative",
         userInterfaceStyle: "automatic",
         newArchEnabled: true,
         ios: {
