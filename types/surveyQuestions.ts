@@ -77,7 +77,7 @@ export interface SelectQuestion extends SurveyInputBase {
 export interface CheckboxQuestion extends SurveyInputBase {
     type: 'checkbox';
     label: string;
-    default: boolean;
+    default?: boolean;
 }
 
 export interface SliderQuestion extends SurveyInputBase {
