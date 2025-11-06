@@ -197,6 +197,7 @@ export default function Survey({
                             title={question.title}
                             containerStyle={question.containerStyle}
                             textStyle={question.textStyle}
+                            titleStyle={question.titleStyle}
                         />
                         break;
                     default:
