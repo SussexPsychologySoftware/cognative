@@ -15,6 +15,7 @@ import LikertSingle from "@/components/inputs/LikertSingle";
 import TimeInput from "@/components/inputs/TimeInput";
 import Paragraph from "@/components/display/Paragraph";
 import AudioPlayer from "@/components/media/AudioPlayer";
+import Picture from "@/components/media/Picture";
 
 interface SurveyProps {
     questions: SurveyComponent[];
@@ -198,6 +199,16 @@ export default function Survey({
                             containerStyle={question.containerStyle}
                             textStyle={question.textStyle}
                             titleStyle={question.titleStyle}
+                        />
+                        break;
+                    case 'picture':
+                        component = <Picture
+                            asset={question.file}
+                            caption={question.caption}
+                            width={question.width}
+                            height={question.height}
+                            imageStyle={question.imageStyle}
+                            captionStyle={question.captionStyle}
                         />
                         break;
                     default:

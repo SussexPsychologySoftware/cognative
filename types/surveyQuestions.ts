@@ -130,7 +130,17 @@ export interface ParagraphDisplay extends SurveyDisplayBase {
     titleStyle?: object;
 }
 
-type SurveyDisplayOnly = ParagraphDisplay; // Add picture
+export interface Picture extends SurveyDisplayBase {
+    type: 'picture';
+    file: number;
+    caption?: string;
+    width?: number;
+    height?: number;
+    imageStyle?: object;
+    captionStyle?: object;
+}
+
+type SurveyDisplayOnly = ParagraphDisplay | Picture;
 
 export type SingleInputQuestion = TextQuestion | TimeQuestion | SelectQuestion | CheckboxQuestion |
     SliderQuestion | RadioQuestion | LikertSingleQuestion | AudioQuestion;
