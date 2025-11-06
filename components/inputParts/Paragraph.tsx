@@ -16,38 +16,43 @@ function ParagraphText({text, textStyle}: {text: string, textStyle?: object}) {
     )
 }
 
-export default function Paragraph({ text, title, containerStyle, textStyle, titleStyle }: { text: string|string[], title?: string, containerStyle?: object, textStyle?: object, titleStyle?: object}) {
+export default function Paragraph({ text, title, containerStyle, textStyle, titleStyle }: { text?: string|string[], title?: string, containerStyle?: object, textStyle?: object, titleStyle?: object}) {
     return (
         <View style={[
             styles.container,
             containerStyle
         ]}>
-            <Text
-                style={[
-                    globalStyles.sectionTitle,
-                    styles.title,
-                    titleStyle
-                ]}
-            >
-                {title}
-            </Text>
+            {title &&
+                <Text
+                    style={[
+                        globalStyles.sectionTitle,
+                        styles.title,
+                        titleStyle
+                    ]}
+                >
+                    {title}
+                </Text>
+            }
+
             {
-                Array.isArray(text) ?
-                text.map((p, index) => (
-                    <ParagraphText
-                        key={`paragraph-${index}`}
-                        text={p}
-                        textStyle={[
-                            styles.paragraph,
-                            index === text.length-1 && styles.lastParagraph,
-                            textStyle
-                        ]}
-                    />
-                )) :
-                    <ParagraphText
-                        text={text}
-                        textStyle={textStyle}
-                    />
+                text && (
+                    Array.isArray(text) ?
+                        text.map((p, index) => (
+                            <ParagraphText
+                                key={`paragraph-${index}`}
+                                text={p}
+                                textStyle={[
+                                    styles.paragraph,
+                                    index === text.length-1 && styles.lastParagraph,
+                                    textStyle
+                                ]}
+                            />
+                        )) :
+                        <ParagraphText
+                            text={text}
+                            textStyle={textStyle}
+                        />
+                )
             }
         </View>
     );
