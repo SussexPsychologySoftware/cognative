@@ -96,7 +96,7 @@ export interface LikertGridQuestion extends SurveyInputBase {
     name?: string; // TODO: not sure I've actually used this anywhere?
     options: string[];
     statements: string[];
-    defaults?: NullableStringRecord;
+    default?: NullableStringRecord;
 }
 
 export interface LikertSingleQuestion extends SurveyInputBase {
