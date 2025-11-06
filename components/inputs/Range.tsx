@@ -1,7 +1,7 @@
 import {StyleSheet, View, Text} from "react-native";
 import {globalStyles} from "@/styles/appStyles";
 import Slider from "@react-native-community/slider";
-import Labels from "@/components/inputParts/Labels";
+import Labels from "@/components/display/Labels";
 
 export default function Range({ value, min, max, step, showValue=true, onChange, style, labels, units }: { value: number, min?: number, max?: number, step?: number, showValue?: boolean, onChange: (value: number) => void, style?: object, labels?: string[], units?: string }) {
     // Note value/markers broken for steps between 0-1, floating point issues

@@ -1,5 +1,5 @@
 import {StyleSheet, View, Text, TouchableOpacity} from 'react-native'
-import Radio from "@/components/inputParts/Radio";
+import Radio from "@/components/display/Radio";
 import {globalStyles} from "@/styles/appStyles";
 
 export default function RadioList({options, value, onSelect, containerStyle} : { options: string[], value: string, onSelect: (option: string)=>void, containerStyle?: object }) {

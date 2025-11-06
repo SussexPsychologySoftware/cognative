@@ -1,6 +1,6 @@
 import {View, Pressable, StyleSheet, DimensionValue} from 'react-native';
-import Radio from "@/components/inputParts/Radio";
-import Labels from "@/components/inputParts/Labels";
+import Radio from "@/components/display/Radio";
+import Labels from "@/components/display/Labels";
 
 function RadioButton({ selected, onChange, size } : { selected: boolean, onChange: () => void, size?: number }) {
     return (

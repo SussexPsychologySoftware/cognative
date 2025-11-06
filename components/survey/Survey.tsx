@@ -13,7 +13,7 @@ import Range from "@/components/inputs/Range";
 import Select from "@/components/inputs/Select";
 import LikertSingle from "@/components/inputs/LikertSingle";
 import TimeInput from "@/components/inputs/TimeInput";
-import Paragraph from "@/components/inputParts/Paragraph";
+import Paragraph from "@/components/display/Paragraph";
 import AudioPlayer from "@/components/media/AudioPlayer";
 
 interface SurveyProps {
