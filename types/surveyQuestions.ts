@@ -123,10 +123,11 @@ export interface SurveyDisplayBase extends SurveyComponentBase {
 
 export interface ParagraphDisplay extends SurveyDisplayBase {
     type: 'paragraph';
-    text: string|string[];
+    text?: string|string[];
     title?: string; // This is used instead of 'question'
     containerStyle?: object;
     textStyle?: object;
+    titleStyle?: object;
 }
 
 type SurveyDisplayOnly = ParagraphDisplay; // Add picture
