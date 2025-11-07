@@ -5,10 +5,31 @@ import { useExperiment } from "@/context/ExperimentContext";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import {globalStyles} from "@/styles/appStyles";
 import {router} from "expo-router";
-import React from "react";
+import React, {useEffect} from "react";
+import {RoutingService} from "@/services/RoutingService";
 
 export default function Index() {
     const { displayState, isLoading, definition } = useExperiment();
+
+    useEffect(() => {
+        // Wait until loading is done and we have state
+        if (isLoading || !displayState) {
+            return;
+        }
+
+        // If autoroute is on AND the experiment is NOT complete
+        if (definition.autoroute && !displayState.isExperimentComplete) {
+            // Find the next available task
+            const nextTask = displayState.tasks.find(
+                task => !task.completed && task.isAllowed
+            );
+
+            if (nextTask) {
+                const href = RoutingService.getTaskHref(nextTask.definition);
+                router.replace(href);
+            }
+        }
+    }, [isLoading, displayState, definition]); // Run when state loads
 
     if(isLoading || !displayState) {
         // TODO: put loading spinner
