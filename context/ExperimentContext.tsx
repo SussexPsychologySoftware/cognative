@@ -9,6 +9,7 @@ import {Alert} from "react-native";
 import { useAutoRefresh } from '@/hooks/useAutoRefresh'
 import {ConditionAssignment} from "@/services/ConditionAssignment";
 import {NotificationService} from "@/services/NotificationService";
+import {RoutingService} from "@/services/RoutingService";
 
 // Define context type
 interface ExperimentContextType {
@@ -68,17 +69,18 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             let experimentState = await ExperimentTracker.getState();
             if (experimentState) {
                 const newDisplayState = ExperimentTracker.calculateDisplayState(experimentState);
-
-                if (newDisplayState.isExperimentComplete) {
-                    router.replace('/end');
-                    return;
-                }
                 setState(experimentState);
                 setDisplayState(newDisplayState);
+            } else { // If no state found set to null and AppGate will redirect to onboarding
+                setState(null);
+                setDisplayState(null);
             }
         } catch (error) {
             console.error("Error loading experiment status:", error);
             // Let the hook handle errors, or setActionError here
+            // Also set to null on error
+            setState(null);
+            setDisplayState(null);
         }
         // NO 'finally' block with setIsLoading
     }, []); // Empty dependency array is fine
@@ -93,13 +95,24 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
 
     useEffect(() => {
         if (state && displayState) {
-            // Re-sync all notifications when app loads
-            // This is a "fire-and-forget" background task
+            // Re-sync all notifications when app loads - "fire-and-forget" background task
             NotificationService.scheduleAllNotifications(state).catch(err => {
                 console.error("Failed to sync notifications on load:", err);
             });
         }
     }, [state, displayState]); // Runs once when state is loaded
+
+    // Navigate if experiment completed
+    useEffect(() => {
+        // Don't navigate while loading/refreshing or no display state
+        if (loading || !displayState) {
+            return;
+        }
+
+        if (displayState.isExperimentComplete) {
+            router.replace('/end');
+        }
+    }, [displayState, loading]);
 
     const startExperiment = useCallback(async (participantId?: string, condition?: string) => {
         setIsActionLoading(true);
@@ -188,36 +201,47 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
     }, [state, displayState, definition]);
 
     const completeTask = useCallback(async (taskId: string) => {
-        //Optimistic State Updater
-        const newCompletionDate = new Date().toISOString();
-        // Note using a functional update pattern to avoid dependency cycle with setting state and running on state updates
-        setState(currentState => {
-            if (!currentState) {
-                console.warn("Cannot complete task: state is not loaded.");
-                return currentState;
-            }
+        setIsActionLoading(true); // Show loading
+        setActionError(null);
 
-            const newState: ExperimentState = {
-                ...currentState,
-                tasksLastCompletionDate: {
-                    ...currentState.tasksLastCompletionDate,
-                    [taskId]: newCompletionDate,
-                },
-            };
-
-            // Calculate and set display state within the same update cycle as it relies on state
+        try {
+            // set to complete - note set tasks completed returns entire new state
+            const newState = await ExperimentTracker.setTaskCompleted(taskId);
+            // Get new display state
             const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
+            // Set states
+            setState(newState);
             setDisplayState(newDisplayState);
+            // fire-and-forget cancel notification
+            NotificationService.cancelNotificationForToday(taskId).catch(err => {
+                console.error("Failed to cancel notification:", err);
+            });
 
-            return newState;
-        });
+            // ROUTING ---***
+            if (newDisplayState.isExperimentComplete) {
+                router.replace('/end');
+                return;
+            }
+            if (definition.autoroute) {
+                // Find the next available task
+                const nextTask = newDisplayState.tasks.find(
+                    task => !task.completed && task.isAllowed
+                );
+                if (nextTask) {
+                    const href = RoutingService.getTaskHref(nextTask.definition);
+                    router.replace(href);
+                    return
+                }
+            }
+            router.replace('/')
+        } catch (e: any) {
+            console.error("Failed to complete task:", e);
+            setActionError(e.message || "Failed to complete task");
+        } finally {
+            setIsActionLoading(false);
+        }
 
-        // Fire and forget
-        ExperimentTracker.setTaskCompleted(taskId).catch(err => {
-            // TODO: consider reverting state on error
-            console.error("Failed to save task completion to storage:", err);
-        });
-    }, []);
+    }, [definition.autoroute]);
 
     const submitTaskData = useCallback(async (
         taskDefinition: TaskDefinition,
@@ -260,12 +284,6 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             }
             await DataService.saveData(data, filename, datapipe_id, participantId, sendAfterTime);
             await completeTask(taskId);
-
-            // Fire and forget the notification canceller
-            NotificationService.cancelNotificationForToday(taskId).catch(err => {
-                console.error("Failed to cancel notification:", err);
-            });
-
         } catch (e) {
             console.error("Failed to submit task data:", e);
             setActionError(`Failed to submit data\n${e}`);
