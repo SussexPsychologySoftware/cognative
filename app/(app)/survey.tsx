@@ -38,13 +38,6 @@ export default function SurveyScreen() {
     const onSubmit = useCallback(async (responses: object) => {
         if (taskDefinition) {
             await submitTaskData(taskDefinition, responses);
-
-            // Handle routing - note this is a screen component in the view layer, submitTaskData is data layer and shouldn't handle that
-            if(taskDefinition?.route_on_submit){
-                router.replace(taskDefinition.route_on_submit as RelativePathString);
-            } else { // Return to home page - todolist for now
-                router.replace('/'); //keep router.canGoBack() -> router.back() in mind
-            }
         } else {
             console.error("Unable to save responses: ", {taskDefinition});
         }
