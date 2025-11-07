@@ -16,7 +16,7 @@ export const useRestore = (isNotificationHandled?: RefObject<boolean>) => {
                     return;
                 }
 
-                const experimentHasEnded = ExperimentTracker.hasExperimentEnded(experimentState);
+                const experimentHasEnded = ExperimentTracker.hasExperimentEnded(experimentState, true);
                 if (experimentHasEnded) {
                     await ExperimentTracker.stopExperiment();
                 } else {
