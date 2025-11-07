@@ -5,6 +5,7 @@ import { useExperiment } from "@/context/ExperimentContext";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import {globalStyles} from "@/styles/appStyles";
 import {router} from "expo-router";
+import React from "react";
 
 export default function Index() {
     const { displayState, isLoading, definition } = useExperiment();
@@ -24,18 +25,22 @@ export default function Index() {
             headerShown={false}
             statusBarStyle={'light'}
         >
-            <Text style={globalStyles.pageTitle}>Today&#39;s activities:</Text>
-            <Text style={[globalStyles.standardText, {alignSelf: 'center'}]}>
-                {
-                    displayState.experimentDay+1 === definition.total_days+1 ?
-                        'Last experiment day' :
-                        `Day ${displayState.experimentDay+1} / ${definition.total_days+1}`
-                }
-            </Text>
+            <Text style={globalStyles.pageTitle}>{definition.total_days ? "Today's activities" : 'Please complete the following tasks:'}</Text>
+            {
+                definition.total_days>0 &&
+                <Text style={[globalStyles.standardText, {alignSelf: 'center'}]}>
+                    {
+                        displayState.experimentDay+1 === definition.total_days+1 ?
+                            'Last experiment day' :
+                            `Day ${displayState.experimentDay+1} / ${definition.total_days+1}`
+                    }
+                </Text>
+            }
+
             {
                 displayState.allTasksCompleteToday &&
                 <Text style={[globalStyles.standardText, styles.allTasksCompleteToday]}>
-                    ✓ All activities completed for today
+                    ✓ All activities completed {definition.total_days>0 && 'for today'}
                 </Text>
             }
 
@@ -43,27 +48,42 @@ export default function Index() {
                 taskStates={displayState.tasks} // Or pass in entire display state?
                 // data={{}} // Could pass experiment info through this?
             />
+
+            {
+                definition.tasks.some(t => t.notification) &&
+                <>
+                    <Text
+                        style={[globalStyles.sectionTitle, {alignSelf: 'center'}]}
+                    >
+                        Settings
+                    </Text>
+                    <SubmitButton
+                        icon='gear'
+                        text='Change notification times'
+                        onPress={()=>{router.push('/settings')}}
+                        cooldown={500}
+                        style={{
+                            backgroundColor: 'transparent',
+                            borderColor: 'white',
+                            borderWidth: 1,
+                            marginVertical: 15,
+                        }}
+                        textStyle={{
+                            color: 'white',
+                        }}
+                        iconColor={'white'}
+                    />
+                </>
+            }
             <Text
-                style={[globalStyles.sectionTitle, {alignSelf: 'center'}]}
+                style={[
+                    globalStyles.standardText,
+                    {color:'lightgrey', alignSelf: 'center'}
+                ]}
+                selectable={true}
             >
-                Settings
+                Participant ID: {displayState.participantId}
             </Text>
-            <SubmitButton
-                icon='gear'
-                text='Change notification times'
-                onPress={()=>{router.push('/settings')}}
-                cooldown={500}
-                style={{
-                    backgroundColor: 'transparent',
-                    borderColor: 'white',
-                    borderWidth: 1,
-                    marginVertical: 15,
-                }}
-                textStyle={{
-                    color: 'white',
-                }}
-                iconColor={'white'}
-            />
         </StandardView>
     );
 }
