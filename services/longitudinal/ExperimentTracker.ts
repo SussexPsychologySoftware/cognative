@@ -224,30 +224,32 @@ export class ExperimentTracker {
         // Calculate display status for each visible task
         const taskDisplayStatuses = this.calculateTaskDisplayStatuses(visibleTasks, state.tasksLastCompletionDate);
 
+        const allTasksCompleteToday = taskDisplayStatuses.every(t => t.completed)
         return {
             participantId: state.participantId??'NO_ID',
             experimentDay,
             currentCondition,
             currentConditionIndex,
-            isExperimentComplete: this.hasExperimentEnded(state),
-            allTasksCompleteToday: taskDisplayStatuses.every(t => t.completed),
+            isExperimentComplete: this.hasExperimentEnded(state, allTasksCompleteToday),
+            allTasksCompleteToday,
             tasks: taskDisplayStatuses
         };
     }
 
-    static hasExperimentEnded(state: ExperimentState): boolean {
-        // TODO: calculate from state if all tasks completed for today and is last day...
-        const experimentDay = this.calculateDaysPassed(state.startDate)
-        return experimentDay>experimentDefinition.total_days
+    static hasExperimentEnded(state: ExperimentState, allTasksCompleteToday: boolean): boolean {
+        const today = this.calculateDaysPassed(state.startDate);
+        const lastDay = experimentDefinition.total_days
+        return (today>lastDay) || (allTasksCompleteToday && today===lastDay)
     }
 
 
     // ============ Task Completion Recording ============
-    static async setTaskCompleted(taskId: string): Promise<void> {
+    static async setTaskCompleted(taskId: string): Promise<ExperimentState> {
         const state = await this.getState();
-        if(!state) return
+        if(!state) throw new Error("No state found to update.");
         state.tasksLastCompletionDate[taskId] = new Date().toISOString();
         await this.saveState(state);
+        return state;
     }
 
     static constructFilename(taskId: string, participantID: string, day?: number): string {
