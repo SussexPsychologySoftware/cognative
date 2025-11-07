@@ -10,7 +10,6 @@ export default function Picture({asset, caption, width, height, imageStyle, capt
     const { width: windowWidth, height: windowHeight } = useWindowDimensions();
     const screenRatio = windowWidth / windowHeight;
 
-    console.log('aspectRatio', aspectRatio);
     return (
         <View style={styles.imageContainer}>
             <Image
@@ -29,7 +28,6 @@ export default function Picture({asset, caption, width, height, imageStyle, capt
                 onLoad={(event: ImageLoadEventData) => {
                     const { width, height } = event.source;
                     setAspectRatio(width / height);
-                    console.log({ width, height, aspectRatio });
                 }}
             />
             {
