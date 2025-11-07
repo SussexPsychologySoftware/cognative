@@ -1,3 +1,4 @@
+import {colours, globalStyles } from "@/styles/appStyles";
 import {ExperimentDefinition, TaskDefinition} from "@/types/experimentConfig";
 import {
     AudioQuestion,
@@ -164,7 +165,7 @@ const confirmSettingsSurvey: SurveyComponent[] = [
         required: true
     },
     {
-        key: 'switchOffScreen',
+        key: 'doNotDisturb',
         question: '',
         type: "checkbox",
         label: "Have you set your phone to 'Do Not Disturb'?'",
@@ -172,15 +173,19 @@ const confirmSettingsSurvey: SurveyComponent[] = [
     }
 ]
 
+const sectionTitleStyle = {
+    paddingBottom: 0,
+    marginBottom: -20,
+    color: colours.primary,
+}
+
 const mainSurvey: SurveyComponent[] = [
     // --- Device Section ---
     {
         key: 'deviceSectionTitle',
         type: 'paragraph',
-        text: '',
         title: 'About your device:',
-        containerStyle: {},
-        textStyle: {},
+        titleStyle: sectionTitleStyle,
     },
     {
         key: 'onPhone',
@@ -296,10 +301,8 @@ const mainSurvey: SurveyComponent[] = [
     {
         key: 'surroundingsSectionTitle',
         type: 'paragraph',
-        text: '',
         title: 'About your surroundings: ',
-        containerStyle: {},
-        textStyle: {},
+        titleStyle: sectionTitleStyle,
     },
     {
         key: 'location',
@@ -329,10 +332,8 @@ const mainSurvey: SurveyComponent[] = [
     {
         key: 'demographicsSectionTitle',
         type: 'paragraph',
-        text: '',
         title: 'About you: ',
-        containerStyle: {},
-        textStyle: {},
+        titleStyle: sectionTitleStyle,
     },
     {
         key: 'age',
@@ -421,9 +422,9 @@ export const debriefSurvey: SurveyComponent[] = [
 export const colourAdjuster: ExperimentDefinition = {
     name: 'DSA',
     debug: true,
-    passphrase: 'colourLAB',
-    total_days: 14, // TODO: OPTIONAL
-    cutoff_hour: 4, // TODO: OPTIONAL
+    passphrase: 'colourlab',
+    total_days: 0, // TODO: OPTIONAL
+    cutoff_hour: 0, // TODO: OPTIONAL
     conditions: { // TODO: OPTIONAL
         conditions: ['control', 'monaural', 'binaural'],
         repeatedMeasures: true,
@@ -431,6 +432,28 @@ export const colourAdjuster: ExperimentDefinition = {
         increase_on_days: [0]
     },
     tasks: [
+        {
+            id: 'consent',
+            type: 'survey',
+            name: 'Consent',
+            prompt: 'Complete Consent Form',
+            questions: consentSurvey,
+            show_on_days: [], // TODO: OPTIONAL
+            datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
+            show_for_conditions: [], // TODO: OPTIONAL
+            allow_edit: false, // TODO: OPTIONAL
+        },
+        {
+            id: 'confirm',
+            type: 'survey',
+            name: 'Confirm Settings Survey',
+            prompt: 'Confirm Settings',
+            questions: confirmSettingsSurvey,
+            show_on_days: [], // TODO: OPTIONAL
+            datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
+            show_for_conditions: [], // TODO: OPTIONAL
+            allow_edit: false, // TODO: OPTIONAL
+        },
         {
             id: 'survey',
             type: 'survey',
