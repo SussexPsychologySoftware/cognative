@@ -17,7 +17,7 @@ export default function EndScreen() {
             statusBarStyle={'light'}
         >
             <Text style={globalStyles.standardText}>The experiment is now over, please contact the experimenter.</Text>
-            <Text style={globalStyles.standardText}>Your Participant ID is: {state?.participantId}</Text>
+            <Text selectable={true} style={globalStyles.standardText}>Your Participant ID is: {state?.participantId}</Text>
         </StandardView>
     );
 }
