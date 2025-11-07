@@ -66,7 +66,7 @@ export default function SettingsScreen() {
     return (
         <StandardView>
             <View style={styles.notificationSettings}>
-                { notifications &&
+                { notifications && notifications.length > 0 &&
                     <>
                         <Text style={globalStyles.pageTitle}>Notification times</Text>
                         <Text style={globalStyles.standardText}>
@@ -93,7 +93,7 @@ export default function SettingsScreen() {
                     </>
                 }
 
-                <Text style={[globalStyles.pageTitle, globalStyles.sectionTitle]}>More info</Text>
+                <Text style={[globalStyles.pageTitle, globalStyles.sectionTitle]}>Participant Information</Text>
                 <Text style={globalStyles.standardText}>Participant ID: {state.participantId}</Text>
             </View>
         </StandardView>
