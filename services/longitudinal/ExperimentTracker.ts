@@ -66,6 +66,18 @@ export class ExperimentTracker {
         if(!participantId) participantId = this.generateRandomID(16)
         const initialState = this.createInitialState(participantId, firstCondition, repeatedMeasuresConditionOrder)
         await this.saveState(initialState);
+
+        // Save participant info //TODO: maybe need to move this - bit messy
+        const participantInfo: Record<string,any> = {
+            participantId: participantId,
+            startDate: initialState.startDate,
+        };
+        if(repeatedMeasuresConditionOrder){
+            participantInfo['conditionOrder'] = repeatedMeasuresConditionOrder
+        } else {
+            participantInfo['condition'] = firstCondition
+        }
+        await DataService.saveData(participantInfo,'participantInfo',experimentDefinition.participant_info_datapipe_id, participantId)
         return initialState
     }
 
