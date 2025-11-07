@@ -142,7 +142,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         } finally {
             setIsActionLoading(false);
         }
-    }, [definition.conditions]);
+    }, [definition]);
 
     const updateNotificationTimes = useCallback(async (times: NullableStringRecord) => {
         setIsActionLoading(true);
@@ -241,7 +241,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             setIsActionLoading(false);
         }
 
-    }, [definition.autoroute]);
+    }, [definition]);
 
     const submitTaskData = useCallback(async (
         taskDefinition: TaskDefinition,
