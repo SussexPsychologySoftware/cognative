@@ -10,6 +10,7 @@ function ParagraphText({text, textStyle}: {text: string, textStyle?: object}) {
                 styles.text,
                 textStyle
             ]}
+            selectable={true}
         >
             {text}
         </Text>
