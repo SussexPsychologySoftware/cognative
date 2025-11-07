@@ -4,6 +4,7 @@ import {Linking, Alert, Platform} from 'react-native';
 import { ExperimentTracker } from '@/services/longitudinal/ExperimentTracker';
 import {experimentDefinition} from "@/config/experimentDefinition";
 import {ExperimentState} from "@/types/trackExperimentState";
+import {RoutingService} from "@/services/RoutingService";
 
 export class NotificationService {
     // TODO: consider push notification service
@@ -115,15 +116,7 @@ export class NotificationService {
                 // Make sure it's in the future
                 // https://developer.apple.com/documentation/usernotifications/pushing-background-updates-to-your-app#overview
                 numberOfScheduledNotifications += 1
-                let pathname;
-                switch (task.type) {
-                    case "screen":
-                        pathname = task.path_to_screen
-                        break;
-                    default:
-                        pathname = '/' + task.type // TODO: add getPathname helper somewhere..
-                }
-
+                const pathname = RoutingService.getTaskPathname(task);
                 // Make sure it's in the future (it should be)
                 if (notificationDate > new Date()) {
                     numberOfScheduledNotifications += 1;

@@ -1,10 +1,11 @@
 import {StyleSheet, View, Text} from "react-native";
 import {globalStyles} from "@/styles/appStyles";
-import {RelativePathString, router} from "expo-router";
+import {router} from "expo-router";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import {TaskDisplayStatus} from "@/types/trackExperimentState";
+import {RoutingService} from "@/services/RoutingService";
 
-function Activity({ task, params }: { task: TaskDisplayStatus, params: Record<string, any> }){
+function Activity({ task, params }: { task: TaskDisplayStatus, params?: Record<string, any> }){
     return (
         <View style={[
             styles.activity,
@@ -36,18 +37,8 @@ function Activity({ task, params }: { task: TaskDisplayStatus, params: Record<st
                 text={(task.completed && task.definition.allow_edit) ? `Edit ${task.definition.name} responses` : `Complete ${task.definition.name}`} // TODO: better button naming
                 // TODO: add disabled text?
                 onPress={()=>{
-                    let pathname;
-                    switch (task.definition.type) {
-                        case "screen":
-                            pathname = task.definition.path_to_screen
-                            break;
-                        default:
-                            pathname = '/'+task.definition.type
-                    }
-                    router.push({
-                        pathname: pathname as RelativePathString,
-                        params
-                    })
+                    const href = RoutingService.getTaskHref(task.definition);
+                    router.push(href)
                 }}
                 style={[
                     styles.activityButton,
@@ -70,15 +61,10 @@ export default function ToDoList({ taskStates, data }: { taskStates: TaskDisplay
                     // TODO: consider passing in all data to all children, and task definition entirely?
                     // const params: Record<string, any> = { ...data }; // (includes day, condition)
                     // params = task.definition; // Pass the name for completion tracking
-                    const params = {
-                        taskId: task.definition.id, // Pass the name for completion tracking
-                        // data // Optionally pass in other data here
-                    }
                     return (
                         <Activity
                             key={task.definition.id}
                             task={task}
-                            params={params}
                         />
                     )
                 }) :
