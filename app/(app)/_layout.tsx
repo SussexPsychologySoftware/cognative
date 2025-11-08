@@ -14,6 +14,7 @@ export default function AppLayout() {
             <Stack.Screen name="survey" options={{ title: 'Survey' }} />
             <Stack.Screen name="settings" options={{ title: 'Settings' }} />
             <Stack.Screen name="end" options={{ headerShown: false }}/>
+            <Stack.Screen name="DSA/adjustColour" options={{ headerShown: false }}/>
         </Stack>
     );
 }
