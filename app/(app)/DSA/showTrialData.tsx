@@ -90,7 +90,9 @@ export default function ShowTrialDataScreen() {
                 }}
             >
                 {/*<Text style={{color: 'black', fontSize: 20, marginBottom: 5, fontWeight: 'bold'}}>ID: {displayState?.participantId}</Text>*/}
-                <Text style={[styles.text, {marginVertical: 20}]}>
+                <Text
+                    selectable={true}
+                    style={[styles.text, {marginVertical: 40}]}>
                     Consent Form: {JSON.stringify(consentData,null,4)}
                 </Text>
                 <View style={styles.trialList}>
