@@ -3,16 +3,16 @@ import { useState } from "react";
 
 export function useTrials (
     trials: Record<string, any>[],
-    onSubmit: (data: object) => void,
+    onSubmit: (data: object) => Promise<void>,
 )
 {
     const [trialIndex, setTrialIndex] = useState(0);
     const [responses, setResponses] = useState<Record<string, any>[]>([]);
     // Derived states
     let currentTrial = trials[trialIndex];
-    const isTaskFinished = trialIndex >= trials.length;
+    const isTaskFinished = trials.length > 0 && trialIndex >= trials.length;
 
-    const handleEndTrial = (response: object): void => {
+    const handleEndTrial = async(response: object): Promise<void> => {
         // Don't do anything if the task is already finished
         if (isTaskFinished) return;
 
@@ -32,7 +32,7 @@ export function useTrials (
 
         const nextIndex = trialIndex + 1;
         if(nextIndex === trials.length){
-            onSubmit(
+            await onSubmit(
                 [
                     ...responses,
                     newResponse
@@ -50,6 +50,7 @@ export function useTrials (
     return {
         handleEndTrial,
         currentTrial,
-        isTaskFinished
+        isTaskFinished,
+        responses,
     }
 }

@@ -10,7 +10,7 @@ import ChangeBackground from "@/components/DSA/ChangeBackground";
 
 export default function AdjustColourScreen() {
     useLockOrientation()
-
+    const [isSubmitting, setIsSubmitting] = useState(false);
     // CREATE THE TRIALS
     const [trials, setTrials] = useState<Record<string, object>[]>([]);
 
@@ -40,15 +40,20 @@ export default function AdjustColourScreen() {
         setTrials(trialsArray)
     }, []);
 
-    const onSubmit = () => {
-        //saveData
+    const onSubmit = async (data: object) => {
+        setIsSubmitting(true);
+        // await saveDataToFirebase(data);
+        // Fake a delay for testing
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        setIsSubmitting(false);
     }
+
     const {
         handleEndTrial,
         currentTrial,
         isTaskFinished,
         responses,
-        isSubmitting
     } = useTrials(trials, onSubmit);
 
     if (isTaskFinished) {
