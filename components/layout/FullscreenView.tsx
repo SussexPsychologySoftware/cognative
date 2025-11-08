@@ -40,10 +40,10 @@ export default function FullscreenView({children, style} : {children?: any, styl
             <StatusBar translucent hidden/>
             <Stack screenOptions={{
                 // Just incase
-                headerShown: false,
                 headerStyle: { backgroundColor: 'black' },
                 headerTintColor: 'black',
-                contentStyle: { backgroundColor: 'black' }
+                contentStyle: { backgroundColor: 'black' },
+                headerShown: false,
             }}/>
             {children}
         </SafeAreaView>
@@ -59,6 +59,7 @@ const styles = StyleSheet.create({
         minHeight: "100%",
         maxHeight: "100%",
         maxWidth: "100%",
+        backgroundColor: 'black',
     },
 });
 
