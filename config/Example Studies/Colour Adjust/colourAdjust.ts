@@ -429,10 +429,8 @@ export const colourAdjuster: ExperimentDefinition = {
     total_days: 0, // TODO: OPTIONAL
     cutoff_hour: 0, // TODO: OPTIONAL
     conditions: { // TODO: OPTIONAL
-        conditions: ['control', 'monaural', 'binaural'],
-        repeatedMeasures: true,
-        datapipe_id: 'dOS0nQ93xCSV',
-        increase_on_days: [0]
+        conditions: [],
+        repeatedMeasures: false,
     },
     tasks: [
         {
@@ -452,10 +450,11 @@ export const colourAdjuster: ExperimentDefinition = {
             name: 'Confirm Settings Survey',
             prompt: 'Confirm Settings',
             questions: confirmSettingsSurvey,
-            show_on_days: [], // TODO: OPTIONAL
-            datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
-            show_for_conditions: [], // TODO: OPTIONAL
-            allow_edit: false, // TODO: OPTIONAL
+            show_on_days: [],
+            // TODO: DON'T SEND DATA IF NO CONSENT GRANTED.
+            datapipe_id: 'dOS0nQ93xCSV',
+            show_for_conditions: [],
+            allow_edit: false,
         },
         {
             id: 'adjust',
