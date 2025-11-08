@@ -32,7 +32,11 @@ export default function SubmitButton({ text, disabledText, disabled, onPress, st
         <Pressable
             disabled={disabled}
             onPress={handlePress}
-            style={[styles.button, style, disabledOrExecuting && styles.disabled]}
+            style={[
+                styles.button,
+                style,
+                disabledOrExecuting && styles.disabled
+            ]}
         >
             {icon &&
                 <FontAwesome6

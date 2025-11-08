@@ -1,21 +1,28 @@
-import {useEffect, useState} from "react";
-import { RGB, LCH, LAB } from "@/types/colours";
+import {useCallback, useEffect, useState} from "react";
+import { LCH } from "@/types/colours";
 import {Text} from "react-native";
 import FullscreenView from "@/components/layout/FullscreenView";
 import {useLockOrientation} from "@/hooks/useLockOrientation";
 import {useTrials} from "@/hooks/useTrials";
-import SubmitButton from "@/components/inputs/SubmitButton";
 import {globalStyles} from "@/styles/appStyles";
 import ChangeBackground from "@/components/DSA/ChangeBackground";
+import {useLocalSearchParams} from "expo-router";
+import {useExperiment} from "@/context/ExperimentContext";
+import {experimentDefinition} from "@/config/experimentDefinition";
 
 export default function AdjustColourScreen() {
     useLockOrientation()
+    // Get task def
+    const { submitTaskData } = useExperiment();
+    const { taskId } = useLocalSearchParams<{ taskId: string }>();
+    const taskDefinition = experimentDefinition.tasks.find(t => t.id === taskId);
+
     const [isSubmitting, setIsSubmitting] = useState(false);
     // CREATE THE TRIALS
     const [trials, setTrials] = useState<Record<string, object>[]>([]);
 
     useEffect(() => {
-        const N_TRIALS = 3
+        const N_TRIALS = 12
 
         const getRandomStartingColour = ():LCH => {
             return {
@@ -40,14 +47,15 @@ export default function AdjustColourScreen() {
         setTrials(trialsArray)
     }, []);
 
-    const onSubmit = async (data: object) => {
+    const onSubmit = useCallback(async (responses: object) => {
         setIsSubmitting(true);
-        // await saveDataToFirebase(data);
-        // Fake a delay for testing
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
+        if (taskDefinition) {
+            await submitTaskData(taskDefinition, responses);
+        } else {
+            console.error("Unable to save responses: ", {taskDefinition});
+        }
         setIsSubmitting(false);
-    }
+    }, [submitTaskData, taskDefinition]);
 
     const {
         handleEndTrial,

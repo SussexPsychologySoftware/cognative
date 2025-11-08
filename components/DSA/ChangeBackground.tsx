@@ -1,10 +1,10 @@
-import { Text, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import AdjustColourButton from '@/components/DSA/AdjustColourButton'
 import { ColourConverter } from '@/utils/colourConversion';
 import { LAB, RGB, LCH } from "@/types/colours";
 import SubmitButton from "@/components/inputs/SubmitButton";
-import {sub} from "ob1";
+import MunsellChip from "@/components/DSA/MunsellChip";
 
 // Return selected colour,
 export default function ChangeBackground({ startColour, onSubmit, submitting }: {startColour: LCH, onSubmit: (colour: LAB, renderedRGB: RGB)=>void, submitting: boolean}) {
@@ -69,18 +69,21 @@ export default function ChangeBackground({ startColour, onSubmit, submitting }: 
         }
     }
 
+    const selectedRGB = `rgb(${backgroundColour.r}, ${backgroundColour.g}, ${backgroundColour.b})`
+
     return (
         <View
             style={[
                 styles.container,
-                {backgroundColor: `rgb(${backgroundColour.r}, ${backgroundColour.g}, ${backgroundColour.b})` }
+                // {backgroundColor:  }
             ]}
         >
             <AdjustColourButton
                 disabled={aUpperBoundReached}
                 onPress={()=>handlePress('a',1)}
                 style={styles.top}
-                text='R+'
+                colour={selectedRGB}
+                text='R'
             />
             <View
                 style={styles.middle}
@@ -89,33 +92,42 @@ export default function ChangeBackground({ startColour, onSubmit, submitting }: 
                     disabled={bLowerBoundReached}
                     onPress={()=>handlePress('b',-1)}
                     style={styles.left}
-                    text='B+'
+                    text='B'
+                    colour={selectedRGB}
                 />
-                <SubmitButton
-                    text='Submit'
-                    disabled={submitting}
-                    onPress={handleSubmit}
-                    style={{
-                        borderColor: 'black', //TODO: Add background colour here
-                        backgroundColor: 'transparent',
-                        borderWidth: 1,
-                    }}
-                    textStyle={{
-                        color: 'black'
-                    }}
-                />
+                <View style={styles.chipAndSubmit}>
+                    <MunsellChip
+                        color={selectedRGB}
+                    />
+                    <SubmitButton
+                        text='Submit'
+                        disabled={submitting}
+                        onPress={handleSubmit}
+                        style={{
+                            borderColor: selectedRGB,
+                            backgroundColor: 'transparent',
+                            borderWidth: 1,
+                        }}
+                        textStyle={{
+                            color: selectedRGB
+                        }}
+                    />
+                </View>
+
                 <AdjustColourButton
                     disabled={bUpperBoundReached}
                     onPress={()=>handlePress('b',1)}
                     style={styles.right}
-                    text='Y+'
+                    text='Y'
+                    colour={selectedRGB}
                 />
             </View>
             <AdjustColourButton
                 disabled={aLowerBoundReached}
                 onPress={()=>handlePress('a',-1)}
                 style={styles.bottom}
-                text='G+'
+                text='G'
+                colour={selectedRGB}
             />
         </View>
     );
@@ -142,6 +154,10 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center"
+    },
+    chipAndSubmit: {
+        flexDirection: 'column',
+        gap: 10
     },
     left: {
     },
