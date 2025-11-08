@@ -107,6 +107,9 @@ const consentSurvey: SurveyComponent[] = [
         type: 'paragraph',
         title: 'Participant code:',
         text: ['Please fill out to generate your participant code if you are consenting to your data being recorded.'],
+        conditions: [
+            { key: 'consent', value: 'I consent to take part in this study and agree to my data being recorded.' }
+        ],
     },
     {
         key: 'codeBirth',
@@ -422,7 +425,7 @@ export const debriefSurvey: SurveyComponent[] = [
 export const colourAdjuster: ExperimentDefinition = {
     name: 'DSA',
     debug: true,
-    passphrase: 'colourlab',
+    autoroute: true,
     total_days: 0, // TODO: OPTIONAL
     cutoff_hour: 0, // TODO: OPTIONAL
     conditions: { // TODO: OPTIONAL
@@ -455,6 +458,17 @@ export const colourAdjuster: ExperimentDefinition = {
             allow_edit: false, // TODO: OPTIONAL
         },
         {
+            id: 'adjust',
+            type: 'screen',
+            path_to_screen: '/DSA/adjustColour',
+            name: 'Task',
+            prompt: 'Complete task',
+            show_on_days: [], // TODO: OPTIONAL
+            datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
+            show_for_conditions: [], // TODO: OPTIONAL
+            allow_edit: false, // TODO: OPTIONAL
+        },
+        {
             id: 'survey',
             type: 'survey',
             name: 'Survey',
@@ -475,6 +489,17 @@ export const colourAdjuster: ExperimentDefinition = {
             datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
             show_for_conditions: [], // TODO: OPTIONAL
             allow_edit: true, // TODO: OPTIONAL
+        },
+        {
+            id: 'test',
+            type: 'screen',
+            path_to_screen: '/DSA/showTrialData',
+            name: 'Test Responses',
+            prompt: 'Go to testing screen',
+            show_on_days: [], // TODO: OPTIONAL
+            datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
+            show_for_conditions: [], // TODO: OPTIONAL
+            allow_edit: false, // TODO: OPTIONAL
         },
     ]
 }
