@@ -1,30 +1,36 @@
 import { Text, StyleSheet, Pressable, View, ColorValue } from 'react-native';
-import { useState, useRef, useEffect } from "react";
+import {useState, useRef, useEffect, useCallback} from "react";
 
 export default function AdjustColourButton({ style, disabled, onPress, text, textStyle, colour}: {style: object, disabled: boolean, onPress: ()=>void, text?: string, textStyle?: object, colour?: ColorValue}) {
 
     const [pressed, setPressed] = useState(false);
-    const intervalRef = useRef<number | null>(null);
+    const animationFrameRef = useRef<number | null>(null);
+
+    const loop = useCallback(() => {
+        onPress(); // Call your state update
+        // Request the *next* frame
+        animationFrameRef.current = requestAnimationFrame(loop);
+    }, [onPress]);
 
     const endPress = () => {
-        setPressed(false)
-        if (intervalRef.current) {
-            clearInterval(intervalRef.current);
-            intervalRef.current = null;
+        setPressed(false);
+        if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
+            animationFrameRef.current = null;
         }
     };
 
     const startLongPress = () => {
-        if(disabled || intervalRef.current) return; // If disabled or already interval running
-        setPressed(true)
-        intervalRef.current = setInterval(onPress, 10);
+        if(disabled || animationFrameRef.current) return;
+        setPressed(true);
+        // Start the loop
+        animationFrameRef.current = requestAnimationFrame(loop);
     };
 
     useEffect(endPress, [disabled]);
-
-    // Cleanup on unmount just incase
+    // Cleanup on unMount just incase
     useEffect(() => {
-        return () => {
+        return (): void => {
             endPress();
         };
     }, []);
