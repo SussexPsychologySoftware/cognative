@@ -439,9 +439,7 @@ export const colourAdjuster: ExperimentDefinition = {
             name: 'Consent',
             prompt: 'Complete Consent Form',
             questions: consentSurvey,
-            show_on_days: [], // TODO: OPTIONAL
             datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
-            show_for_conditions: [], // TODO: OPTIONAL
         },
         {
             id: 'confirm',
@@ -449,9 +447,7 @@ export const colourAdjuster: ExperimentDefinition = {
             name: 'Confirm Settings Survey',
             prompt: 'Confirm Settings',
             questions: confirmSettingsSurvey,
-            show_on_days: [],
             // TODO: DON'T SEND DATA IF NO CONSENT GRANTED.
-            show_for_conditions: [],
         },
         {
             id: 'adjust',
@@ -459,9 +455,7 @@ export const colourAdjuster: ExperimentDefinition = {
             path_to_screen: '/DSA/adjustColour',
             name: 'Task',
             prompt: 'Complete task',
-            show_on_days: [], // TODO: OPTIONAL
             datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
-            show_for_conditions: [], // TODO: OPTIONAL
         },
         {
             id: 'survey',
@@ -469,9 +463,7 @@ export const colourAdjuster: ExperimentDefinition = {
             name: 'Survey',
             prompt: 'Complete Survey',
             questions: mainSurvey,
-            show_on_days: [], // TODO: OPTIONAL
             datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
-            show_for_conditions: [], // TODO: OPTIONAL
         },
         {
             id: 'debrief',
@@ -479,8 +471,6 @@ export const colourAdjuster: ExperimentDefinition = {
             name: 'Do we remember the colours of familiar devices?',
             prompt: 'Read Debrief',
             questions: debriefSurvey,
-            show_on_days: [], // TODO: OPTIONAL
-            show_for_conditions: [], // TODO: OPTIONAL
         },
         {
             id: 'test',
@@ -488,8 +478,6 @@ export const colourAdjuster: ExperimentDefinition = {
             path_to_screen: '/DSA/showTrialData',
             name: 'Test Responses',
             prompt: 'Go to testing screen',
-            show_on_days: [], // TODO: OPTIONAL
-            show_for_conditions: [], // TODO: OPTIONAL
         },
     ]
 }
