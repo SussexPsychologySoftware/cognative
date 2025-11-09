@@ -150,9 +150,9 @@ export class ExperimentTracker {
     static filterPendingTasks(experimentDay: number, condition: string): TaskDefinition[] {
         return experimentDefinition.tasks.filter(task => {
             // Check day schedule
-            const showOnDay = task.show_on_days.length === 0 || task.show_on_days.includes(experimentDay);
+            const showOnDay = !task.show_on_days || task.show_on_days.length === 0 || task.show_on_days.includes(experimentDay);
             // Check condition schedule
-            const showForCondition = task.show_for_conditions.length === 0 || task.show_for_conditions.includes(condition);
+            const showForCondition = !task.show_for_conditions || task.show_for_conditions.length === 0 || task.show_for_conditions.includes(condition);
             return showOnDay && showForCondition;
         });
     }

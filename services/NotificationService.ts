@@ -69,7 +69,7 @@ export class NotificationService {
         await Notifications.cancelAllScheduledNotificationsAsync();
         const currentDay = ExperimentTracker.calculateDaysPassed(state.startDate);
 
-        // const daysRemainingInExperiment = experimentDefinition.total_days-currentDay
+        const daysRemainingInExperiment = experimentDefinition.total_days-currentDay
         // TODO: concerned this might break if anything is improved in the conditions list?
         let numberOfScheduledNotifications = 0;
         let maxNotifications = Platform.OS === 'ios' ? 64 : 50; // Note some Android APIs allow manufacturers to lower notification limit
@@ -87,13 +87,17 @@ export class NotificationService {
             const completedToday = taskCompletionDate ? ExperimentTracker.happenedToday(taskCompletionDate) : false;
 
             // Get days task will run on
-            const remainingTaskDays = task.show_on_days.filter(day => completedToday ? day > currentDay : day >= currentDay)
+            // TODO: Show on all remaining days if no show_on_days
+            const showOnDays = !task.show_on_days || task.show_on_days.length === 0 ?
+                Array.from({ length: daysRemainingInExperiment - currentDay + 1 }, (_, i) => currentDay + i) :
+                task.show_on_days
+            const remainingTaskDays = showOnDays.filter(day => completedToday ? day > currentDay : day >= currentDay)
             // Get days where condition lines up
             const daysToSchedule = remainingTaskDays.filter(day => {
                 // note updateCondition handles independent measures by not doing anything
                 const conditionOnDay = ExperimentTracker.updateCondition(state,day).currentCondition
                 // If show_for_conditions is empty then show on all conditions
-                return task.show_for_conditions.length === 0 || task.show_for_conditions.includes(conditionOnDay);
+                return !task.show_for_conditions || task.show_for_conditions.length === 0 || task.show_for_conditions.includes(conditionOnDay);
             })
             if(daysToSchedule.length === 0) return; //No days left to schedule
 

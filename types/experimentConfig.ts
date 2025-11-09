@@ -16,8 +16,8 @@ interface TaskDefinitionBasic {
     id: string;
     name: string;
     prompt?: string;
-    show_on_days: number[]; // Empty array means show all days
-    show_for_conditions: string[]; // Empty array means show for all conditions
+    show_on_days?: number[]; // Empty array means show all days
+    show_for_conditions?: string[]; // Empty array means show for all conditions
     datapipe_id?: string;
     allow_edit?: boolean; // TODO: change to allow_once
     params?: Record<string, any>; // other stuff to pass in
