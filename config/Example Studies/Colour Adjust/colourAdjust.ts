@@ -442,7 +442,6 @@ export const colourAdjuster: ExperimentDefinition = {
             show_on_days: [], // TODO: OPTIONAL
             datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
             show_for_conditions: [], // TODO: OPTIONAL
-            allow_edit: false, // TODO: OPTIONAL
         },
         {
             id: 'confirm',
@@ -452,9 +451,7 @@ export const colourAdjuster: ExperimentDefinition = {
             questions: confirmSettingsSurvey,
             show_on_days: [],
             // TODO: DON'T SEND DATA IF NO CONSENT GRANTED.
-            datapipe_id: 'dOS0nQ93xCSV',
             show_for_conditions: [],
-            allow_edit: false,
         },
         {
             id: 'adjust',
@@ -465,7 +462,6 @@ export const colourAdjuster: ExperimentDefinition = {
             show_on_days: [], // TODO: OPTIONAL
             datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
             show_for_conditions: [], // TODO: OPTIONAL
-            allow_edit: false, // TODO: OPTIONAL
         },
         {
             id: 'survey',
@@ -476,7 +472,6 @@ export const colourAdjuster: ExperimentDefinition = {
             show_on_days: [], // TODO: OPTIONAL
             datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
             show_for_conditions: [], // TODO: OPTIONAL
-            allow_edit: false, // TODO: OPTIONAL
         },
         {
             id: 'debrief',
@@ -485,9 +480,7 @@ export const colourAdjuster: ExperimentDefinition = {
             prompt: 'Read Debrief',
             questions: debriefSurvey,
             show_on_days: [], // TODO: OPTIONAL
-            datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
             show_for_conditions: [], // TODO: OPTIONAL
-            allow_edit: true, // TODO: OPTIONAL
         },
         {
             id: 'test',
@@ -496,9 +489,7 @@ export const colourAdjuster: ExperimentDefinition = {
             name: 'Test Responses',
             prompt: 'Go to testing screen',
             show_on_days: [], // TODO: OPTIONAL
-            datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
             show_for_conditions: [], // TODO: OPTIONAL
-            allow_edit: false, // TODO: OPTIONAL
         },
     ]
 }
