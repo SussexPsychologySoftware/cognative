@@ -47,6 +47,9 @@ export default function ShowTrialDataScreen() {
                 if(!consentFilename) return null;
                 const consentData = await DataService.getData(consentFilename)
                 if (consentData === null) return null;
+                // const consentDataFiltered = Object.fromEntries(
+                //     Object.entries(consentData).filter(([_, v]) => v)
+                // )
                 setConsentData(consentData);
                 // Trials
                 const trialsFilename = getTaskFilename('adjust')
@@ -112,7 +115,7 @@ export default function ShowTrialDataScreen() {
                     <Text style={styles.text}>TRIAL DATA</Text>
                     {
                         trialData.map((item, index) => {
-                            console.log(item);
+                            // console.log(item);
                             return(
                                 <DisplayColourButton
                                     key={`trial-${index}`}

@@ -173,7 +173,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
     const getTaskFilename = useCallback((taskId: string, day?: number): string | undefined => {
         // Note this is a 'getter' - I could probably pass taskDef in but just relying on taskId is more portable.
         if (!state || !displayState) {
-            console.warn("Cannot get filename: state is not ready.");
+            console.warn(`Cannot get filename: state is not ready. ${taskId}, ${day?.toString()}`);
             return undefined;
         }
 

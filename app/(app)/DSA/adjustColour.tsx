@@ -43,7 +43,7 @@ export default function AdjustColourScreen() {
         }
 
         const trialsArray = createTrialsArray();
-        console.log(trialsArray);
+        // console.log(trialsArray);
         setTrials(trialsArray)
     }, []);
 

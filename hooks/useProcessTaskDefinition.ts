@@ -9,6 +9,7 @@ import {DataService} from "@/services/data/DataService";
  * dynamic properties, like 'overwrite_parameter_from_storage'.
  */
 export function useProcessTaskDefinition(taskId?: string) {
+    // TODO: why not just pass the task def in here?
     const { definition, getTaskFilename } = useExperiment();
 
     // Find the original, unprocessed task definition
@@ -44,7 +45,7 @@ export function useProcessTaskDefinition(taskId?: string) {
                     if ('overwrite_parameter_from_storage' in question && question.overwrite_parameter_from_storage) {
                         for (const params of question.overwrite_parameter_from_storage) {
                             try {
-                                const storageFilename = getTaskFilename(params.task_id, params.day);
+                                const storageFilename = getTaskFilename(params.task_id, params.day); //TODO: TRIES TO RUN THIS
                                 if (!storageFilename) {
                                     console.warn(`Could not construct filename for storage_taskId: ${params.task_id}`);
                                     continue; // Skip this one
