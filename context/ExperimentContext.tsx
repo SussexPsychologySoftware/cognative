@@ -88,7 +88,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         onRefresh: loadExperimentState, // Pass the function directly
         refreshOnMount: true,
         refreshOnFocus: false, // TODO: should these be true?
-        refreshOnAppActive: false,
+        refreshOnAppActive: true,
         scheduledRefreshHour: definition.cutoff_hour || 0,
     });
 
