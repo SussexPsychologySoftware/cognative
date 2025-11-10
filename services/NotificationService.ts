@@ -69,7 +69,7 @@ export class NotificationService {
         await Notifications.cancelAllScheduledNotificationsAsync();
         const currentDay = ExperimentTracker.calculateDaysPassed(state.startDate);
 
-        const daysRemainingInExperiment = experimentDefinition.total_days-currentDay
+        const daysRemainingInExperiment = (experimentDefinition.total_days??0)-currentDay
         // TODO: concerned this might break if anything is improved in the conditions list?
         let numberOfScheduledNotifications = 0;
         let maxNotifications = Platform.OS === 'ios' ? 64 : 50; // Note some Android APIs allow manufacturers to lower notification limit

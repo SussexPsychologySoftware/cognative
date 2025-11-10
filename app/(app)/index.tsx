@@ -48,7 +48,7 @@ export default function Index() {
         >
             <Text style={globalStyles.pageTitle}>{definition.total_days ? "Today's activities" : 'Please complete the following tasks:'}</Text>
             {
-                definition.total_days>0 &&
+                definition.total_days &&
                 <Text style={[globalStyles.standardText, {alignSelf: 'center'}]}>
                     {
                         displayState.experimentDay+1 === definition.total_days+1 ?
@@ -61,7 +61,7 @@ export default function Index() {
             {
                 displayState.allTasksCompleteToday &&
                 <Text style={[globalStyles.standardText, styles.allTasksCompleteToday]}>
-                    ✓ All activities completed {definition.total_days>0 && 'for today'}
+                    ✓ All activities completed {definition.total_days && 'for today'}
                 </Text>
             }
 
