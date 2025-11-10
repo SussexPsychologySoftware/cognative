@@ -4,7 +4,7 @@ import {StandardView} from "@/components/layout/StandardView";
 import {globalStyles} from "@/styles/appStyles";
 import {useSurvey} from "@/hooks/useSurvey";
 import Survey from "@/components/survey/Survey";
-import {RelativePathString, router, useLocalSearchParams} from 'expo-router';
+import {useLocalSearchParams} from 'expo-router';
 import {useExperiment} from "@/context/ExperimentContext";
 import {SurveyTaskDefinition} from "@/types/experimentConfig";
 import {useCallback, useEffect} from "react";
@@ -34,7 +34,8 @@ export default function SurveyScreen() {
         : undefined;
 
     // SUBMISSION -------
-    const surveyFilename = getTaskFilename(taskId);
+    // TODO: not include state && here as a hacky fix so if participant is reset we don't try get task filename for null state
+    const surveyFilename = taskId ? getTaskFilename(taskId) : undefined;
     const onSubmit = useCallback(async (responses: object) => {
         if (taskDefinition) {
             await submitTaskData(taskDefinition, responses);
