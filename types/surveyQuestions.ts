@@ -16,7 +16,8 @@ export type SurveyInputType =
     'slider' |
     'select' |
     'likertSingle' |
-    'audio';
+    'audio' |
+    'video';
 
 export interface DisplayCondition {
     key: string
@@ -107,13 +108,18 @@ export interface LikertSingleQuestion extends SurveyInputBase {
     default?: string;
 }
 
-export interface AudioQuestion extends SurveyInputBase {
-    type: 'audio';
+export interface MediaQuestion extends SurveyInputBase {
+    type: 'audio' | 'video';
     file: number;
     resetOnPause?: boolean;
     volume?: number;
     volumeControls?: boolean;
-    default?: boolean
+    default?: boolean;
+    timeControls?: boolean; //'Scrubber'
+}
+
+export interface AudioQuestion extends MediaQuestion {
+    type: 'audio';
 }
 
 // -*#*- SURVEY DISPLAY ONLY -*#*-
