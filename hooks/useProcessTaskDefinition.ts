@@ -3,6 +3,7 @@ import {useExperiment} from "@/context/ExperimentContext";
 import {SurveyTaskDefinition, TaskDefinition} from "@/types/experimentConfig";
 import {SurveyComponent} from '@/types/surveyQuestions'
 import {DataService} from "@/services/data/DataService";
+import {getNestedValue, hasNestedKey} from "@/utils/dotNotation";
 
 /**
  * This hook fetches the raw task definition and processes any
@@ -51,9 +52,8 @@ export function useProcessTaskDefinition(taskId?: string) {
                                     continue; // Skip this one
                                 }
                                 const storedData = await DataService.getData(storageFilename);
-
-                                if (storedData && typeof storedData === 'object' && params.response_key in storedData) {
-                                    (question as any)[params.parameter] = storedData[params.response_key];
+                                if (storedData && typeof storedData === 'object' && hasNestedKey(storedData, params.response_key)) {
+                                    (question as any)[params.parameter] = getNestedValue(storedData, params.response_key)
                                 } else {
                                     console.warn(`DataService: Could not find ${params.response_key} in ${storedData} for ${question.key}, params: ${params}`);
                                 }
