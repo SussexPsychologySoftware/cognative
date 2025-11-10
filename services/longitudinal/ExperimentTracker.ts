@@ -4,6 +4,7 @@ import {DataService} from "@/services/data/DataService";
 import {experimentDefinition} from "@/config/experimentDefinition";
 import {TaskDefinition} from "@/types/experimentConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import {ConditionAssignment} from "@/services/ConditionAssignment";
 
 // ============ State Management ============
 // EXPERIMENT TRACKER - this saves and calculates states for display
@@ -15,7 +16,11 @@ export class ExperimentTracker {
 
     // ============ START EXPERIMENT ============
 
-    private static createInitialState(participantId: string, firstCondition: string, repeatedMeasuresConditionOrder?: string[]): ExperimentState {
+    private static createInitialState(
+        participantId: string,
+        assignedCondition?: string | string[]
+    ): ExperimentState {
+
         const emptyTaskStates = Object.fromEntries(
             experimentDefinition.tasks.map((task, index)=> {
                 return [task.id, null];
@@ -26,31 +31,37 @@ export class ExperimentTracker {
             experimentDefinition.tasks
                 .filter(task => task.notification)
                 .map((task, index)=> {
-                return [task.id, task.notification?.default_time ?? null];
-            })
+                    return [task.id, task.notification?.default_time ?? null];
+                })
         );
 
         const baseState = {
             startDate: new Date().toISOString(),
             participantId,
             tasksLastCompletionDate: emptyTaskStates,
-            notificationTimes: emptyNotificationTimes, // Note an empty object works fine here too actually.
+            notificationTimes: emptyNotificationTimes,
         };
 
-        if (repeatedMeasuresConditionOrder) {
-            return {
-                ...baseState,
-                conditionType: 'repeated',
-                repeatedMeasuresConditionOrder: repeatedMeasuresConditionOrder
-            };
-
+        if(experimentDefinition.conditions && assignedCondition !== undefined) {
+            if (Array.isArray(assignedCondition)) {
+                // It's a repeated measures experiment TODO: this sort of makes conditionType redundant then?
+                return {
+                    ...baseState,
+                    conditionType: 'repeated',
+                    repeatedMeasuresConditionOrder: assignedCondition
+                };
+            } else {
+                // It's an independent measures experiment
+                return {
+                    ...baseState,
+                    conditionType: 'independent',
+                    assignedCondition: assignedCondition
+                };
+            }
         } else {
-            return {
-                ...baseState,
-                conditionType: 'independent',
-                assignedCondition: firstCondition // Use 'firstCondition' as the one and only condition
-            };
+            return baseState
         }
+
     }
 
     static generateRandomID(length: number)  {
@@ -62,23 +73,48 @@ export class ExperimentTracker {
         return id
     }
 
-    static async startExperiment(firstCondition: string, repeatedMeasuresConditionOrder?: string[], participantId?: string): Promise<ExperimentState> {
-        if(!participantId) participantId = this.generateRandomID(16)
-        const initialState = this.createInitialState(participantId, firstCondition, repeatedMeasuresConditionOrder)
-        await this.saveState(initialState);
+    static async startExperiment(
+        participantId?: string,
+        overrideCondition?: string | string[]
+    ): Promise<ExperimentState> {
 
-        // Save participant info //TODO: maybe need to move this - bit messy
-        const participantInfo: Record<string,any> = {
-            participantId: participantId,
-            startDate: initialState.startDate,
-        };
-        if(repeatedMeasuresConditionOrder){
-            participantInfo['conditionOrder'] = repeatedMeasuresConditionOrder
-        } else {
-            participantInfo['condition'] = firstCondition
+        if(!participantId) {
+            participantId = this.generateRandomID(16);
         }
-        await DataService.saveData(participantInfo,'participantInfo',experimentDefinition.participant_info_datapipe_id, participantId)
-        return initialState
+
+        let assignedCondition: string | string[] | undefined = undefined;
+        if (overrideCondition) {
+            // An override was passed in (e.g., for testing or a specific link)
+            assignedCondition = overrideCondition;
+        } else if(experimentDefinition.conditions){
+            // No override, so fetch the condition using the definition
+            const condDef = experimentDefinition.conditions;
+            assignedCondition = await ConditionAssignment.getCondition(
+                condDef.conditions,
+                condDef.repeatedMeasures,
+                condDef.datapipe_id
+            );
+        }
+
+        // Now call the simplified createInitialState
+        const initialState = this.createInitialState(participantId, assignedCondition);
+
+        await this.saveState(initialState)
+        void this.sendParticipantInfo(participantId,initialState.startDate, assignedCondition);
+        return initialState;
+    }
+
+    static async sendParticipantInfo(participantId: string, startDate: string, condition?: string | string[]) {
+        const participantInfo: Record<string,any> = {
+            startDate,
+            condition
+        };
+        await DataService.saveData(
+            participantInfo,
+            'participantInfo',
+            experimentDefinition.participant_info_datapipe_id,
+            participantId
+        );
     }
 
     // ============ STOP EXPERIMENT ============
@@ -147,12 +183,12 @@ export class ExperimentTracker {
         return experimentDefinition.tasks.find(t => t.id === taskId);
     }
 
-    static filterPendingTasks(experimentDay: number, condition: string): TaskDefinition[] {
+    static filterPendingTasks(experimentDay: number, condition?: string): TaskDefinition[] {
         return experimentDefinition.tasks.filter(task => {
             // Check day schedule
             const showOnDay = !task.show_on_days || task.show_on_days.length === 0 || task.show_on_days.includes(experimentDay);
             // Check condition schedule
-            const showForCondition = !task.show_for_conditions || task.show_for_conditions.length === 0 || task.show_for_conditions.includes(condition);
+            const showForCondition = !condition || !task.show_for_conditions || task.show_for_conditions.length === 0 || task.show_for_conditions.includes(condition);
             return showOnDay && showForCondition;
         });
     }
@@ -183,6 +219,8 @@ export class ExperimentTracker {
     }
 
      static updateCondition(state: ExperimentState, experimentDay: number) {
+        // TODO handling of no condition a bit messy...
+        if(!('conditionType' in state) || !experimentDefinition.conditions) return {currentCondition: undefined, currentConditionIndex: undefined}; // has no conditions
         let currentCondition: string;
         let currentConditionIndex: number = 0;
         const { conditions } = experimentDefinition;
@@ -273,7 +311,7 @@ export class ExperimentTracker {
 
         // Adjust both dates to previous day if before cutoff hour, then normalize to midnight
         [now, parsed].forEach(date => {
-            if (date.getHours() < experimentDefinition.cutoff_hour) {
+            if (date.getHours() < (experimentDefinition.cutoff_hour||0)) {
                 date.setDate(date.getDate() - 1);
             }
             date.setHours(0, 0, 0, 0);
