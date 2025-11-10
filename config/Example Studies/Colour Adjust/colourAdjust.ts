@@ -433,7 +433,7 @@ export const colourAdjuster: ExperimentDefinition = {
             name: 'Consent',
             prompt: 'Complete Consent Form',
             questions: consentSurvey,
-            datapipe_id: 'dOS0nQ93xCSV'
+            datapipe_id: 'q2ecSpabQ6nH'
         },
         {
             id: 'confirm',
@@ -449,7 +449,7 @@ export const colourAdjuster: ExperimentDefinition = {
             path_to_screen: '/DSA/adjustColour',
             name: 'Task',
             prompt: 'Complete task',
-            datapipe_id: 'dOS0nQ93xCSV',
+            datapipe_id: '4s7WE6aDDG5Y',
         },
         {
             id: 'survey',
@@ -457,7 +457,7 @@ export const colourAdjuster: ExperimentDefinition = {
             name: 'Survey',
             prompt: 'Complete Survey',
             questions: mainSurvey,
-            datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
+            datapipe_id: '4s7WE6aDDG5Y',
         },
         {
             id: 'debrief',
