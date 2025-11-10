@@ -27,8 +27,6 @@ interface AudioProps {
     volume?: number,
     style?: object,
     disabled?: boolean,
-    time?: number,
-    onTimeChange?: (time:number) => void,
     getDuration?: (duration:number) => number
 }
 
@@ -41,8 +39,6 @@ export default function Audio({
                                   volume,
                                   style,
                                   disabled,
-                                  time,
-                                  onTimeChange,
                                   getDuration }: AudioProps) {
     // Note: audioSource is not loaded inside the component as this needs to be known at runtime, dynamic requires not allowed in RN
     // Volume works well with a slider if required dynamic setting
@@ -93,12 +89,6 @@ export default function Audio({
             onFinishedRef.current();
         }
     }, [didJustFinish]);
-
-    useEffect(() => {
-        if (onTimeChange && currentTime !== time) {
-            onTimeChange(currentTime);
-        }
-    }, [currentTime, onTimeChange, time]);
 
     useEffect(() => {
         if(getDuration){

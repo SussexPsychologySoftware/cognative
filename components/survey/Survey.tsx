@@ -26,7 +26,6 @@ interface SurveyProps {
     isSubmitting?: boolean;
     progress?: number;
     invalidQuestions?: Set<string>;
-    volume?: number;
 }
 
 export default function Survey({
@@ -38,7 +37,6 @@ export default function Survey({
                                    isSubmitting,
                                    progress,
                                    invalidQuestions,
-                                   volume
                                }: SurveyProps) {
     return (
         <View style={styles.container}>
@@ -168,26 +166,23 @@ export default function Survey({
                         />
                         break;
                     case 'audio':
-                        const isFinished = responses[key] === 'finished';
-                        const isPlaying = responses[key] === true;
                         component = <AudioPlayer
                                 audioSource={question.file}
-                                disabled={isFinished}
-                                isPlaying={isPlaying}
+                                resetOnPause={question.resetOnPause}
+                                disabled={responses[key].finished}
+                                isPlaying={responses[key].currentlyPlaying}
                                 onPress={() => {
-                                    if (isFinished) return;
-                                    updateResponses(key, !isPlaying);
+                                    if (responses[key].finished) return;
+                                    updateResponses(key, !responses[key].currentlyPlaying, 'currentlyPlaying');
                                 }}
                                 onFinished={() => {
                                     if (responses[key] !== 'finished') {
-                                        updateResponses(key, 'finished');
+                                        updateResponses(key, 'finished', 'currentlyPlaying');
                                     }
                                 }}
-                                resetOnPause={question.resetOnPause}
-                                volume={question.volumeControls ? responses[key+'.volume'] :
-                                    question.volume ?? volume ?? 1}
+                                volume={responses[key].volume}
                                 onVolumeChange={question.volumeControls ?
-                                    (newVolume) => updateResponses(key+'.volume', newVolume) :
+                                    (newVolume) => updateResponses(key, newVolume,'volume') :
                                     undefined
                                 }
                             />

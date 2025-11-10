@@ -12,6 +12,7 @@ interface Props {
     onFinished?: () => void;
     disabled?: boolean;
     resetOnPause?: boolean;
+    onTimeChange?: (newTime: number) => void,
 }
 export default function AudioPlayer({audioSource, onPress, isPlaying, volume=1, onVolumeChange, onFinished, disabled, resetOnPause } : Props) {
     return (

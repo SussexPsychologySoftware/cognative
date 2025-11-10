@@ -1,10 +1,16 @@
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {Alert} from "react-native";
-import {SurveyDataType, SurveyComponent, SurveyQuestion, displayOnlyTypes} from '@/types/surveyQuestions'
+import {displayOnlyTypes, SurveyComponent, SurveyDataType, SurveyQuestion} from '@/types/surveyQuestions'
 import {DataService} from "@/services/data/DataService";
 
 // useSurvey is a form manager which turns questions into responses, checks them, and triggers a save
 
+interface MediaData {
+    currentlyPlaying: boolean,
+    time: number, //seconds
+    volume : number,
+    finished: boolean
+}
 // Initialize responses from survey definition
 // Type Predicate (guard) for survey inputs
 function isSurveyInput(question: SurveyComponent): question is SurveyQuestion {
@@ -25,15 +31,15 @@ function initializeResponses(questions: SurveyComponent[]): Record<string, any> 
             question.statements?.forEach((statement, index) => {
                 responses[key][statement] = question.default ?? null;
             });
+        } else if (question.type === 'audio') {
+            responses[key] = {
+                currentlyPlaying: question.default ?? false,
+                // time: 0, //seconds - TODO: consider adding this?
+                volume: question.volume ?? 1,
+                finished: false
+            }
         } else {
             responses[key] = question.default ?? null;
-        }
-
-        // Separately add volume
-        if (question.type === 'audio' && question.volumeControls) {
-            // TODO: this is a little messy...maybe use a standard return of:
-            //  {runtime: '00.00.00', currentlyPlaying: true, finished: false, volume: 0.5}
-            responses[key + '.volume'] = question.volume ?? .5; // Default to provided volume or half way
         }
     }
 
@@ -92,13 +98,10 @@ export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (
                             if (question.type === 'audio') {
                                 const key = question.key || question.question;
                                 // Reset to default if restored state is 'true' (playing),
-                                if (processedData[key] === true) {
-                                    processedData[key] = question.default ?? false;
-                                }
-                                // TODO: fix sloppy handling of the volume parameter here and throughout...
-                                if(question.volumeControls){
-                                    processedData[key+'.volume'] = restoredData[key+'.volume'] ?? question.volume ?? .5;
-                                }
+                                processedData[key] = {
+                                    ...restoredData,
+                                    currentlyPlaying: question.default ?? false,
+                                };
                             }
                         }
 
