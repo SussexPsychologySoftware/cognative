@@ -90,7 +90,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         refreshOnMount: true,
         refreshOnFocus: false,
         refreshOnAppActive: true,
-        scheduledRefreshHour: definition.cutoff_hour,
+        scheduledRefreshHour: definition.cutoff_hour || 0,
     });
 
     useEffect(() => {
@@ -114,35 +114,21 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         }
     }, [displayState, loading]);
 
-    const startExperiment = useCallback(async (participantId?: string, condition?: string) => {
+    const startExperiment = useCallback(async (participantId?: string, overrideCondition?: string) => {
         setIsActionLoading(true);
         setActionError(null);
         try {
-            let newCondition: string|string[];
-            if(!condition) {
-                const conditionDef = definition.conditions
-                newCondition = await ConditionAssignment.getCondition(conditionDef.conditions,conditionDef.repeatedMeasures,conditionDef.datapipe_id)
-            } else {
-                newCondition = condition
-            }
-            let newState: ExperimentState;
-            if (Array.isArray(newCondition)) {
-                // It's a repeated measures experiment
-                newState = await ExperimentTracker.startExperiment(newCondition[0],newCondition,participantId);
-            } else {
-                // It's an independent measures experiment
-                newState = await ExperimentTracker.startExperiment(newCondition, undefined,participantId);
-            }
-            const newDisplayState = ExperimentTracker.calculateDisplayState(newState);
-            setState(newState);
-            setDisplayState(newDisplayState);
+            const initialState = await ExperimentTracker.startExperiment(participantId, overrideCondition);
+            const initialDisplayState = ExperimentTracker.calculateDisplayState(initialState);
+            setState(initialState);
+            setDisplayState(initialDisplayState);
         } catch (e: any) {
             console.error("Failed to start experiment:", e);
             setActionError(e.message || "Failed to start experiment");
         } finally {
             setIsActionLoading(false);
         }
-    }, [definition]);
+    }, []);
 
     const updateNotificationTimes = useCallback(async (times: NullableStringRecord) => {
         setIsActionLoading(true);

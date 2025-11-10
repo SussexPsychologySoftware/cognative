@@ -14,7 +14,7 @@ interface BaseExperimentState extends ParticipantInformation {
     notificationTimes: NullableStringRecord;
 }
 
-// Note
+// Change here to allow for no condition
 interface IndependentMeasuresState extends BaseExperimentState {
     conditionType: 'independent';
     assignedCondition: string;
@@ -25,7 +25,7 @@ interface RepeatedMeasuresState extends BaseExperimentState {
     repeatedMeasuresConditionOrder: string[];
 }
 
-export type ExperimentState = IndependentMeasuresState | RepeatedMeasuresState;
+export type ExperimentState = IndependentMeasuresState | RepeatedMeasuresState | BaseExperimentState;
 
 // FOR DISPLAY STATE **************
 export interface TaskDisplayStatus {
@@ -42,8 +42,8 @@ export interface scheduledNotification {
 export interface ExperimentDisplayState {
     participantId: string;
     experimentDay: number; // Day 0, 1, 2, etc.
-    currentCondition: string;
-    currentConditionIndex: number;
+    currentCondition?: string;
+    currentConditionIndex?: number;
     isExperimentComplete: boolean;
     allTasksCompleteToday: boolean;
     tasks: TaskDisplayStatus[];
