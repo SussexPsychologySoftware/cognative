@@ -99,7 +99,7 @@ export function useSurvey(questions: SurveyComponent[] | undefined, onSubmit?: (
                                 const key = question.key || question.question;
                                 // Reset to default if restored state is 'true' (playing),
                                 processedData[key] = {
-                                    ...restoredData,
+                                    ...restoredData[key],
                                     currentlyPlaying: question.default ?? false,
                                 };
                             }
