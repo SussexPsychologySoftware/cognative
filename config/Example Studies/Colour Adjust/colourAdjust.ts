@@ -426,12 +426,6 @@ export const colourAdjuster: ExperimentDefinition = {
     name: 'DSA',
     debug: true,
     autoroute: true,
-    total_days: 0, // TODO: OPTIONAL
-    cutoff_hour: 0, // TODO: OPTIONAL
-    conditions: { // TODO: OPTIONAL
-        conditions: [],
-        repeatedMeasures: false,
-    },
     tasks: [
         {
             id: 'consent',
@@ -439,7 +433,7 @@ export const colourAdjuster: ExperimentDefinition = {
             name: 'Consent',
             prompt: 'Complete Consent Form',
             questions: consentSurvey,
-            datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
+            datapipe_id: 'dOS0nQ93xCSV'
         },
         {
             id: 'confirm',
@@ -455,7 +449,7 @@ export const colourAdjuster: ExperimentDefinition = {
             path_to_screen: '/DSA/adjustColour',
             name: 'Task',
             prompt: 'Complete task',
-            datapipe_id: 'dOS0nQ93xCSV', // TODO: OPTIONAL
+            datapipe_id: 'dOS0nQ93xCSV',
         },
         {
             id: 'survey',
