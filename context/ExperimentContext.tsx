@@ -302,9 +302,12 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         setIsActionLoading(true);
         setActionError(null);
         try {
-            await ExperimentTracker.stopExperiment();
+            // NOTE: creates a minor race condition - if state is null and a screen calls e.g. getFilename then returns warning
+            // Could try implement isResettingParticipant state here to handle, but atm not an issue.
+            // Can also just check for null state in any page
             setState(null);
             setDisplayState(null);
+            await ExperimentTracker.stopExperiment();
         } catch (e: any) {
             console.error("Failed to stop experiment:", e);
             setActionError(e.message || "Failed to stop experiment");
