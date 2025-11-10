@@ -75,7 +75,7 @@ export interface ExperimentDefinition {
     debug?: boolean;
     passphrase?: string;
     total_days?: number; // Total length of experiment
-    cutoff_hour: number; // Hour (0-23) when "day" switches (e.g., 4 = 4am)
+    cutoff_hour?: number; // Hour (0-23) when "day" switches (e.g., 4 = 4am)
     participant_info_datapipe_id?: string;
     autoroute?: boolean;
     conditions?: ConditionDefinition;

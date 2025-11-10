@@ -261,7 +261,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             if (allow_edit) {
                 const sendTime = new Date();
                 // Set time to the cutoff hour today
-                sendTime.setHours(definition.cutoff_hour, 0, 0, 0);
+                sendTime.setHours(definition.cutoff_hour||0, 0, 0, 0);
                 if (new Date() >= sendTime) { // if past today's cutoff, schedule for tomorrow
                     sendTime.setDate(sendTime.getDate() + 1);
                 }
