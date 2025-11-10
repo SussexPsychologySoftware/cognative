@@ -169,7 +169,7 @@ export class ExperimentTracker {
             // Task is allowed if all previous required tasks are done
             displayStatuses.push({
                 definition: taskDef, // Just pass the whole definition
-                isAllowed: (allPreviousRequiredTasksComplete && !taskCompleted) || (taskCompleted && taskDef.allow_edit),
+                isAllowed: (allPreviousRequiredTasksComplete && !taskCompleted) || (taskCompleted && taskDef.allow_edit===true),
                 completed: taskCompleted,
             });
 
@@ -225,23 +225,26 @@ export class ExperimentTracker {
         const taskDisplayStatuses = this.calculateTaskDisplayStatuses(visibleTasks, state.tasksLastCompletionDate);
 
         const allTasksCompleteToday = taskDisplayStatuses.every(t => t.completed)
+        const anyTasksEditable = visibleTasks.some(t => t.allow_edit);
         return {
             participantId: state.participantId??'NO_ID',
             experimentDay,
             currentCondition,
             currentConditionIndex,
-            isExperimentComplete: this.hasExperimentEnded(state, allTasksCompleteToday),
+            isExperimentComplete: this.hasExperimentEnded(state, allTasksCompleteToday && anyTasksEditable),
             allTasksCompleteToday,
             tasks: taskDisplayStatuses
         };
     }
 
-    static hasExperimentEnded(state: ExperimentState, allTasksCompleteToday: boolean): boolean {
+    static hasExperimentEnded(state: ExperimentState, noRemainingTasks: boolean): boolean {
         const today = this.calculateDaysPassed(state.startDate);
-        const lastDay = experimentDefinition.total_days
-        return (today>lastDay) || (allTasksCompleteToday && today===lastDay)
+        const totalDays = experimentDefinition.total_days
+        // Note: if they didn't include a total_days then study doesn't end on it's basis ever
+        const noDaysFinished = totalDays===undefined && noRemainingTasks
+        const longitudinalFinished = totalDays!==undefined && ((today>totalDays) || (noRemainingTasks && today===totalDays))
+        return longitudinalFinished || noDaysFinished
     }
-
 
     // ============ Task Completion Recording ============
     static async setTaskCompleted(taskId: string): Promise<ExperimentState> {
