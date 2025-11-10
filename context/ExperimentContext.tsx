@@ -7,7 +7,6 @@ import { DataService } from '@/services/data/DataService';
 import {router} from "expo-router";
 import {Alert} from "react-native";
 import { useAutoRefresh } from '@/hooks/useAutoRefresh'
-import {ConditionAssignment} from "@/services/ConditionAssignment";
 import {NotificationService} from "@/services/NotificationService";
 import {RoutingService} from "@/services/RoutingService";
 
@@ -88,8 +87,8 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
     const { refreshing, refresh, loading } = useAutoRefresh({
         onRefresh: loadExperimentState, // Pass the function directly
         refreshOnMount: true,
-        refreshOnFocus: false,
-        refreshOnAppActive: true,
+        refreshOnFocus: false, // TODO: should these be true?
+        refreshOnAppActive: false,
         scheduledRefreshHour: definition.cutoff_hour || 0,
     });
 
