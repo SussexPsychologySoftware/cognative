@@ -64,7 +64,8 @@ export default function SurveyExample() {
             key: 'age',
             question: 'What is your age?',
             required: true,
-            type: "number",
+            type: "text",
+            inputType: 'numeric',
         },
         {
             key: 'gender',
@@ -99,7 +100,8 @@ export default function SurveyExample() {
         {
             key: 'multilineTextInput',
             question: "Tell us about yourself",
-            type: 'multiline',
+            type: "text",
+            multiline: true,
             placeholder: "Say as much as you like...",
         },
         {

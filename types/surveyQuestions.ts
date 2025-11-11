@@ -1,13 +1,12 @@
 import {NullableStringRecord} from "@/types/trackExperimentState";
+import {KeyboardTypeOptions} from "react-native";
 
 // -*#*-*#*- SURVEY COMPONENTS -*#*-*#*-
 export type SurveyDisplayType = 'paragraph' | 'picture' | 'video'
 export const displayOnlyTypes = ['paragraph', 'picture', 'video'];
 
 export type SurveyInputType =
-    'number' |
     'text' |
-    'multiline' |
     'time' |
     'lengthOfTime' |
     'radio' |
@@ -49,10 +48,12 @@ export interface SurveyInputBase extends SurveyComponentBase {
 }
 
 export interface TextQuestion extends SurveyInputBase {
-    type: 'number' | 'text' | 'multiline';
+    type: 'text'
     placeholder?: string;
     maxLength?: number;
     default?: string;
+    inputType?: KeyboardTypeOptions;
+    multiline?: boolean;
 }
 
 export interface TimeQuestion extends SurveyInputBase {

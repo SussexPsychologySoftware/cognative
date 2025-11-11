@@ -143,7 +143,8 @@ const consentSurvey: SurveyComponent[] = [
     },
     {
         key: 'codePhone',
-        type: 'number',
+        type: "text",
+        inputType: 'numeric',
         question: '4. Please enter the final digit of your mobile phone number:',
         required: true,
         conditions: [
@@ -153,7 +154,8 @@ const consentSurvey: SurveyComponent[] = [
     },
     {
         key: 'email',
-        type: 'text',
+        type: "text",
+        inputType: 'email-address',
         question: "This study may have additional runs, and you may be invited back for further testing sessions. If you're interested in continuing your participation, please include your email address so you can be contacted for further tests (optional):",
         required: false,
     },
@@ -283,19 +285,22 @@ const mainSurvey: SurveyComponent[] = [
     },
     {
         key: 'months',
-        type: 'number',
+        type: "text",
+        inputType: 'numeric',
         question: 'How long have you had this phone for? (months)',
         required: true,
     },
     {
         key: 'hours',
-        type: 'number',
+        type: "text",
+        inputType: 'numeric',
         question: 'Approximately how many hours per day do you spend using this phone?',
         required: true,
     },
     {
         key: 'filters',
-        type: 'multiline', // Assuming this is for a longer text answer
+        type: "text",
+        multiline: true,
         question: "Please describe any other filter apps, adjustments or display settings that you use on your device (if there are none, or you just used default settings please state 'none')",
         required: true,
     },
@@ -340,7 +345,8 @@ const mainSurvey: SurveyComponent[] = [
     },
     {
         key: 'age',
-        type: 'number',
+        type: "text",
+        inputType: 'numeric',
         question: 'What is your age in years?',
         required: true,
     },
@@ -353,7 +359,7 @@ const mainSurvey: SurveyComponent[] = [
     },
     {
         key: 'genderSelfDescriptionText',
-        type: 'multiline', // Assuming this is for a longer text answer
+        type: 'text',
         question: 'Self describe your gender:',
         conditions: [
             { key: 'gender', value: 'Prefer to self describe' },
@@ -425,7 +431,7 @@ export const debriefSurvey: SurveyComponent[] = [
 export const colourAdjuster: ExperimentDefinition = {
     name: 'DSA',
     debug: true,
-    autoroute: true,
+    autoroute: false,
     tasks: [
         {
             id: 'consent',

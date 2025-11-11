@@ -1,9 +1,7 @@
-import {StyleSheet, View, Text, TextInput} from 'react-native';
+import {StyleSheet, View, Text} from 'react-native';
 import {globalStyles, colours} from "@/styles/appStyles";
-import NumericInput from "@/components/inputs/NumericInput";
 import React from "react";
 import {displayOnlyTypes, SurveyComponent, SurveyQuestion} from '@/types/surveyQuestions';
-import MultilineTextInput from "@/components/inputs/MultilineTextInput";
 import RadioList from "@/components/inputs/RadioList";
 import TimePicker from "@/components/inputs/TimePicker";
 import LikertGrid from "@/components/survey/LikertGrid";
@@ -16,6 +14,7 @@ import TimeInput from "@/components/inputs/TimeInput";
 import Paragraph from "@/components/display/Paragraph";
 import AudioPlayer from "@/components/media/AudioPlayer";
 import Picture from "@/components/media/Picture";
+import Textbox from "@/components/inputs/Textbox";
 
 interface SurveyProps {
     questions: SurveyComponent[];
@@ -61,30 +60,14 @@ export default function Survey({
                 // Get input type
                 switch (question.type) {
                     case "text":
-                        component = <TextInput
-                            value={responses[key]}
-                            placeholder={question.placeholder}
-                            placeholderTextColor={'grey'}
-                            style={globalStyles.input}
-                            onChangeText={newValue => updateResponses(key, newValue)}
-                            maxLength={question.maxLength}
-                        />
-                        break;
-                    case 'number':
-                        component = <NumericInput
+                        component = <Textbox
                             value={responses[key]}
                             placeholder={question.placeholder}
                             onChange={newValue => updateResponses(key, newValue)}
                             maxLength={question.maxLength}
-                        />;
-                        break;
-                    case 'multiline':
-                        component = <MultilineTextInput
-                            value={responses[key]}
-                            placeholder={question.placeholder}
-                            onChange={(newValue: string) => updateResponses(key, newValue)}
-                            maxLength={question.maxLength}
-                        />;
+                            type={question.inputType}
+                            multiline={question.multiline}
+                        />
                         break;
                     case 'radio':
                         component = <RadioList

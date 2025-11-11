@@ -1,26 +1,59 @@
-import {InputAccessoryView, Keyboard, Platform, Pressable, TextInput, View, Text} from "react-native";
+import {
+    InputAccessoryView,
+    Keyboard,
+    Platform,
+    Pressable,
+    TextInput,
+    View,
+    Text,
+    KeyboardTypeOptions
+} from "react-native";
 import {globalStyles} from "@/styles/appStyles";
+import {useState} from "react";
 
-export default function MultilineTextInput({ value, placeholder, onChange, maxLength }: { value: string, placeholder?: string, onChange: (number: string) => void, maxLength?: number}){
+export default function Textbox({ value, placeholder, onChange, maxLength, multiline, type, style }: {
+    value: string,
+    placeholder?: string,
+    onChange: (text: string) => void,
+    maxLength?: number
+    multiline?: boolean
+    type?: KeyboardTypeOptions;
+    style?: object;
+}){
     // controlled component, no internal state
-    const inputAccessoryViewID = 'uniqueID'; // required for adding the done button back in
+    const [inputAccessoryViewID] = useState(() => `multiline-input-accessory-${Math.random()}`);
+
+    function extractNumbers(response: string){
+        // Remove non-numeric characters
+        const onlyNumbers = response.replace(/[^0-9]/g, '');
+        // Allow empty string for clearing the input
+        if (!onlyNumbers) {
+            return ''
+        }
+        // Convert to number and back to remove leading zeros - prevents "00" but allows "0"
+        return String(parseInt(onlyNumbers, 10) || 0);
+    }
 
     function handleInput(response: string) {
+        if(type === 'numeric') {
+            response = extractNumbers(response);
+        }
         onChange(response);
     }
 
     return (
         <>
             <TextInput
-                multiline
+                multiline={multiline}
+                keyboardType={type} // Could just restrict to numeric?
                 value={value}
                 placeholder={placeholder}
                 placeholderTextColor={'grey'}
-                style={globalStyles.input}
+                style={[globalStyles.input, style]}
                 onChangeText={text => handleInput(text)}
-                // returnKeyType='done' // This changes the 'enter' key, and no done button present by default
                 inputAccessoryViewID={inputAccessoryViewID}
                 maxLength={maxLength}
+                returnKeyType={multiline ? undefined : 'done'} // Note: a little broken on ios so handle manually for now
             />
             { // Include custom done button in top bar on iOS
                 Platform.OS === 'ios' &&

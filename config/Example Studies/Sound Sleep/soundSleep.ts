@@ -42,7 +42,8 @@ const ethnicitiesList = {
 const demographics: SurveyComponent[] = [
     {
         key: 'age',
-        type: "number",
+        type: "text",
+        inputType: 'numeric',
         question: 'What is your age?',
         required: true,
     },
@@ -91,14 +92,16 @@ const morningSleepDiary: SurveyComponent[] = [
     {
         key: 'hours_in_bed',
         question: 'Hours spent in bed last night',
-        type: 'number',
+        type: "text",
+        inputType: 'numeric',
         default: '0',
         required: true
     },
     {
         key: 'number_awakenings',
         question: 'Number of awakenings last night',
-        type: 'number',
+        type: "text",
+        inputType: 'numeric',
         default: '0',
         required: true
     },
@@ -119,7 +122,8 @@ const morningSleepDiary: SurveyComponent[] = [
     {
         key: 'medicines',
         question: "Medicines taken last night to improve sleep",
-        type: 'multiline',
+        type: "text",
+        multiline: true,
     },
     {
         key: 'alertness',
@@ -134,22 +138,26 @@ const eveningSleepDiary: SurveyComponent[] = [
     {
         key: 'caffeinated',
         question: 'Number of caffeinated drinks (coffee, tea, cola) and time when I had them today',
-        type: 'multiline',
+        type: "text",
+        multiline: true,
     },
     {
         key: 'alcoholic',
         question: 'Number of alcoholic drinks (beer, wine, liquor) and time when I had them today',
-        type: 'multiline',
+        type: "text",
+        multiline: true,
     },
     {
         key: 'naptimes',
         question: 'Naptimes and lengths today',
-        type: 'multiline',
+        type: "text",
+        multiline: true,
     },
     {
         key: 'exercise',
         question: 'Exercise times and lengths today',
-        type: 'multiline',
+        type: "text",
+        multiline: true,
     },
     {
         key: 'sleepiness',
@@ -417,6 +425,27 @@ const audioTaskTemplate: TaskDefinition = { // must be defined below phase2Days
     allow_edit: false,
     autosumbit_on_complete: true
 }
+
+const audioTest: TaskDefinition = {
+        id: 'testAudio',
+        type: 'survey',
+        name: 'Test Audio',
+        prompt: 'Test Audio',
+        questions: [
+            {
+                key: 'audioTest',
+                type: 'audio',
+                file: require('../../../assets/sounds/counting_test.mp3'),
+                question: '',
+                default: false, // autoplay
+                overwrite_parameter_from_storage: [{
+                    parameter: 'volume',
+                    task_id: 'setVolume',
+                    response_key: 'setVolumeQuestion.volume'
+                }]
+            }
+        ],
+    }
 
 export const soundSleepDefinition: ExperimentDefinition = {
     name: 'Sound Sleep',
