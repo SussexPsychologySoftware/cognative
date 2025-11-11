@@ -24,8 +24,10 @@ const config = {
                 ITSAppUsesNonExemptEncryption: false,
             },
             bundleIdentifier: "com.maxlovell.cognative",
+            backgroundColor: "#000000",
         },
         android: {
+            backgroundColor: "#000000",
             adaptiveIcon: {
                 backgroundColor: "#000000",
                 foregroundImage: "./assets/images/android-icon-foreground.png",
@@ -71,7 +73,8 @@ const config = {
             "expo-secure-store",
             "expo-web-browser",
             "expo-asset",
-            "expo-dev-client"
+            "expo-dev-client",
+            ["./plugins/withRootBackground", "#000000"]
         ],
         experiments: {
             typedRoutes: true,
@@ -84,6 +87,10 @@ const config = {
                 projectId: "cad52bbe-fe46-4866-bc69-005ad2b0780b",
             },
         },
+        backgroundColor: "#000000",
+        splash: {
+            "backgroundColor": "#000000"
+        }
     },
 };
 
