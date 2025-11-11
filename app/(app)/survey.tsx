@@ -22,9 +22,11 @@ export default function SurveyScreen() {
 
     // LOAD TASK AND SURVEY INFO -------
     // Note to avoid useProcessTaskDefinition load directly with:
-        // const taskDefinition = definition.tasks.find(t => t.id === taskId);
+        //let taskDefinition = definition.tasks.find(t => t.id === taskId);
+
     const {taskDefinition, isProcessingTask, taskProcessingError} = useProcessTaskDefinition(taskId);
-    const questions = (taskDefinition && taskDefinition.type === 'survey')
+    const surveyFilename = taskId ? getTaskFilename(taskId) : undefined;
+    const questions = (taskDefinition && taskDefinition.id === taskId && taskDefinition.type === 'survey')
         ? (taskDefinition as SurveyTaskDefinition).questions
         : undefined;
     const surveyTitle = taskDefinition?.name || "Survey";
@@ -35,7 +37,6 @@ export default function SurveyScreen() {
 
     // SUBMISSION -------
     // TODO: not include state && here as a hacky fix so if participant is reset we don't try get task filename for null state
-    const surveyFilename = taskId ? getTaskFilename(taskId) : undefined;
     const onSubmit = useCallback(async (responses: object) => {
         if (taskDefinition) {
             await submitTaskData(taskDefinition, responses);
@@ -67,6 +68,15 @@ export default function SurveyScreen() {
         void autoSubmitOnFirstCompletion();
     }, [isSubmitting, handleSurveySubmit, progress, taskDefinition?.autosumbit_on_complete, taskDisplayState?.completed])
 
+    // Handle loading state - restoring responses or new task id loaded
+    if (isLoading || isProcessingTask || taskDefinition?.id !== taskId) {
+        return (
+            <StandardView>
+                <Text style={globalStyles.pageTitle}>Loading Survey...</Text>
+            </StandardView>
+        )
+    }
+
     // RENDER INCORRECT DATA STATES -------
     if (!questions || taskProcessingError) {
         return (
@@ -75,15 +85,6 @@ export default function SurveyScreen() {
                 <Text style={globalStyles.standardText}>Survey configuration could not be found for task ID: {taskId}</Text>
             </StandardView>
         );
-    }
-
-    // Handle loading state (especially for when restoring responses)
-    if (isLoading || isProcessingTask) {
-        return (
-            <StandardView>
-                <Text style={globalStyles.pageTitle}>Loading Survey...</Text>
-            </StandardView>
-        )
     }
 
     // RENDER COMPONENT -------
@@ -99,6 +100,7 @@ export default function SurveyScreen() {
                 {/* TODO: add a 'group' or 'page' property to SurveyQuestion type and render the survey in sections dynamically.*/}
                 {/*<Text style={globalStyles.sectionTitle}>Please fill out the following survey</Text>*/}
                 <Survey
+                    key={taskId} // Note using a key here forces react to tear down the survey and recreate when taskId changes.
                     questions={questions}
                     responses={responses}
                     updateResponses={updateResponses}
