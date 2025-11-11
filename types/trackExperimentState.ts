@@ -1,15 +1,11 @@
 import { TaskDefinition, NotificationDefinition } from "@/types/experimentConfig";
 
 // STORED INFO ON PARTICIPANT STATE ********
-interface ParticipantInformation {
-    // Stuff that never changes
-    startDate: string; // ISO string
-    participantId?: string;
-}
-
 export type NullableStringRecord = Record<string, string|null>
 
-interface BaseExperimentState extends ParticipantInformation {
+interface BaseExperimentState {
+    startDate: string; // ISO string
+    participantId?: string;
     tasksLastCompletionDate: NullableStringRecord;
     notificationTimes: NullableStringRecord;
 }
