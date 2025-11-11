@@ -1,4 +1,4 @@
-import {globalStyles} from "@/styles/appStyles";
+import {colours, globalStyles} from "@/styles/appStyles";
 import {StyleSheet, Text, TouchableOpacity} from 'react-native'
 import {Checkbox} from 'expo-checkbox';
 
@@ -18,7 +18,7 @@ export default function Tickbox({ checked, text, colour, onChange }: {
                 style={styles.checkbox}
                 value={checked}
                 onValueChange={onChange}
-                color={checked ? colour : 'grey'}
+                color={checked ? colour ?? colours.primary : 'grey'}
             />
             <Text
                 style={[
