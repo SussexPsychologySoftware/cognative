@@ -433,7 +433,7 @@ export const debriefSurvey: SurveyComponent[] = [
 export const colourAdjuster: ExperimentDefinition = {
     name: 'DSA',
     debug: true,
-    autoroute: false,
+    autoroute: true,
     tasks: [
         {
             id: 'consent',
