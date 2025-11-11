@@ -156,6 +156,19 @@ export class ExperimentTracker {
         return state;
     }
 
+    static async setParticipantVariable(key: string, value: any): Promise<ExperimentState | null> {
+        const state = await this.getState();
+        if (!state) return null;
+
+        if (!state.participantVariables) {
+            state.participantVariables = {};
+        }
+        state.participantVariables[key] = value;
+
+        await this.saveState(state);
+        return state;
+    }
+
     static async resetTasks(): Promise<ExperimentState | null> {
         const state = await this.getState();
         if (!state) return null;

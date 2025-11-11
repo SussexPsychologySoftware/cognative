@@ -19,7 +19,7 @@ export default function SurveyScreen() {
     const { taskId } = useLocalSearchParams<{ taskId: string }>();
     // TODO: (small) concern user could be on task when day ticks over and survey will be recorded for that next day...
     //    FIX: pipe experimentDay as local search param, send to submitTaskData -> getTaskFilename
-    const { submitTaskData, displayState, getTaskFilename, updateSendData } = useExperiment();
+    const { submitTaskData, displayState, getTaskFilename, updateSendData, setParticipantVariable } = useExperiment();
 
     // LOAD TASK AND SURVEY INFO -------
     // Note to avoid useProcessTaskDefinition load directly with:
@@ -55,17 +55,23 @@ export default function SurveyScreen() {
                         return
                     }
                     const responseValue = getNestedValue(responses, action.response_key);
-                    let conditionMet = false;
-                    if (action.operator === '=') {
-                        conditionMet = (responseValue === action.compare_value);
-                    } else if (action.operator === '!=') {
-                        conditionMet = (responseValue !== action.compare_value);
+                    let conditionMet = true;
+                    if(action.operator && action.compare_value) { // If no action or operator then run anyway
+                        if (action.operator === '=') {
+                            conditionMet = (responseValue === action.compare_value);
+                        } else if (action.operator === '!=') {
+                            conditionMet = (responseValue !== action.compare_value);
+                        }
                     }
                     if (conditionMet) {
                         if (action.action === 'set_send_data') {
                             // Call the function from useExperiment
-                            await updateSendData(action.payload);
-                        } // TODO: else if for more actions
+                            await updateSendData(action.payload ?? conditionMet); // if no payload use conditionMey
+                        } else if (action.action === 'set_participant_variable') {
+                            // TODO: how to actually use these variables?
+                            // If no payload value set then use responseValue.
+                            await setParticipantVariable(action.payload.key, action.payload.value===undefined ? responseValue : action.payload.value);
+                        }
                     }
                 }
             }

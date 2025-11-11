@@ -29,19 +29,28 @@ interface OverwriteData {
 // Can do overwrite parameters options at task level and change datapipe_id?
 
 interface StateUpdateActionBase {
+    // TODO: risky I guess, but in future this should just expose the entire state, displayState, etc.
     response_key: string; // Looks up a value in the survey's 'responses' object
-    operator: '=' | '!=' | '<' | '<=' | '>' | '>=' | '|' | '&' ; // The comparison to run
-    compare_value: SurveyDataType;
-    action: 'set_send_data'; // The action to take if the comparison is true // TODO: add here
-    payload: SurveyDataType; // The value to pass to that action
+    operator?: '=' | '!=' | '<' | '<=' | '>' | '>=' | '|' | '&' ; // The comparison to run
+    compare_value?: SurveyDataType;
+    action: 'set_send_data' | 'set_participant_variable'; // The action to take if the comparison is true // TODO: add here
+    payload?: any; // The value to pass to that action - defaults to value of response_key
 }
 
 interface UpdateSendDataAction extends StateUpdateActionBase {
     action: 'set_send_data';
-    payload: boolean;
+    payload?: boolean; // Defaults to value of 'conditionMet' by comparing response to value using operator
 }
 
-type StateUpdateAction = UpdateSendDataAction // TODO: add more here
+interface SetParticipantVariableAction extends StateUpdateActionBase {
+    action: 'set_participant_variable';
+    payload: {
+        key: string; // What to store it under - TODO: for a more generic state setter this could be hoisted to the ActionBase
+        value?: any; // if not included, is the value stored in response_key
+    };
+}
+
+type StateUpdateAction = UpdateSendDataAction | SetParticipantVariableAction // TODO: add more here
 
 interface TaskDefinitionBasic {
     id: string;

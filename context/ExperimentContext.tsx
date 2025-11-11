@@ -35,6 +35,7 @@ interface ExperimentContextType {
 
     updateNotificationTimes: (times: NullableStringRecord) => Promise<void>;
     updateSendData: (sendData: boolean) => Promise<void>;
+    setParticipantVariable: (key: string, value: any) => Promise<void>;
 
     refreshState: () => Promise<void>;
 }
@@ -158,6 +159,14 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
 
     const updateSendData = async (sendData: boolean) => {
         const newState = await ExperimentTracker.updateSendData(sendData);
+        if (newState) {
+            setState(newState); // Update the live React state
+        }
+    };
+
+    const setParticipantVariable = async (key: string, value: any) => {
+        // TODO: this could expose the state and displayState to arbitrary updates, allows setting condition, sendData, etc.
+        const newState = await ExperimentTracker.setParticipantVariable(key, value);
         if (newState) {
             setState(newState); // Update the live React state
         }
@@ -361,6 +370,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         resetTaskCompletion,
         updateNotificationTimes,
         updateSendData,
+        setParticipantVariable,
         stopExperiment,
         confirmAndStopExperiment,
         isActionLoading,

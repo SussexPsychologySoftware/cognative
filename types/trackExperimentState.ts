@@ -9,6 +9,7 @@ interface BaseExperimentState {
     sendData?: boolean;
     tasksLastCompletionDate: NullableStringRecord;
     notificationTimes: NullableStringRecord;
+    participantVariables?: Record<string, any>; // <-- ADD THIS
 }
 
 // Change here to allow for no condition
