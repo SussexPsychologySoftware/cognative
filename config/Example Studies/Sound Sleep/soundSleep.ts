@@ -248,7 +248,8 @@ const blockQuestionnaire: SurveyComponent[] = [
         key: 'MOS-SS_Q2',
         question: 'On average, how many hours did you sleep each night during the past 4 days?',
         placeholder: 'Hours Slept',
-        type: 'number',
+        type: 'text',
+        inputType: 'numeric',
         required: true
     }
 ]
