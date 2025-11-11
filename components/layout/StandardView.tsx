@@ -14,7 +14,7 @@ import {experimentDefinition} from "@/config/experimentDefinition";
 export const StandardView = ({
                                  children,
                                  statusBarStyle = 'dark',
-                                 keyboardBehavior = Platform.OS === 'ios' ? 'padding' : 'height',
+                                 keyboardBehavior = Platform.OS === 'ios' ? 'padding' : undefined,
                                  headerShown = true,
                                  safeAreaStyle,
                                  keyboardAvoidingViewStyle,
