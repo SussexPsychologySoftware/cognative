@@ -53,6 +53,8 @@ export default function Textbox({ value, placeholder, onChange, maxLength, multi
                 onChangeText={text => handleInput(text)}
                 inputAccessoryViewID={inputAccessoryViewID}
                 maxLength={maxLength}
+                disableFullscreenUI={true}
+                keyboardAppearance="dark"
                 returnKeyType={multiline ? undefined : 'done'} // Note: a little broken on ios so handle manually for now
             />
             { // Include custom done button in top bar on iOS
