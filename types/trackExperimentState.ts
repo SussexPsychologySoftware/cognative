@@ -6,6 +6,7 @@ export type NullableStringRecord = Record<string, string|null>
 interface BaseExperimentState {
     startDate: string; // ISO string
     participantId?: string;
+    sendData?: boolean;
     tasksLastCompletionDate: NullableStringRecord;
     notificationTimes: NullableStringRecord;
 }

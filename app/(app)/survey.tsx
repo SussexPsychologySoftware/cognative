@@ -6,11 +6,12 @@ import {useSurvey} from "@/hooks/useSurvey";
 import Survey from "@/components/survey/Survey";
 import {useLocalSearchParams} from 'expo-router';
 import {useExperiment} from "@/context/ExperimentContext";
-import {SurveyTaskDefinition} from "@/types/experimentConfig";
+import {SurveyTaskDefinition, TaskDefinition} from "@/types/experimentConfig";
 import {useCallback, useEffect} from "react";
 import ExperimentInfo from "@/components/debug/ExperimentInfo";
 import {useProcessTaskDefinition} from "@/hooks/useProcessTaskDefinition";
 import {experimentDefinition} from "@/config/experimentDefinition";
+import {getNestedValue, hasNestedKey} from "@/utils/dotNotation";
 
 export default function SurveyScreen() {
     // This is a typical screen setup (view layer),
@@ -18,7 +19,7 @@ export default function SurveyScreen() {
     const { taskId } = useLocalSearchParams<{ taskId: string }>();
     // TODO: (small) concern user could be on task when day ticks over and survey will be recorded for that next day...
     //    FIX: pipe experimentDay as local search param, send to submitTaskData -> getTaskFilename
-    const { submitTaskData, displayState, getTaskFilename } = useExperiment();
+    const { submitTaskData, displayState, getTaskFilename, updateSendData } = useExperiment();
 
     // LOAD TASK AND SURVEY INFO -------
     // Note to avoid useProcessTaskDefinition load directly with:
@@ -37,13 +38,42 @@ export default function SurveyScreen() {
 
     // SUBMISSION -------
     // TODO: not include state && here as a hacky fix so if participant is reset we don't try get task filename for null state
+
     const onSubmit = useCallback(async (responses: object) => {
-        if (taskDefinition) {
-            await submitTaskData(taskDefinition, responses);
-        } else {
+        if (!taskDefinition) {
             console.error("Unable to save responses: ", {taskDefinition});
+            return;
         }
-    }, [submitTaskData, taskDefinition]);
+
+        const runStateActions = async (taskDefinition: TaskDefinition) => {
+            if (taskDefinition.type === 'survey' && taskDefinition.on_submit_actions) {
+                for (const action of taskDefinition.on_submit_actions) {
+                    // We can use your existing dot-notation helpers if response_key can be nested
+                    // For this simple case, direct lookup is fine:
+                    if (!hasNestedKey(responses, action.response_key)) {
+                        console.log(`${action.response_key} not found in responses`)
+                        return
+                    }
+                    const responseValue = getNestedValue(responses, action.response_key);
+                    let conditionMet = false;
+                    if (action.operator === '=') {
+                        conditionMet = (responseValue === action.compare_value);
+                    } else if (action.operator === '!=') {
+                        conditionMet = (responseValue !== action.compare_value);
+                    }
+                    if (conditionMet) {
+                        if (action.action === 'set_send_data') {
+                            // Call the function from useExperiment
+                            await updateSendData(action.payload);
+                        } // TODO: else if for more actions
+                    }
+                }
+            }
+        }
+
+        await runStateActions(taskDefinition);
+        await submitTaskData(taskDefinition, responses);
+    }, [submitTaskData, taskDefinition, updateSendData]);
 
     const {
         responses,

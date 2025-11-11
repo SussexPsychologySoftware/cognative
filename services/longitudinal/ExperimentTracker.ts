@@ -40,6 +40,7 @@ export class ExperimentTracker {
             participantId,
             tasksLastCompletionDate: emptyTaskStates,
             notificationTimes: emptyNotificationTimes,
+            sendData: experimentDefinition.send_data ?? true
         };
 
         if(experimentDefinition.conditions && assignedCondition !== undefined) {
@@ -112,7 +113,7 @@ export class ExperimentTracker {
         await DataService.saveData(
             participantInfo,
             'participantInfo',
-            experimentDefinition.participant_info_datapipe_id,
+            experimentDefinition.participant_info_datapipe_id, // If not defined, just saves
             participantId
         );
     }
@@ -140,6 +141,16 @@ export class ExperimentTracker {
         if (!state) return null;
 
         state.notificationTimes = times; // Overwrite with the new object
+
+        await this.saveState(state); // Persist the change
+        return state;
+    }
+
+    static async updateSendData(sendData: boolean): Promise<ExperimentState | null> {
+        const state = await this.getState();
+        if (!state) return null;
+
+        state.sendData = sendData;
 
         await this.saveState(state); // Persist the change
         return state;

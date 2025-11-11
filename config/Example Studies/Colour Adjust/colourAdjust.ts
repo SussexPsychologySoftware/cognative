@@ -93,6 +93,8 @@ const consentSurvey: SurveyComponent[] = [
         required: false,
     },
     {
+        // TODO: Note would be easier to handle this if it was 'I consent to take part in this experiment' and 'I consent to my data being recorded'
+        // Then could overwrite 'sendData' with the answer to that question.
         key: 'consent',
         type: 'radio',
         question: 'Please select your consent option:',
@@ -439,7 +441,16 @@ export const colourAdjuster: ExperimentDefinition = {
             name: 'Consent',
             prompt: 'Complete Consent Form',
             questions: consentSurvey,
-            datapipe_id: 'q2ecSpabQ6nH'
+            datapipe_id: 'q2ecSpabQ6nH',
+            on_submit_actions: [
+                {
+                    response_key: 'consent',
+                    operator: '=',
+                    compare_value: 'I would like to continue without my data being recorded.',
+                    action: 'set_send_data',
+                    payload: false
+                }
+            ]
         },
         {
             id: 'confirm',
@@ -456,6 +467,13 @@ export const colourAdjuster: ExperimentDefinition = {
             name: 'Task',
             prompt: 'Complete task',
             datapipe_id: '4s7WE6aDDG5Y',
+            // TODO
+            // overwrite_parameters_on_load: [{
+            //     parameter: 'datapipe_id',
+            //     task_id: 'consent',
+            //     response_key: 'consent',
+            //     // if response is 'I would like to continue without my data being recorded.' then false
+            // }]
         },
         {
             id: 'survey',

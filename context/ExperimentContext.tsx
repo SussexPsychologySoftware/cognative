@@ -34,6 +34,7 @@ interface ExperimentContextType {
     confirmAndStopExperiment: () => void;
 
     updateNotificationTimes: (times: NullableStringRecord) => Promise<void>;
+    updateSendData: (sendData: boolean) => Promise<void>;
 
     refreshState: () => Promise<void>;
 }
@@ -155,6 +156,13 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         }
     }, []); // No dependencies needed, tracker gets its own state
 
+    const updateSendData = async (sendData: boolean) => {
+        const newState = await ExperimentTracker.updateSendData(sendData);
+        if (newState) {
+            setState(newState); // Update the live React state
+        }
+    };
+
     const getTaskFilename = useCallback((taskId: string, day?: number): string | undefined => {
         // Note this is a 'getter' - I could probably pass taskDef in but just relying on taskId is more portable.
         if (!state || !displayState) {
@@ -245,6 +253,9 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         }
 
         const { id: taskId, datapipe_id, allow_edit } = taskDefinition; // Messy on taskId
+        // Conditionally set the datapipe_id to undefined if consent is withdrawn
+        const finalDatapipeId = state.sendData ?? true ? datapipe_id : undefined;
+
         const filename = getTaskFilename(taskId);
         const { participantId } = state;
 
@@ -267,7 +278,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
                 // sendTime is now the next upcoming cutoff time
                 sendAfterTime = sendTime.toISOString();
             }
-            await DataService.saveData(data, filename, datapipe_id, participantId, sendAfterTime);
+            await DataService.saveData(data, filename, finalDatapipeId, participantId, sendAfterTime);
             await completeTask(taskId);
         } catch (e) {
             console.error("Failed to submit task data:", e);
@@ -349,6 +360,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         submitTaskData,
         resetTaskCompletion,
         updateNotificationTimes,
+        updateSendData,
         stopExperiment,
         confirmAndStopExperiment,
         isActionLoading,

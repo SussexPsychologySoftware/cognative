@@ -1,5 +1,5 @@
 // TODO: move this into trackExperimentState and rename to experiment.ts
-import {SurveyComponent} from "@/types/surveyQuestions";
+import {SurveyComponent, SurveyDataType} from "@/types/surveyQuestions";
 
 
 export interface NotificationDefinition {
@@ -11,6 +11,37 @@ export interface NotificationDefinition {
 export interface TaskNotification extends NotificationDefinition {
     taskId: string;
 }
+
+interface OverwriteData {
+    // on_start_overwrite_data
+    // on_finish_save_as
+    source: 'task'|'state' // if task use createFilename, else just use storage key
+    storage_key: string; // 'experimentState'
+    day?: number; // optional if using repeating survey
+
+    item_key: string; // The key within the data returned from storage key
+
+    // Storing in current object or to somewhere else?
+    save_key: string; // The thing to overwrite in the current data - overwrite if existing or create new.
+}
+
+// TODO: what is it I actually need right now? To turn off sending data for whole experiment
+// Can do overwrite parameters options at task level and change datapipe_id?
+
+interface StateUpdateActionBase {
+    response_key: string; // Looks up a value in the survey's 'responses' object
+    operator: '=' | '!=' | '<' | '<=' | '>' | '>=' | '|' | '&' ; // The comparison to run
+    compare_value: SurveyDataType;
+    action: 'set_send_data'; // The action to take if the comparison is true // TODO: add here
+    payload: SurveyDataType; // The value to pass to that action
+}
+
+interface UpdateSendDataAction extends StateUpdateActionBase {
+    action: 'set_send_data';
+    payload: boolean;
+}
+
+type StateUpdateAction = UpdateSendDataAction // TODO: add more here
 
 interface TaskDefinitionBasic {
     id: string;
@@ -24,6 +55,9 @@ interface TaskDefinitionBasic {
     type: 'survey' | 'screen' | 'web';
     notification?: NotificationDefinition;
     autosumbit_on_complete?: boolean;
+    on_submit_actions?: StateUpdateAction[]; // <-- ADD THIS
+    // overwrite_parameters_on_load?: OverwriteDataOptions[] // TODO: something like this could work?
+
     // Other ideas
     // required: true,
     // showWhen?: (context: object) => {
@@ -80,6 +114,7 @@ export interface ExperimentDefinition {
     autoroute?: boolean;
     conditions?: ConditionDefinition;
     tasks: TaskDefinition[];
+    send_data?: boolean;
     // Other ideas
     // blocks?: {
     //     names: [],
