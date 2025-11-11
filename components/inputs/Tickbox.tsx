@@ -20,7 +20,14 @@ export default function Tickbox({ checked, text, colour, onChange }: {
                 onValueChange={onChange}
                 color={checked ? colour : 'grey'}
             />
-            <Text style={globalStyles.standardText}>{text}</Text>
+            <Text
+                style={[
+                    globalStyles.standardText,
+                    styles.textStyle
+                ]}
+            >
+                {text}
+            </Text>
         </TouchableOpacity>
     )
 }
@@ -29,9 +36,12 @@ const styles = StyleSheet.create({
     checkboxContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        gap: 10
+        gap: 10,
     },
     checkbox: {
     },
+    textStyle: {
+        flex: 1
+    }
 })
 

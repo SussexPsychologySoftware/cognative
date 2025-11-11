@@ -18,7 +18,14 @@ export default function RadioList({options, value, onSelect, containerStyle} : {
                     <Radio
                         selected={value===option}
                     />
-                    <Text style={globalStyles.standardText}>{option}</Text>
+                    <Text
+                        style={[
+                            globalStyles.standardText,
+                            styles.textStyle
+                        ]}
+                    >
+                        {option}
+                    </Text>
                 </TouchableOpacity>
             ))}
         </View>
@@ -32,6 +39,9 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 5
     },
+    textStyle: {
+        flex: 1
+    }
 })
 
 
