@@ -27,6 +27,7 @@ const config = {
             backgroundColor: "#000000",
         },
         android: {
+            userInterfaceStyle: "dark",
             backgroundColor: "#000000",
             adaptiveIcon: {
                 backgroundColor: "#000000",
