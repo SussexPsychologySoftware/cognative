@@ -111,9 +111,12 @@ export class ExperimentTracker {
             condition
         };
 
+        const infoFilename = `${participantId}_participantInfo`;
+        // TODO: add device info.
+
         await DataService.saveData(
             participantInfo,
-            'participantInfo',
+            infoFilename,
             experimentDefinition.participant_info_datapipe_id, // If not defined, just saves
             participantId
         );
