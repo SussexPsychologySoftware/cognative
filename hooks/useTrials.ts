@@ -37,30 +37,21 @@ export function useTrials (
             endTime: endTime,         // Add the trial end time
         }
 
-        setResponses(prevResponses =>
-            [
-                ...prevResponses,
-                newResponse
-            ]
-        );
+        const newResponsesList = [
+            ...responses,
+            newResponse
+        ];
 
-        // TODO: store responses in a new state array inside this hook.
+        setResponses(newResponsesList);
 
         const nextIndex = trialIndex + 1;
-        if(nextIndex === trials.length){
-            await onSubmit(
-                [
-                    ...responses,
-                    newResponse
-                ]
-            )
+        if (nextIndex === trials.length) {
+            await onSubmit({
+                responses: newResponsesList
+            });
         }
 
         setTrialIndex(nextIndex);
-    }
-
-    const handleEndTask = (): void => {
-        // onSubmit(trials)
     }
 
     return {
