@@ -5,6 +5,7 @@ import {experimentDefinition} from "@/config/experimentDefinition";
 import {TaskDefinition} from "@/types/experimentConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {ConditionAssignment} from "@/services/ConditionAssignment";
+import * as Device from 'expo-device';
 
 // ============ State Management ============
 // EXPERIMENT TRACKER - this saves and calculates states for display
@@ -106,13 +107,36 @@ export class ExperimentTracker {
     }
 
     static async sendParticipantInfo(participantId: string, startDate: string, condition?: string | string[]) {
+        const deviceType = await Device.getDeviceTypeAsync();
+        const isRooted = await Device.isRootedExperimentalAsync();
+
+        const device = {
+            brand: Device.brand,
+            androidDesignName: Device.designName,
+            modelId: Device.modelId,
+            manufacturer: Device.manufacturer,
+            modelName: Device.modelName,
+            osBuildId: Device.osBuildId,
+            osName: Device.osName,
+            osVersion: Device.osVersion,
+            productName: Device.productName,
+            // For performance debugging
+            deviceYearClass: Device.deviceYearClass,
+            totalMemory: Device.totalMemory, // Total RAM
+            isDevice: Device.isDevice, // Real device vs. simulator
+            isRooted: isRooted, // Jailbroken or rooted?
+            deviceType: deviceType
+            // --- AVOID ---
+            // deviceName: Device.deviceName, // <-- PII, do not collect!
+        };
+
         const participantInfo: Record<string,any> = {
             startDate,
-            condition
+            condition,
+            device
         };
 
         const infoFilename = `${participantId}_participantInfo`;
-        // TODO: add device info.
 
         await DataService.saveData(
             participantInfo,
