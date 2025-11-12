@@ -203,7 +203,7 @@ export class ExperimentTracker {
     static async getSendDataState() {
         const state = await this.getState();
         if (!state) return null;
-        return state.sendData;
+        return state.sendData ?? true;
     }
     // ============ TASK MANAGER ============
 

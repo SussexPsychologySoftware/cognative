@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Network from "expo-network";
 import {HttpService} from "@/services/data/HttpService";
 import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
+import { experimentDefinition } from '@/config/experimentDefinition';
 
 const STORAGE_KEY = 'dataQueue';
 
@@ -15,9 +16,17 @@ interface QueueItem {
 class DataQueue {
     private processingPromise: Promise<string> | null = null;
 
+    // *** A PRIVATE GETTER WITH SAFE DEFAULT ***
+    private getSendDataState: () => Promise<boolean | null> =
+        () => Promise.resolve(experimentDefinition.send_data??null); // Default to true if not set
+
     constructor() {
         this.processingPromise = null;
         this.initNetworkListener();
+    }
+
+    public setSendDataStateGetter(getter: () => Promise<boolean | null>) {
+        this.getSendDataState = getter;
     }
 
     async getQueue(): Promise<QueueItem[]> {
@@ -87,8 +96,9 @@ class DataQueue {
         const networkAvailable = await HttpService.isConnectedToInternet()
         if (!networkAvailable) return 'No internet connection';
         // TODO: check if send data currently on here, if not return 'send data off'
-        const sendData = await ExperimentTracker.getSendDataState()
+        const sendData = await this.getSendDataState();
         if(sendData === false) return 'Sending data is off';
+
         try {
             const queue = await this.getQueue();
             // return '' // to disable
