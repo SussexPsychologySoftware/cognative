@@ -66,7 +66,7 @@ export default function SurveyScreen() {
                     if (conditionMet) {
                         if (action.action === 'set_send_data') {
                             // Call the function from useExperiment
-                            await updateSendData(action.payload ?? conditionMet); // if no payload use conditionMey
+                            await updateSendData(action.payload ?? conditionMet); // if no payload use conditionMet
                         } else if (action.action === 'set_participant_variable') {
                             // TODO: how to actually use these variables?
                             // If no payload value set then use responseValue.
@@ -79,7 +79,7 @@ export default function SurveyScreen() {
 
         await runStateActions(taskDefinition);
         await submitTaskData(taskDefinition, responses);
-    }, [submitTaskData, taskDefinition, updateSendData]);
+    }, [setParticipantVariable, submitTaskData, taskDefinition, updateSendData]);
 
     const {
         responses,

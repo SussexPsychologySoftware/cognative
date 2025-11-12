@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Network from "expo-network";
 import {HttpService} from "@/services/data/HttpService";
+import {ExperimentTracker} from "@/services/longitudinal/ExperimentTracker";
 
 const STORAGE_KEY = 'dataQueue';
 
@@ -85,7 +86,9 @@ class DataQueue {
     private async _processQueueInternal(): Promise<string> {
         const networkAvailable = await HttpService.isConnectedToInternet()
         if (!networkAvailable) return 'No internet connection';
-
+        // TODO: check if send data currently on here, if not return 'send data off'
+        const sendData = await ExperimentTracker.getSendDataState()
+        if(sendData === false) return 'Sending data is off';
         try {
             const queue = await this.getQueue();
             // return '' // to disable

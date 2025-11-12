@@ -266,7 +266,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
 
         const { id: taskId, datapipe_id, allow_edit } = taskDefinition; // Messy on taskId
         // Conditionally set the datapipe_id to undefined if consent is withdrawn
-        const finalDatapipeId = state.sendData ?? true ? datapipe_id : undefined;
+        // const finalDatapipeId = state.sendData ?? true ? datapipe_id : undefined;
 
         const filename = getTaskFilename(taskId);
         const { participantId } = state;
@@ -290,7 +290,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
                 // sendTime is now the next upcoming cutoff time
                 sendAfterTime = sendTime.toISOString();
             }
-            await DataService.saveData(data, filename, finalDatapipeId, participantId, sendAfterTime);
+            await DataService.saveData(data, filename, datapipe_id, participantId, sendAfterTime);
             await completeTask(taskId);
         } catch (e) {
             console.error("Failed to submit task data:", e);

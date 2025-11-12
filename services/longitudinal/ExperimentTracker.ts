@@ -200,6 +200,11 @@ export class ExperimentTracker {
         return state;
     }
 
+    static async getSendDataState() {
+        const state = await this.getState();
+        if (!state) return null;
+        return state.sendData;
+    }
     // ============ TASK MANAGER ============
 
     // Need function to create daily tasks list
