@@ -446,9 +446,9 @@ export const colourAdjuster: ExperimentDefinition = {
                 {
                     response_key: 'consent',
                     operator: '=',
-                    compare_value: 'I would like to continue without my data being recorded.',
+                    compare_value: 'I consent to take part in this study and agree to my data being recorded.',
                     action: 'set_send_data',
-                    payload: false
+                    payload: true
                 }
             ]
         },
