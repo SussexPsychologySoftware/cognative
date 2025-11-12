@@ -56,7 +56,7 @@ export default function ShowTrialDataScreen() {
                 if(!trialsFilename) return null;
                 const data = await DataService.getData(trialsFilename)
                 if (data === null) return null;
-                setTrialData(data);
+                setTrialData(data.responses);
 
             } catch (error) {
                 console.error('Error loading trial data:', error);

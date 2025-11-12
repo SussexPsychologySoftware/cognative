@@ -432,6 +432,7 @@ export const debriefSurvey: SurveyComponent[] = [
 // -=*#*=- DEFINITION -=*#*=-
 export const colourAdjuster: ExperimentDefinition = {
     name: 'DSA',
+    send_data: false,
     debug: true,
     autoroute: true,
     tasks: [
