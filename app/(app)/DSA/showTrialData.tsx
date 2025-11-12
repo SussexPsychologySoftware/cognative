@@ -113,7 +113,7 @@ export default function ShowTrialDataScreen() {
                         })
                     }
                     <Text style={styles.text}>TRIAL DATA</Text>
-                    {
+                    { trialData && 
                         trialData.map((item, index) => {
                             // console.log(item);
                             return(
