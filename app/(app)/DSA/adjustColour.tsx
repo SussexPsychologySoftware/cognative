@@ -89,14 +89,7 @@ export default function AdjustColourScreen() {
         <FullscreenView>
             <ChangeBackground
                 startColour={currentTrial.startingColour}
-                onSubmit={
-                    (LAB, RGB) => {
-                        handleEndTrial({
-                            rt: Date.now(),
-                            response: {LAB, RGB},
-                        });
-                    }
-                }
+                onSubmit={async (LAB, RGB) => await handleEndTrial({LAB, RGB})}
                 submitting={isSubmitting}
             />
             <Text>{JSON.stringify(currentTrial)}</Text>
