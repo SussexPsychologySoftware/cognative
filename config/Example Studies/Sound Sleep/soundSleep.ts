@@ -454,6 +454,7 @@ export const soundSleepDefinition: ExperimentDefinition = {
     passphrase: 'suss3x',
     total_days: 14,
     cutoff_hour: 4, // TODO: maybe use hours and mins, day_cutoff_time: '04:32'
+    participant_info_datapipe_id: 'dOS0nQ93xCSV',
     conditions: {
         conditions: ['control', 'monaural', 'binaural'],
         repeatedMeasures: true,

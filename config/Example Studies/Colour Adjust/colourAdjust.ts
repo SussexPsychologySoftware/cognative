@@ -435,6 +435,7 @@ export const colourAdjuster: ExperimentDefinition = {
     send_data: false,
     debug: true,
     autoroute: true,
+    participant_info_datapipe_id: 'q2ecSpabQ6nH',
     tasks: [
         {
             id: 'consent',
