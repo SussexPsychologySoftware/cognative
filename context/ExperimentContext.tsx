@@ -278,6 +278,28 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             throw new Error(err);
         }
 
+        // Add metadata to files
+        let dataAndMetadata: Record<string, any> = {
+            participantId,
+            // timestamp: new Date().toISOString(),
+            taskId: taskId,
+            responses: data
+        };
+
+        if(experimentDefinition.total_days && experimentDefinition.total_days > 0) {
+            dataAndMetadata = {
+                ...dataAndMetadata,
+                day: displayState.experimentDay
+            }
+        }
+
+        if(experimentDefinition.conditions) {
+            dataAndMetadata = {
+                ...dataAndMetadata,
+                condition: displayState.currentCondition
+            }
+        }
+
         try {
             let sendAfterTime: string|undefined = undefined;
             if (allow_edit) {
@@ -290,7 +312,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
                 // sendTime is now the next upcoming cutoff time
                 sendAfterTime = sendTime.toISOString();
             }
-            await DataService.saveData(data, filename, datapipe_id, participantId, sendAfterTime);
+            await DataService.saveData(dataAndMetadata, filename, datapipe_id, sendAfterTime);
             await completeTask(taskId);
         } catch (e) {
             console.error("Failed to submit task data:", e);

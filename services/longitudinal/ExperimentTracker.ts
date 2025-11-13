@@ -131,6 +131,7 @@ export class ExperimentTracker {
         };
 
         const participantInfo: Record<string,any> = {
+            participantId,
             startDate,
             condition,
             device
@@ -141,8 +142,7 @@ export class ExperimentTracker {
         await DataService.saveData(
             participantInfo,
             infoFilename,
-            experimentDefinition.participant_info_datapipe_id, // If not defined, just saves
-            participantId
+            experimentDefinition.participant_info_datapipe_id // If not defined, just saves
         );
     }
 

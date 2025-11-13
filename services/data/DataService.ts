@@ -29,12 +29,11 @@ export class DataService {
     }
 
     // TODO: change signature to make participant id required and earlier
-    static async saveData(data: Record<string, any>, name: string, datapipeId?: string, participantId?: string, sendAfter?: string) {
+    static async saveData(data: Record<string, any>, name: string, datapipeId?: string, sendAfter?: string) {
         // Note this function is intentionally dumb and doesn't know what a taskDef or displayState etc is, just strings and records.
         // TODO: add metadata object and just pass to data, add condition, day, participantID, taskId, etc to all data if required
         // TODO: participantID should be required here - perhaps a taskID should as well.
         data.timestamp = new Date().toISOString();
-        data.participantId = participantId;
         // Save local copy
         const dataString = await this.setData(name, data)
 
