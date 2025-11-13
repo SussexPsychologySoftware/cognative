@@ -221,24 +221,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             NotificationService.cancelNotificationForToday(taskId).catch(err => {
                 console.error("Failed to cancel notification:", err);
             });
-
-            // ROUTING ---***
-            if (newDisplayState.isExperimentComplete) {
-                router.replace('/end');
-                return;
-            }
-            if (definition.autoroute) {
-                // Find the next available task
-                const nextTask = newDisplayState.tasks.find(
-                    task => !task.completed && task.isAllowed
-                );
-                if (nextTask) {
-                    const href = RoutingService.getTaskHref(nextTask.definition);
-                    router.replace(href);
-                    return
-                }
-            }
-            router.replace('/')
+            return newDisplayState;
         } catch (e: any) {
             console.error("Failed to complete task:", e);
             setActionError(e.message || "Failed to complete task");
@@ -246,7 +229,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             setIsActionLoading(false);
         }
 
-    }, [definition]);
+    }, []);
 
     const submitTaskData = useCallback(async (
         taskDefinition: TaskDefinition,
@@ -313,13 +296,32 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
                 sendAfterTime = sendTime.toISOString();
             }
             await DataService.saveData(dataAndMetadata, filename, datapipe_id, sendAfterTime);
-            await completeTask(taskId);
+            const newDisplayState = await completeTask(taskId);
+
+            // ROUTING ---***
+            if(newDisplayState) {
+                if (newDisplayState.isExperimentComplete) {
+                    router.replace('/end');
+                    return;
+                } else if (definition.autoroute) {
+                    // Find the next available task
+                    const nextTask = newDisplayState.tasks.find(
+                        task => !task.completed && task.isAllowed
+                    );
+                    if (nextTask) {
+                        const href = RoutingService.getTaskHref(nextTask.definition);
+                        router.replace(href);
+                        return
+                    }
+                }
+            }
+            router.replace('/')
         } catch (e) {
             console.error("Failed to submit task data:", e);
             setActionError(`Failed to submit data\n${e}`);
             throw e; // Re-throw so useSurvey's 'handleSurveySubmit' can catch it
         }
-    }, [state, displayState, getTaskFilename, completeTask, definition.cutoff_hour]);
+    }, [state, displayState, getTaskFilename, completeTask, definition]);
 
     const resetTaskCompletion = useCallback(async () => {
         setIsActionLoading(true);
