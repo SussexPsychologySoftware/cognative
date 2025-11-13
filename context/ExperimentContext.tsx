@@ -26,7 +26,7 @@ interface ExperimentContextType {
     startExperiment: (participantId?: string, condition?: string) => Promise<void>;
 
     getTaskFilename: (taskId: string, day?: number) => string | undefined;
-    completeTask: (taskId: string) => Promise<void>;
+    completeTask: (taskId: string) => Promise<ExperimentDisplayState>;
     submitTaskData: (taskDefinition: TaskDefinition, data: any) => Promise<void>;
 
     resetTaskCompletion: () => Promise<void>;
@@ -225,10 +225,11 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
         } catch (e: any) {
             console.error("Failed to complete task:", e);
             setActionError(e.message || "Failed to complete task");
+            // ensure the promise rejects on failure, submitTaskData then catch.
+            throw e;
         } finally {
             setIsActionLoading(false);
         }
-
     }, []);
 
     const submitTaskData = useCallback(async (
