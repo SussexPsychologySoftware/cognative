@@ -108,6 +108,28 @@ export class ExperimentTracker {
 
     static async sendParticipantInfo(participantId: string, startDate: string, condition?: string | string[]) {
         const deviceType = await Device.getDeviceTypeAsync();
+        let deviceTypeString = ''
+        switch(deviceType) {
+            case 0:
+                deviceTypeString = 'UNKNOWN';
+                break;
+            case 1:
+                deviceTypeString = 'PHONE';
+                break;
+            case 2:
+                deviceTypeString = 'TABLET';
+                break;
+            case 3:
+                deviceTypeString = 'DESKTOP';
+                break;
+            case 4:
+                deviceTypeString = 'TV';
+                break;
+            default:
+                deviceTypeString = 'NOT_FOUND';
+                break;
+        }
+
         const isRooted = await Device.isRootedExperimentalAsync();
 
         const device = {
@@ -125,7 +147,7 @@ export class ExperimentTracker {
             totalMemory: Device.totalMemory, // Total RAM
             isDevice: Device.isDevice, // Real device vs. simulator
             isRooted: isRooted, // Jailbroken or rooted?
-            deviceType: deviceType
+            deviceType: deviceTypeString
             // --- AVOID ---
             // deviceName: Device.deviceName, // <-- PII, do not collect!
         };
