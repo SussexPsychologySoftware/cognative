@@ -1,9 +1,10 @@
-import {useEffect, useState} from "react";
+import {useCallback, useEffect, useRef, useState} from "react";
 
 
 export function useTrials (
     trials: Record<string, any>[],
     onSubmit: (data: Record<string, any>[]) => Promise<void>,
+    isi?: number
 )
 {
     const [trialIndex, setTrialIndex] = useState(0);
@@ -14,13 +15,60 @@ export function useTrials (
     let currentTrial = trials[trialIndex];
     const isTaskFinished = trials.length > 0 && trialIndex >= trials.length;
 
-    // NEW: Effect to update the start time whenever a new trial begins
+    const [inISI, setInISI] = useState(false);
+    const isiStartTime = useRef<number>(Date.now());
+    const animationFrameRef = useRef<number | null>(null);
+
+    const endISI = useCallback(()=>{
+        if (animationFrameRef.current) {
+            cancelAnimationFrame(animationFrameRef.current);
+            animationFrameRef.current = null;
+        }
+        setInISI(false);
+        setTrialStartTime(Date.now());
+    }, [])
+
+    const runIsiTimer = useCallback(() => {
+        const timeLeft = Date.now()-isiStartTime.current
+        if(isi && timeLeft >= isi) {
+            endISI()
+            return;
+        }
+        animationFrameRef.current = requestAnimationFrame(runIsiTimer);
+    }, [endISI, isi]);
+
     useEffect(() => {
-        // When the trialIndex changes, record the current time as start of the new trial.
-        if (!isTaskFinished) {
+        // Stop if the task is finished
+        if (trialIndex >= trials.length) {
+            setInISI(false); // Ensure we're not stuck in ISI
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+                animationFrameRef.current = null;
+            }
+            return;
+        }
+
+        // Check if a valid ISI is provided
+        if(isi) {
+            // Start the ISI period
+            isiStartTime.current = Date.now();
+            animationFrameRef.current = requestAnimationFrame(runIsiTimer);
+            setInISI(true);
+        } else {
+            // No ISI, start the trial immediately
+            setInISI(false);
             setTrialStartTime(Date.now());
         }
-    }, [trialIndex, isTaskFinished]); // This effect runs when trialIndex changes
+
+        // Cleanup: ensures the timer is stopped if the component unmounts
+        return () => {
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+                animationFrameRef.current = null;
+            }
+        }
+
+    }, [trialIndex, isi, runIsiTimer, trials.length]);
 
     const handleEndTrial = async(response: object): Promise<void> => {
         // Don't do anything if the task is already finished
@@ -57,5 +105,6 @@ export function useTrials (
         currentTrial,
         isTaskFinished,
         responses,
+        inISI
     }
 }
