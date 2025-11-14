@@ -8,169 +8,26 @@ import {
     SurveyDataType
 } from "@/types/surveyQuestions";
 
-const consentSurvey: SurveyComponent[] = [
+const setupSurvey: SurveyComponent[] = [
     {
-        key: 'pageTitle',
-        type: 'paragraph',
-        title: 'Information & Consent Form',
-        text: [
-            'Thank you for carefully reading this information sheet, a copy of which you can keep for your records. This study is being conducted by Yesesvi Konakanchi (yk357@sussex.ac.uk) and Dr John Maule (j.maule@sussex.ac.uk) from the School of Psychology, University of Sussex, who are happy to be contacted if you have any questions.'
-        ],
+        key: 'participantCode',
+        type: 'text',
+        question: 'Enter participant code:',
+        required: true
     },
     {
-        key: 'titleInvite',
-        type: 'paragraph',
-        title: 'Invitation to take part',
-        text: [
-            'You are being invited to take part in a research study to further our understanding of colour vision. The research is being funded by the School of Psychology, University of Sussex.'
-        ],
-    },
-    {
-        key: 'titleWhy',
-        type: 'paragraph',
-        title: 'Why have I been invited for testing and what will I do?',
-        text: [
-            'We are testing adults colour perception on their phones. The experiment will take no more than 30 minutes. It involves making remote colour adjustments on your mobile device, followed by a short questionnaire.',
-            "For the study, you will be required to download an app on your mobile device. Although it is preferred to complete the study on the phone, you can access the study on a computer device here: https://sussexpsychologysoftware.github.io/colour-adjuster/ and complete the study, if so, please state in the questionnaire that you are not doing the study on your phone.",
-            "After completing the task, you will be invited to do a small calibration procedure which measures the display range of your mobile device. The procedure would be quick and would have no effect on the device's performance. This is optional and would only be conducted with your consent.",
-            'Additionally, you have the option to choose to participate without your data being recorded. Participation in this study is part of your practical learning of psychology experiments but is not binding to your data being collected. All data collection is optional and consensual and choosing not to submit your data will not affect your grades or progress.'
-        ],
-    },
-    {
-        key: 'titleResults',
-        type: 'paragraph',
-        title: 'What will happen to the results of my personal information?',
-        text: [
-            'The results of this research may be written into a scientific report for a psychology dissertation and/or publication. We anticipate being able to provide a summary of our findings on request from January 2025.',
-            'Your privacy will be ensured in the way described in the consent information below. Please read this information carefully and then, if you wish to take part, please proceed to show you have fully understood this sheet, and that you consent to take part in the study as it is described here.',
-            'You will generate your own participant code by giving us four pieces of information to form a code which will be unique to you but could not identify you. This code will be used to pair your data from the online task with measurements from your device. The use of this code does not mean that your data is strictly anonymous but instead that the data cannot be attributed to a specific participant without the use of additional information. This additional information is only available if you provide it in future (e.g. you wish to withdraw). Your consent will be recorded with your personal code and responses.',
-            'All data will be transmitted from the JsPsych interface of the online task through the Open Science Framework, a data management system. Raw data will be stored in a private OSF repository, available only to the research team. Both comply with the General Data Protection Regulation (EU) 2016/679 and UK data protection legislation will only be accessible to members of the project team. If any data is made available to the wider scientific community your experimental data may be available with your participant code (pseudonym), but never your name. This means that no data provided can be identifiable back to you.',
-            'If you have concerns about the collection, storage, or use of your personal data, you can contact University of Sussex Data Protection Officer: dpo@sussex.ac.uk.'
-        ],
-    },
-    {
-        key: 'titleApproved',
-        type: 'paragraph',
-        title: 'Who has approved this study?',
-        text: [
-            'The research has been approved by the Science & Technology Cross-Schools Research Ethics Committee (C-REC) ethical review process (ER/YK357/4)'
-        ],
-    },
-    {
-        key: 'titleContact',
-        type: 'paragraph',
-        title: 'Contact for Further Information',
-        text: [
-            'If you have any concerns relating to this project please contact Yesesvi Konakanchi (yk357@sussex.ac.uk), Dr John Maule (j.maule@sussex.ac.uk) and/or the Chair of the Science and Technology Cross Schools Research Ethics Committee, (crecscitec@sussex.ac.uk).'
-        ],
-    },
-    {
-        key: 'titleInsurance',
-        type: 'paragraph',
-        title: 'Insurance',
-        text: [
-            'The University of Sussex has insurance in place to cover its legal liabilities in respect of this study.'
-        ],
-    },
-    {
-        key: 'titleConsent',
-        type: 'paragraph',
-        title: 'CONSENT',
-        text: [
-            '• I understand that by signing below I am agreeing to take part in the University of Sussex research described here, and that I have read and understood this information sheet.',
-            '• I understand that my participation is entirely voluntary, that I can choose not to participate in part or all of the study, and that I can withdraw at any stage of testing without having to give a reason and without being penalised in any way (e.g., if I am a student, my decision whether or not to take part will not affect my grades or personal record).',
-            '• I understand I can request without penalty that my contact details can be withdrawn and deleted after testing is complete. Your experimental data (the responses we record during the study) can be withdrawn prior to data analysis (4 weeks after date of testing).',
-            "• I understand that my personal data will be used for the purposes of this research study and will be handled in accordance with Data Protection legislation. I understand that the University's Privacy Notice provides further information on how the University uses personal data in its research.",
-            '• I understand that my collected data will be stored using only my research participant code I understand my data, identified by participant code only, may be made publicly available through online data repositories or at the request of other researchers.',
-            '• I understand that my participation will remain confidential in any written reports of this research, and that no information I disclose will lead to the identification in those reports of any individual either by the researchers or by any other party, without first obtaining my written permission.'
-        ],
-    },
-    {
-        key: 'futureStudies',
-        type: 'checkbox',
-        question: '',
-        label: `Our research group at the University of Sussex carries out studies on colour vision and colour perception. Please check this box if you are happy for us to include your data again in future studies if these have gained independent ethical approval, based on the strict confidentiality terms described above.`,
-        required: false,
-    },
-    {
-        // TODO: Note would be easier to handle this if it was 'I consent to take part in this experiment' and 'I consent to my data being recorded'
-        // Then could overwrite 'sendData' with the answer to that question.
         key: 'consent',
         type: 'radio',
-        question: 'Please select your consent option:',
+        question: 'Device familiarity:',
         options: [
-            'I consent to take part in this study and agree to my data being recorded.',
-            'I would like to continue without my data being recorded.'
+            'Familiar',
+            'Unfamiliar',
         ],
         required: true,
-    },
-    {
-        key: 'titleCode',
-        type: 'paragraph',
-        title: 'Participant code:',
-        text: ['Please fill out to generate your participant code if you are consenting to your data being recorded.'],
-        conditions: [
-            { key: 'consent', value: 'I consent to take part in this study and agree to my data being recorded.' }
-        ],
-    },
-    {
-        key: 'codeBirth',
-        type: 'text',
-        question: '1. Please enter the last letter of your place of birth:',
-        required: true,
-        conditions: [
-            { key: 'consent', value: 'I consent to take part in this study and agree to my data being recorded.' }
-        ],
-        maxLength: 1,
-    },
-    {
-        key: 'codeName',
-        type: 'text',
-        question: '2. Please enter the second letter of your second name:',
-        required: true,
-        conditions: [
-            { key: 'consent', value: 'I consent to take part in this study and agree to my data being recorded.' }
-        ],
-        maxLength: 1,
-    },
-    {
-        key: 'codeStreet',
-        type: 'text',
-        question: '3. Please enter the first letter of the street where you live:',
-        required: true,
-        conditions: [
-            { key: 'consent', value: 'I consent to take part in this study and agree to my data being recorded.' }
-        ],
-        maxLength: 1,
-    },
-    {
-        key: 'codePhone',
-        type: "text",
-        inputType: 'numeric',
-        question: '4. Please enter the final digit of your mobile phone number:',
-        required: true,
-        conditions: [
-            { key: 'consent', value: 'I consent to take part in this study and agree to my data being recorded.' }
-        ],
-        maxLength: 1,
-    },
-    {
-        key: 'email',
-        type: "text",
-        inputType: 'email-address',
-        question: "This study may have additional runs, and you may be invited back for further testing sessions. If you're interested in continuing your participation, please include your email address so you can be contacted for further tests (optional):",
-        required: false,
     },
 ];
 
 const confirmSettingsSurvey: SurveyComponent[] = [
-    {
-        key: 'switchOffScreen',
-        question: '',
-        type: "checkbox",
-        label: "Have you switched off any other screen which is nearby?",
-        required: true
-    },
     {
         key: 'doNotDisturb',
         question: '',
@@ -432,27 +289,18 @@ export const debriefSurvey: SurveyComponent[] = [
 // -=*#*=- DEFINITION -=*#*=-
 export const colourAdjuster: ExperimentDefinition = {
     name: 'DSA',
-    send_data: false,
+    send_data: true,
     debug: true,
     autoroute: true,
     participant_info_datapipe_id: 'q2ecSpabQ6nH',
     tasks: [
         {
-            id: 'consent',
+            id: 'setup',
             type: 'survey',
-            name: 'Consent',
-            prompt: 'Complete Consent Form',
-            questions: consentSurvey,
+            name: 'Setup',
+            prompt: 'Complete Setup',
+            questions: setupSurvey,
             datapipe_id: 'q2ecSpabQ6nH',
-            on_submit_actions: [
-                {
-                    response_key: 'consent',
-                    operator: '=',
-                    compare_value: 'I consent to take part in this study and agree to my data being recorded.',
-                    action: 'set_send_data',
-                    payload: true
-                }
-            ]
         },
         {
             id: 'confirm',
