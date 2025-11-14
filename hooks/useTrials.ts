@@ -3,7 +3,7 @@ import {useEffect, useState} from "react";
 
 export function useTrials (
     trials: Record<string, any>[],
-    onSubmit: (data: object) => Promise<void>,
+    onSubmit: (data: Record<string, any>[]) => Promise<void>,
 )
 {
     const [trialIndex, setTrialIndex] = useState(0);
@@ -46,9 +46,7 @@ export function useTrials (
 
         const nextIndex = trialIndex + 1;
         if (nextIndex === trials.length) {
-            await onSubmit({
-                responses: newResponsesList
-            });
+            await onSubmit(newResponsesList); //Consider wrapping: {responses: newResponsesList}
         }
 
         setTrialIndex(nextIndex);
