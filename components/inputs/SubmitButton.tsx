@@ -2,7 +2,7 @@ import React, {useState} from 'react'
 import {Text, StyleSheet, Pressable} from 'react-native'
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
-export default function SubmitButton({ text, disabledText, disabled, onPress, style, cooldown=0, textStyle, icon, iconColor } : { text: string, disabledText?: string, disabled?: boolean, onPress: () => void | Promise<void>, style?: object, cooldown?: number, textStyle?: object, icon?: string, iconColor?: string }) {
+export default function SubmitButton({ text, disabledText, disabled, onPress, style, cooldown=0, textStyle, icon, iconColor, disabledStyle } : { text: string, disabledText?: string, disabled?: boolean, onPress: () => void | Promise<void>, style?: object, cooldown?: number, textStyle?: object, icon?: string, iconColor?: string, disabledStyle?: object }) {
     const [pressExecuting, setPressExecuting] = useState(false); // Define pressExecuting state
 
     const handlePress = async () => {
@@ -35,7 +35,8 @@ export default function SubmitButton({ text, disabledText, disabled, onPress, st
             style={[
                 styles.button,
                 style,
-                disabledOrExecuting && styles.disabled
+                disabledOrExecuting && styles.disabled,
+                disabledOrExecuting && disabledStyle
             ]}
         >
             {icon &&
@@ -48,10 +49,10 @@ export default function SubmitButton({ text, disabledText, disabled, onPress, st
             <Text
                 style={[
                     styles.text,
-                    textStyle
+                    textStyle,
+                    disabledOrExecuting && disabledStyle
                 ]}
             >
-
                 { disabledOrExecuting ? (disabledText??text) : text}
             </Text>
         </Pressable>
