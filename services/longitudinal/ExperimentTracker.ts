@@ -6,6 +6,7 @@ import {TaskDefinition} from "@/types/experimentConfig";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import {ConditionAssignment} from "@/services/ConditionAssignment";
 import * as Device from 'expo-device';
+import {getNestedValue} from "@/utils/dotNotation";
 
 // ============ State Management ============
 // EXPERIMENT TRACKER - this saves and calculates states for display
@@ -19,7 +20,8 @@ export class ExperimentTracker {
 
     private static createInitialState(
         participantId: string,
-        assignedCondition?: string | string[]
+        assignedCondition?: string | string[],
+        deviceInfo?: Record<string, any>
     ): ExperimentState {
 
         const emptyTaskStates = Object.fromEntries(
@@ -41,7 +43,8 @@ export class ExperimentTracker {
             participantId,
             tasksLastCompletionDate: emptyTaskStates,
             notificationTimes: emptyNotificationTimes,
-            sendData: experimentDefinition.send_data ?? true
+            sendData: experimentDefinition.send_data ?? true,
+            participantVariables: deviceInfo ? { device: deviceInfo } : {}
         };
 
         if(experimentDefinition.conditions && assignedCondition !== undefined) {
@@ -97,42 +100,29 @@ export class ExperimentTracker {
                 condDef.datapipe_id
             );
         }
-
-        // Now call the simplified createInitialState
-        const initialState = this.createInitialState(participantId, assignedCondition);
+        const deviceInfo = await this.getParticipantDeviceInfo();
+        const initialState = this.createInitialState(participantId, assignedCondition, deviceInfo);
 
         await this.saveState(initialState)
-        void this.sendParticipantInfo(participantId, initialState.startDate, assignedCondition);
+        void this.sendParticipantInfo(initialState, deviceInfo);
         return initialState;
     }
 
-    static async sendParticipantInfo(participantId: string, startDate: string, condition?: string | string[]) {
+    static async getParticipantDeviceInfo(): Promise<Record<string, any>> {
         const deviceType = await Device.getDeviceTypeAsync();
-        let deviceTypeString = ''
+        let deviceTypeString = '';
         switch(deviceType) {
-            case 0:
-                deviceTypeString = 'UNKNOWN';
-                break;
-            case 1:
-                deviceTypeString = 'PHONE';
-                break;
-            case 2:
-                deviceTypeString = 'TABLET';
-                break;
-            case 3:
-                deviceTypeString = 'DESKTOP';
-                break;
-            case 4:
-                deviceTypeString = 'TV';
-                break;
-            default:
-                deviceTypeString = 'NOT_FOUND';
-                break;
+            case 0: deviceTypeString = 'UNKNOWN'; break;
+            case 1: deviceTypeString = 'PHONE'; break;
+            case 2: deviceTypeString = 'TABLET'; break;
+            case 3: deviceTypeString = 'DESKTOP'; break;
+            case 4: deviceTypeString = 'TV'; break;
+            default: deviceTypeString = 'NOT_FOUND'; break;
         }
 
         const isRooted = await Device.isRootedExperimentalAsync();
 
-        const device = {
+        return {
             brand: Device.brand,
             androidDesignName: Device.designName,
             modelId: Device.modelId,
@@ -142,24 +132,31 @@ export class ExperimentTracker {
             osName: Device.osName,
             osVersion: Device.osVersion,
             productName: Device.productName,
-            // For performance debugging
             deviceYearClass: Device.deviceYearClass,
-            totalMemory: Device.totalMemory, // Total RAM
-            isDevice: Device.isDevice, // Real device vs. simulator
-            isRooted: isRooted, // Jailbroken or rooted?
-            deviceType: deviceTypeString
-            // --- AVOID ---
-            // deviceName: Device.deviceName, // <-- PII, do not collect!
+            totalMemory: Device.totalMemory,
+            isDevice: Device.isDevice,
+            isRooted: isRooted,
+            deviceType: deviceTypeString // <-- This is the key you'll check
         };
+    }
+
+    static async sendParticipantInfo(
+        state: ExperimentState,
+        device: Record<string, any>
+    ) {
+
+        const condition = ('conditionType' in state)
+            ? (state.conditionType === 'independent' ? state.assignedCondition : state.repeatedMeasuresConditionOrder)
+            : undefined;
 
         const participantInfo: Record<string,any> = {
-            participantId,
-            startDate,
+            participantId: state.participantId,
+            startDate: state.startDate,
             condition,
             device
         };
 
-        const infoFilename = `${participantId}_participantInfo`;
+        const infoFilename = `${state.participantId}_participantInfo`;
 
         await DataService.saveData(
             participantInfo,
@@ -273,23 +270,55 @@ export class ExperimentTracker {
     }
 
     static calculateTaskDisplayStatuses(visibleTasks: TaskDefinition[],
-                                        taskCompletionDates: NullableStringRecord): TaskDisplayStatus[] {
+                                        state: ExperimentState): TaskDisplayStatus[] {
         const displayStatuses: TaskDisplayStatus[] = [];
         let allPreviousRequiredTasksComplete = true;
 
         for (const taskDef of visibleTasks) {
-            const taskCompletionDate = taskCompletionDates[taskDef.id];
+            const taskCompletionDate = state.tasksLastCompletionDate[taskDef.id];
             const taskCompleted = taskCompletionDate ? this.happenedToday(taskCompletionDate) : false;
 
+            // TODO: things like this need to be centralised as an action generally.
+            let shouldSkip = false;
+            if (taskDef.skip_if && !taskCompleted) { // Only check if not already complete
+                const { state_key, operator, compare_value } = taskDef.skip_if
+                try {
+                    // Use getNestedValue to check the ExperimentState
+                    const stateValue = getNestedValue(state, state_key);
+
+                    if (stateValue !== undefined) {
+                        let conditionMet = false;
+                        if (operator === '=') {
+                            conditionMet = (stateValue === compare_value);
+                        } else if (operator === '!=') {
+                            conditionMet = (stateValue !== compare_value);
+                        }
+                        // TODO: Add other operators (>, <, etc.)
+                        if (conditionMet) {
+                            shouldSkip = true;
+                        }
+                    } else {
+                        console.warn(`skip_if: state_key "${state_key}" not found in ExperimentState.`);
+                    }
+                } catch (e) {
+                    console.error(`Error processing skip_if for task ${taskDef.id}:`, e);
+                }
+            }
+
+            const isCompleted = taskCompleted || shouldSkip;
+            const isAllowed = (allPreviousRequiredTasksComplete && !isCompleted) ||
+                (isCompleted && taskDef.allow_edit === true && !shouldSkip); // Don't allow edit for a skipped task
+
+            console.log({isAllowed, isCompleted})
             // Task is allowed if all previous required tasks are done
             displayStatuses.push({
                 definition: taskDef, // Just pass the whole definition
-                isAllowed: (allPreviousRequiredTasksComplete && !taskCompleted) || (taskCompleted && taskDef.allow_edit===true),
-                completed: taskCompleted,
+                isAllowed: isAllowed,
+                completed: isCompleted,
             });
 
             // Update for next iteration
-            if (!taskCompleted) {
+            if (!isCompleted) {
                 allPreviousRequiredTasksComplete = false;
             }
         }
@@ -339,7 +368,7 @@ export class ExperimentTracker {
         // Get tasks that should show today
         const visibleTasks = this.filterPendingTasks(experimentDay, currentCondition);
         // Calculate display status for each visible task
-        const taskDisplayStatuses = this.calculateTaskDisplayStatuses(visibleTasks, state.tasksLastCompletionDate);
+        const taskDisplayStatuses = this.calculateTaskDisplayStatuses(visibleTasks, state);
 
         const allTasksCompleteToday = taskDisplayStatuses.every(t => t.completed)
         const anyTasksEditable = visibleTasks.some(t => t.allow_edit);
