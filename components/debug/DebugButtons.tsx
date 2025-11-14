@@ -44,9 +44,9 @@ function DebugSubmitButton({ text, loadingText, onPress, disabled, style, textSt
     );
 }
 
-function DebugButtonRow({ title, children }: { title: string; children: ReactNode }) {
+function DebugButtonRow({ title, children, style}: { title: string; children: ReactNode, style?: object }) {
     return (
-        <View style={styles.buttonRow}>
+        <View style={[styles.buttonRow, style]}>
             <Text style={globalStyles.debugText}>{title}:</Text>
             {children}
         </View>
@@ -55,13 +55,13 @@ function DebugButtonRow({ title, children }: { title: string; children: ReactNod
 
 // --- Main Component ---
 
-export default function DebugButtons(){
+export default function DebugButtons({buttonRowStyle}:{buttonRowStyle?: object}){
     const { isActionLoading, confirmAndStopExperiment, resetTaskCompletion } = useExperiment();
 
     return (
         <View style={globalStyles.debugContainer}>
             <Text style={[globalStyles.debugText, globalStyles.debugTitle]}>Debug Buttons:</Text>
-            <DebugButtonRow title="Queue">
+            <DebugButtonRow title="Queue" style={buttonRowStyle}>
                 <DebugSubmitButton
                     text="Sync"
                     loadingText="Syncing..."
@@ -95,7 +95,7 @@ export default function DebugButtons(){
             </DebugButtonRow>
 
             {/* Reset Actions Row */}
-            <DebugButtonRow title="Reset">
+            <DebugButtonRow title="Reset" style={buttonRowStyle}>
                 <DebugSubmitButton
                     text="Task completion"
                     loadingText="Resetting..."
