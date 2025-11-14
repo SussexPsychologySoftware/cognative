@@ -32,6 +32,7 @@ interface ExperimentContextType {
     resetTaskCompletion: () => Promise<void>;
     stopExperiment: () => Promise<void>;
     confirmAndStopExperiment: () => void;
+    // manuallyFinishExperiment: () => Promise<void>;
 
     loadExperimentState: () => Promise<void>;
 
@@ -382,6 +383,16 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
             { cancelable: true }
         );
     }, [stopExperiment]); // Add dependency
+
+    // TODO: for debugging and participant manually ending experiment on last day, finish this:
+    // const forceSendData = useCallback(async () => {
+    //     //
+    // }, [])
+    //
+    // const manuallyFinishExperiment = useCallback(async () => {
+    //         const newDisplayState = {...displayState, isExperimentComplete: true};
+    //         // setDisplayState(newDisplayState)
+    // }, [displayState])
 
     // Create object to pass to context
     const value: ExperimentContextType = {
