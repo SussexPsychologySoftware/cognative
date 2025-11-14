@@ -1,4 +1,4 @@
-import { View, StyleSheet } from "react-native";
+import {View, StyleSheet, Pressable} from "react-native";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import AdjustColourButton from '@/components/DSA/AdjustColourButton'
 import { ColourConverter } from '@/utils/colourConversion';
@@ -99,27 +99,13 @@ export default function ChangeBackground({ startColour, onSubmit, submitting }: 
                     colour={selectedRGB}
                 />
                 <View style={styles.chipAndSubmit}>
-                    <MunsellChip
-                        color={selectedRGB}
-                    />
-                    <SubmitButton
-                        text='Submit'
-                        disabled={submitting || !hasClickedButton}
+                    <Pressable
                         onPress={handleSubmit}
-                        style={{
-                            borderColor: selectedRGB,
-                            backgroundColor: 'transparent',
-                            borderWidth: 1,
-                        }}
-                        textStyle={{
-                            color: selectedRGB
-                        }}
-                        disabledStyle={{
-                            borderColor: 'black',
-                            backgroundColor: 'transparent',
-                            color: 'black'
-                        }}
-                    />
+                    >
+                        <MunsellChip
+                            color={selectedRGB}
+                        />
+                    </Pressable>
                 </View>
 
                 <AdjustColourButton
