@@ -1,7 +1,7 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import {View, StyleSheet, ColorValue} from 'react-native';
 
-export default function MunsellChip({ color }: { color: string }) {
+export default function MunsellChip({ color }: { color: ColorValue }) {
     return (
         <View style={styles.chipContainer}>
             {/* main rectangle */}
