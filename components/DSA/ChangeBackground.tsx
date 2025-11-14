@@ -98,15 +98,14 @@ export default function ChangeBackground({ startColour, onSubmit, submitting }: 
                     text='B'
                     colour={selectedRGB}
                 />
-                <View style={styles.chipAndSubmit}>
-                    <Pressable
-                        onPress={handleSubmit}
-                    >
-                        <MunsellChip
-                            color={selectedRGB}
-                        />
-                    </Pressable>
-                </View>
+
+                <Pressable
+                    onPress={handleSubmit}
+                >
+                    <MunsellChip
+                        color={selectedRGB}
+                    />
+                </Pressable>
 
                 <AdjustColourButton
                     disabled={bUpperBoundReached}
@@ -148,10 +147,6 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         justifyContent: "space-between",
         alignItems: "center"
-    },
-    chipAndSubmit: {
-        flexDirection: 'column',
-        gap: 10
     },
     left: {
     },
