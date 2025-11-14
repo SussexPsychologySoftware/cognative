@@ -8,11 +8,11 @@ export default function RadioList({options, value, onSelect, containerStyle} : {
     }
 
     return(
-        <View style={containerStyle}>
+        <View style={[containerStyle, styles.container]}>
             {options.map((option, index) => (
                 <TouchableOpacity
                     key={option}
-                    style={styles.container}
+                    style={styles.optionContainer}
                     onPress={()=>onOptionPress(option)}
                 >
                     <Radio
@@ -34,13 +34,18 @@ export default function RadioList({options, value, onSelect, containerStyle} : {
 
 const styles = StyleSheet.create({
     container: {
+        gap: 10,
+    },
+    optionContainer: {
         flexDirection: 'row',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        gap: 5
+        gap: 5,
+        // borderWidth: 1,
+        // borderColor: 'lightgray',
     },
     textStyle: {
-        flex: 1
+        flex: 1,
     }
 })
 
