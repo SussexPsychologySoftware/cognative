@@ -52,6 +52,12 @@ interface SetParticipantVariableAction extends StateUpdateActionBase {
 
 type StateUpdateAction = UpdateSendDataAction | SetParticipantVariableAction // TODO: add more here
 
+export interface SkipAction {
+    state_key: string;
+    operator: '=' | '!=' | '<' | '<=' | '>' | '>=';
+    compare_value: SurveyDataType;
+}
+
 interface TaskDefinitionBasic {
     id: string;
     name: string;
@@ -64,7 +70,8 @@ interface TaskDefinitionBasic {
     type: 'survey' | 'screen' | 'web';
     notification?: NotificationDefinition;
     autosumbit_on_complete?: boolean;
-    on_submit_actions?: StateUpdateAction[]; // <-- ADD THIS
+    on_submit_actions?: StateUpdateAction[];
+    skip_if?: SkipAction;
     // overwrite_parameters_on_load?: OverwriteDataOptions[] // TODO: something like this could work?
 
     // Other ideas
