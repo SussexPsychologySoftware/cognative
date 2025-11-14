@@ -1,5 +1,6 @@
 import { Text, StyleSheet, Pressable, View, ColorValue } from 'react-native';
 import {useState, useRef, useEffect, useCallback} from "react";
+import {sizes} from "@/styles/appStyles";
 
 export default function AdjustColourButton({ style, disabled, onPress, text, textStyle, colour}: {style: object, disabled: boolean, onPress: ()=>void, text?: string, textStyle?: object, colour?: ColorValue}) {
 
@@ -7,8 +8,8 @@ export default function AdjustColourButton({ style, disabled, onPress, text, tex
     const animationFrameRef = useRef<number | null>(null);
 
     const loop = useCallback(() => {
-        onPress(); // Call your state update
-        // Request the *next* frame
+        onPress(); // state update
+        // Request next frame
         animationFrameRef.current = requestAnimationFrame(loop);
     }, [onPress]);
 
@@ -81,6 +82,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     text: {
-        fontSize: 30,
+        fontSize: sizes.medium,
     }
 });
