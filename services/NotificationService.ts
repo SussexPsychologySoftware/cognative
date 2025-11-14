@@ -97,7 +97,8 @@ export class NotificationService {
                 // note updateCondition handles independent measures by not doing anything
                 const conditionOnDay = ExperimentTracker.updateCondition(state,day).currentCondition
                 // If show_for_conditions is empty then show on all conditions
-                return !task.show_for_conditions || task.show_for_conditions.length === 0 || task.show_for_conditions.includes(conditionOnDay);
+                // TODO: CHECK LOGIC HERE AGAIN - particularly conditionOnDay===undefined
+                return conditionOnDay===undefined || !task.show_for_conditions || task.show_for_conditions.length === 0 || task.show_for_conditions.includes(conditionOnDay);
             })
             if(daysToSchedule.length === 0) return; //No days left to schedule
 
