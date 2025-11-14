@@ -332,6 +332,11 @@ export const colourAdjuster: ExperimentDefinition = {
             prompt: 'Complete Survey',
             questions: mainSurvey,
             datapipe_id: '4s7WE6aDDG5Y',
+            skip_if: {
+                state_key: 'participantVariables.device.deviceType',
+                operator: '!=',
+                compare_value: 'PHONE'
+            }
         },
         {
             id: 'debrief',
@@ -339,6 +344,11 @@ export const colourAdjuster: ExperimentDefinition = {
             name: 'Do we remember the colours of familiar devices?',
             prompt: 'Read Debrief',
             questions: debriefSurvey,
+            skip_if: {
+                state_key: 'participantVariables.device.deviceType',
+                operator: '!=',
+                compare_value: 'PHONE'
+            }
         },
         {
             id: 'test',
