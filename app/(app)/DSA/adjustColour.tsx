@@ -62,7 +62,8 @@ export default function AdjustColourScreen() {
         currentTrial,
         isTaskFinished,
         responses,
-    } = useTrials(trials, onSubmit);
+        inISI
+    } = useTrials(trials, onSubmit, 400);
 
     if (isTaskFinished) {
         return (
@@ -85,13 +86,29 @@ export default function AdjustColourScreen() {
         );
     }
 
+    // if (inISI) {
+    //     return (
+    //         <FullscreenView
+    //             style={{alignItems: "center", justifyContent: "center"}}
+    //         >
+    //             <Text style={{color:'white', fontSize: 50, textAlign: 'center'}}>+</Text>
+    //
+    //         </FullscreenView>
+    //     )
+    // }
+
     return(
         <FullscreenView>
-            <ChangeBackground
-                startColour={currentTrial.startingColour}
-                onSubmit={async (LAB, RGB) => await handleEndTrial({LAB, RGB})}
-                submitting={isSubmitting}
-            />
+            {
+                inISI ?
+                    null
+                    :
+                <ChangeBackground
+                    startColour={currentTrial.startingColour}
+                    onSubmit={async (LAB, RGB) => await handleEndTrial({LAB, RGB})}
+                    submitting={isSubmitting}
+                />
+            }
             <Text>{JSON.stringify(currentTrial)}</Text>
         </FullscreenView>
        );
