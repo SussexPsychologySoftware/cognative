@@ -46,7 +46,7 @@ export default function SurveyScreen() {
         }
 
         const runStateActions = async (taskDefinition: TaskDefinition) => {
-            if (taskDefinition.type === 'survey' && taskDefinition.on_submit_actions) {
+            if (taskDefinition.on_submit_actions) {
                 for (const action of taskDefinition.on_submit_actions) {
                     // We can use your existing dot-notation helpers if response_key can be nested
                     // For this simple case, direct lookup is fine:
