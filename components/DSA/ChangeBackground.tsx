@@ -13,6 +13,7 @@ export default function ChangeBackground({ startColour, onSubmit, submitting }: 
     const [aLowerBoundReached, setALowerBoundReached] = useState(false);
     const [bUpperBoundReached, setBUpperBoundReached] = useState(false);
     const [bLowerBoundReached, setBLowerBoundReached] = useState(false);
+    const [hasClickedButton, setHasClickedButton] = useState(true);
 
     // Derive RGB when needed for display
     const backgroundColour = useMemo(() =>
@@ -48,9 +49,11 @@ export default function ChangeBackground({ startColour, onSubmit, submitting }: 
         setResponseColour(lab);
         // Now, check the bounds for the new colour
         checkToggleButtons(lab);
+        setHasClickedButton(false)
     }, [startColour, checkToggleButtons]);
 
     const handlePress = (axisKey:'a'|'b', change:1|-1) => {
+        setHasClickedButton(true)
         setResponseColour(prev => {
             const lab: LAB = increaseLAB(axisKey, change, prev)
             checkToggleButtons(lab)
@@ -101,7 +104,7 @@ export default function ChangeBackground({ startColour, onSubmit, submitting }: 
                     />
                     <SubmitButton
                         text='Submit'
-                        disabled={submitting}
+                        disabled={submitting || !hasClickedButton}
                         onPress={handleSubmit}
                         style={{
                             borderColor: selectedRGB,
@@ -110,6 +113,11 @@ export default function ChangeBackground({ startColour, onSubmit, submitting }: 
                         }}
                         textStyle={{
                             color: selectedRGB
+                        }}
+                        disabledStyle={{
+                            borderColor: 'black',
+                            backgroundColor: 'transparent',
+                            color: 'black'
                         }}
                     />
                 </View>

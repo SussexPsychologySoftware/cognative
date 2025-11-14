@@ -47,7 +47,7 @@ export default function AdjustColourScreen() {
         setTrials(trialsArray)
     }, []);
 
-    const onSubmit = useCallback(async (responses: object) => {
+    const onSubmit = useCallback(async (responses: Record<string, any>[]) => {
         setIsSubmitting(true);
         if (taskDefinition) {
             await submitTaskData(taskDefinition, responses);
