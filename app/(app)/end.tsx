@@ -6,7 +6,7 @@ import {globalStyles} from "@/styles/appStyles";
 import {StandardView} from "@/components/layout/StandardView";
 
 export default function EndScreen() {
-    const { definition, displayState, state } = useExperiment();
+    const { state } = useExperiment();
 
     // TODO: add experimenter contact to config?
     return (
@@ -25,10 +25,3 @@ export default function EndScreen() {
         </StandardView>
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-    },
-});
