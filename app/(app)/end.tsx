@@ -14,7 +14,9 @@ export default function EndScreen() {
             contentContainerStyle={{
                 marginVertical: 40,
                 gap: 30
-        }}
+            }}
+            headerShown={false}
+            statusBarStyle={'light'}
         >
             <Text style={globalStyles.standardText}>The experiment is now over, please contact the experimenter.</Text>
             <Text style={globalStyles.standardText}>Your Participant ID is: {state?.participantId}</Text>
