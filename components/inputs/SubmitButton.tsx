@@ -1,7 +1,8 @@
 import React, {useState} from 'react'
 import {Text, StyleSheet, Pressable} from 'react-native'
+import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
 
-export default function SubmitButton({ text, disabledText, disabled, onPress, style, cooldown=0, textStyle } : { text: string, disabledText?: string, disabled?: boolean, onPress: () => void | Promise<void>, style?: object, cooldown?: number, textStyle?: object }) {
+export default function SubmitButton({ text, disabledText, disabled, onPress, style, cooldown=0, textStyle, icon, iconColor } : { text: string, disabledText?: string, disabled?: boolean, onPress: () => void | Promise<void>, style?: object, cooldown?: number, textStyle?: object, icon?: string, iconColor?: string }) {
     const [pressExecuting, setPressExecuting] = useState(false); // Define pressExecuting state
 
     const handlePress = async () => {
@@ -31,13 +32,22 @@ export default function SubmitButton({ text, disabledText, disabled, onPress, st
         <Pressable
             disabled={disabled}
             onPress={handlePress}
-            style={[{backgroundColor: disabledOrExecuting ? 'grey' : 'white'}, styles.button, style]}        >
+            style={[styles.button, style, disabledOrExecuting && styles.disabled]}
+        >
+            {icon &&
+                <FontAwesome6
+                    name={icon}
+                    size={30}
+                    color={iconColor??'black'}
+                />
+            }
             <Text
                 style={[
                     styles.text,
                     textStyle
                 ]}
             >
+
                 { disabledOrExecuting ? (disabledText??text) : text}
             </Text>
         </Pressable>
@@ -46,15 +56,24 @@ export default function SubmitButton({ text, disabledText, disabled, onPress, st
 
 const styles = StyleSheet.create({
     button: {
+        backgroundColor: 'white',
         color: 'black',
         paddingVertical: 10,
         paddingHorizontal: 15,
         borderRadius: 5,
         alignSelf: 'center',
+        flexDirection: 'row',
+        columnGap: 8,
+        // justifyContent: 'center',
+        alignItems: 'center',
     },
     text: {
         color: 'black',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    disabled: {
+        backgroundColor: 'grey'
     }
 })
 
