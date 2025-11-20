@@ -101,7 +101,7 @@ export class ExperimentTracker {
         const initialState = this.createInitialState(participantId, assignedCondition);
 
         await this.saveState(initialState)
-        void this.sendParticipantInfo(participantId,initialState.startDate, assignedCondition);
+        void this.sendParticipantInfo(participantId, initialState.startDate, assignedCondition);
         return initialState;
     }
 
@@ -110,6 +110,7 @@ export class ExperimentTracker {
             startDate,
             condition
         };
+
         await DataService.saveData(
             participantInfo,
             'participantInfo',

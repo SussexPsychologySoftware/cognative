@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 import { AppState } from 'react-native';
 import { useFocusEffect } from 'expo-router';
 
@@ -58,7 +58,7 @@ export function useAutoRefresh(options: AutoRefreshOptions): AutoRefreshReturn {
     const {
         onRefresh,
         refreshOnFocus = true,
-        refreshOnAppActive = true,
+        refreshOnAppActive = false,
         scheduledRefreshHour,
         scheduledRefreshMinute = 0,
         refreshOnMount = true,
@@ -68,6 +68,7 @@ export function useAutoRefresh(options: AutoRefreshOptions): AutoRefreshReturn {
     const [loading, setLoading] = useState(true);
     const [refreshing, setRefreshing] = useState(false);
     const [timerId, setTimerId] = useState(0); // Just a dummy number to re-run the effect
+    const isFocused = useRef(false); // <-- ADD THIS
 
     // Core refresh function
     const executeRefresh = useCallback(
@@ -103,31 +104,37 @@ export function useAutoRefresh(options: AutoRefreshOptions): AutoRefreshReturn {
         }
     }, [refreshOnMount, executeRefresh]);
 
-    // Focus refresh
+    // Focus refresh - TODO: not sure this does anything from inside experiment context
     useFocusEffect(
         useCallback(() => {
+            isFocused.current = true; // <-- ADD THIS
             if (refreshOnFocus && !loading) {
                 void executeRefresh();
             }
+            return () => {
+                isFocused.current = false; // <-- ADD THIS
+            };
         }, [refreshOnFocus, executeRefresh, loading])
     );
 
     // App state (foreground/background) refresh
+    // TODO: note if this runs on whle app surveys get cleared when coming back to app
     useEffect(() => {
         if (!refreshOnAppActive) return;
 
         const handleAppStateChange = async (nextAppState: string) => {
-            if (nextAppState === 'active') {
+            if (nextAppState === 'active' && isFocused.current) {
                 await executeRefresh();
             }
         };
 
         const subscription = AppState.addEventListener('change', handleAppStateChange);
         return () => subscription.remove();
-    }, [refreshOnAppActive, executeRefresh]);
+    }, [refreshOnAppActive, executeRefresh, isFocused]);
 
     // Scheduled refresh at specific time
     useEffect(() => {
+        // TODO: consider isFocused.current here as well?
         if (scheduledRefreshHour === undefined) return;
 
         const getMillisecondsUntilScheduledTime = () => {

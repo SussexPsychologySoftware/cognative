@@ -33,6 +33,8 @@ interface ExperimentContextType {
     stopExperiment: () => Promise<void>;
     confirmAndStopExperiment: () => void;
 
+    loadExperimentState: () => Promise<void>;
+
     updateNotificationTimes: (times: NullableStringRecord) => Promise<void>;
     updateSendData: (sendData: boolean) => Promise<void>;
     setParticipantVariable: (key: string, value: any) => Promise<void>;
@@ -65,6 +67,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
     const definition = experimentDefinition;
 
     const loadExperimentState = useCallback(async () => {
+        // console.log(`loadExperimentState CALLED at: ${new Date().toLocaleTimeString()}`); // <-- ADD THIS
         try {
             // TODO: why not load the state directly from the context???
             let experimentState = await ExperimentTracker.getState();
@@ -89,9 +92,9 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
     const { refreshing, refresh, loading } = useAutoRefresh({
         onRefresh: loadExperimentState, // Pass the function directly
         refreshOnMount: true,
-        refreshOnFocus: false, // TODO: should these be true?
-        refreshOnAppActive: true,
-        scheduledRefreshHour: definition.cutoff_hour || 0,
+        refreshOnFocus: false, // Not sure this does anything from within the context?
+        refreshOnAppActive: false, // App brought to foreground - not true inside context or surveys will get cleared
+        scheduledRefreshHour: definition.cutoff_hour,
     });
 
     useEffect(() => {
@@ -358,6 +361,7 @@ export function ExperimentProvider({ children }: { children: ReactNode }) {
     // Create object to pass to context
     const value: ExperimentContextType = {
         isLoading: loading,
+        loadExperimentState,
         definition,
         state,
         displayState,

@@ -1,15 +1,23 @@
-import {Text, StyleSheet} from "react-native";
+import {Text, StyleSheet, AppState} from "react-native";
 import {StandardView} from "@/components/layout/StandardView";
 import ToDoList from "@/components/longitudinal/ToDoList";
 import { useExperiment } from "@/context/ExperimentContext";
 import SubmitButton from "@/components/inputs/SubmitButton";
 import {globalStyles} from "@/styles/appStyles";
-import {router} from "expo-router";
+import {router, useFocusEffect} from "expo-router";
 import React, {useEffect} from "react";
 import {RoutingService} from "@/services/RoutingService";
+import {useAutoRefresh} from "@/hooks/useAutoRefresh";
 
 export default function Index() {
-    const { displayState, isLoading, definition } = useExperiment();
+    const { displayState, isLoading, definition, loadExperimentState } = useExperiment();
+    useAutoRefresh({
+        onRefresh: loadExperimentState,
+        refreshOnMount: false, // Context already did the initial load
+        refreshOnFocus: true, // Refresh when navigating to index
+        refreshOnAppActive: true, // Refresh on foregrounding (if on index)
+        scheduledRefreshHour: definition.cutoff_hour, // Refresh at cutoff (if on index)
+    });
 
     useEffect(() => {
         // Wait until loading is done and we have state
